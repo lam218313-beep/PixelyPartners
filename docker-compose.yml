@@ -19,7 +19,8 @@ services:
       - ./orchestrator:/app/orchestrator
     networks:
       - pixely_network
-    command: python orchestrator/analyze.py
+    command: python -m orchestrator all
+    restart: unless-stopped
 
   # ============================================
   # FRONTEND: Streamlit Dashboard
