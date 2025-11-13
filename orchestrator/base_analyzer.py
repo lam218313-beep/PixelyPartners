@@ -39,6 +39,8 @@ class BaseAnalyzer(ABC):
             "outputs_dir",
             os.path.join(os.path.dirname(__file__), "outputs")
         )
+        # Model name is configurable via environment or config (fallback to gpt-5-nano)
+        self.model_name = os.environ.get("OPENAI_MODEL") or self.config.get("openai_model") or "gpt-5-nano"
 
     def load_ingested_data(self) -> Dict[str, Any]:
         """
