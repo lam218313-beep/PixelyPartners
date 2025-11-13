@@ -88,7 +88,7 @@ IMPORTANT: Return ONLY valid JSON with raw scores (0-100), not percentages:
 
         try:
             response = await self.openai_client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5-nano",
                 messages=[
                     {
                         "role": "system",

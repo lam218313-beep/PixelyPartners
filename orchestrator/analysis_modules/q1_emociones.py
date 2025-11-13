@@ -77,7 +77,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
 
         try:
             response = await self.openai_client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5-nano",
                 messages=[
                     {
                         "role": "system",
