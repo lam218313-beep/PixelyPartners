@@ -1,0 +1,28 @@
+{
+    "tendencia_general": [
+        {"fecha": "2025-10-25", "interacciones": 1240},
+        {"fecha": "2025-10-26", "interacciones": 980},
+        {"fecha": "2025-10-27", "interacciones": 1105},
+        {"fecha": "2025-10-28", "interacciones": 1302},
+        {"fecha": "2025-10-29", "interacciones": 1450},
+        {"fecha": "2025-10-30", "interacciones": 1700},
+        {"fecha": "2025-10-31", "interacciones": 1600}
+    ],
+    "patrones_dia_semana": [
+        {"dia": "Lunes", "promedio_interacciones": 180},
+        {"dia": "Martes", "promedio_interacciones": 220},
+        {"dia": "Miércoles", "promedio_interacciones": 200},
+        {"dia": "Jueves", "promedio_interacciones": 230},
+        {"dia": "Viernes", "promedio_interacciones": 260},
+        {"dia": "Sábado", "promedio_interacciones": 300},
+        {"dia": "Domingo", "promedio_interacciones": 310}
+    ],
+    "horas_pico": [
+        {"hora": "09:00", "promedio_actividad": 120},
+        {"hora": "12:00", "promedio_actividad": 220},
+        {"hora": "18:00", "promedio_actividad": 400}
+    ],
+    "momentos_destacados": [
+        {"fecha": "2025-09-10", "titulo": "Lanzamiento campaña X", "interacciones": 92000, "descripcion": "Alto engagement por Reel promocional.", "tendencia": "pico"}
+    ]
+}

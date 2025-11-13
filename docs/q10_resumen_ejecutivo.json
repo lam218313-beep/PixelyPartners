@@ -1,0 +1,12 @@
+{
+  "resumen": [
+    "Estrategia centrada en innovación y sostenibilidad con alto engagement en formatos de video corto.",
+    "Recomendación: aumentar Reels en fines de semana para maximizar alcance y ER.",
+    "Priorizar mensajes de confianza y cercanía con la comunidad."
+  ],
+  "prioridades": [
+    {"accion": "Aumentar Reels en fines de semana", "impacto_score": 78, "frameworks_relevantes": ["Q8"]},
+    {"accion": "Refinar tono de comunicación hacia sostenibilidad", "impacto_score": 65, "frameworks_relevantes": ["Q2","Q3"]}
+  ],
+  "metadata": {"fecha_analisis": "2025-11-07"}
+}

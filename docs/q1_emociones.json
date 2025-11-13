@@ -1,0 +1,45 @@
+{
+  "analisis_por_publicacion": [
+    {
+      "post_url": "https://instagram.com/p/ABC123",
+      "resumen_emocional": "Predominantemente positivo con alivio y orgullo",
+      "emociones": {
+        "alegria": 0.45,
+        "confianza": 0.25,
+        "sorpresa": 0.05,
+        "tristeza": 0.02,
+        "enojo": 0.03,
+        "miedo": 0.01,
+        "disgusto": 0.01,
+        "anticipacion": 0.18
+      }
+    },
+    {
+      "post_url": "https://instagram.com/p/DEF456",
+      "resumen_emocional": "Mezcla de anticipación y confianza",
+      "emociones": {
+        "alegria": 0.30,
+        "confianza": 0.35,
+        "sorpresa": 0.10,
+        "tristeza": 0.02,
+        "enojo": 0.01,
+        "miedo": 0.01,
+        "disgusto": 0.00,
+        "anticipacion": 0.21
+      }
+    }
+  ],
+  "resumen_global_emociones": {
+    "alegria": 0.375,
+    "confianza": 0.30,
+    "sorpresa": 0.075,
+    "tristeza": 0.02,
+    "enojo": 0.02,
+    "miedo": 0.01,
+    "disgusto": 0.005,
+    "anticipacion": 0.195,
+    "Sentimiento Positivo": 0.70,
+    "Sentimiento Negativo": 0.08,
+    "Sentimiento Neutral": 0.22
+  }
+}

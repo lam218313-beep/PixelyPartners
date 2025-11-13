@@ -1,0 +1,14 @@
+{
+  "client_id": 1,
+  "client_name": "Nike",
+  "google_sheet_url": "https://docs.google.com/spreadsheets/d/1kGDc9GI1qnnQHk4n2TfbmRhuua-FOno6mTXXO0czmp4/edit?gid=261178786#gid=261178786",
+    "tabs": {
+        "social_media_fichas_cliente": "Ficha Cliente",
+        "social_media_publicaciones": "Social_Media_Posts",
+        "social_media_comentarios": "Comentarios"
+      },
+  "active_pipelines": [
+    "social_media"
+  ],
+  "outputs_dir": "/app/outputs"
+}

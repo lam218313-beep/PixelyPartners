@@ -1,0 +1,49 @@
+﻿{
+    "lista_oportunidades": [
+        {
+            "tema": "Contenido Educativo en IA para Principiantes",
+            "gap_score": 85,
+            "actividad_competitiva": "Baja",
+            "justificacion": "Alta demanda no atendida de contenido básico en IA, evidenciada por 45% de comentarios solicitando tutoriales y aumento del 156% en búsquedas relacionadas",
+            "recomendacion_accion": "Desarrollar serie de tutoriales básicos en IA y ML, enfocados en conceptos fundamentales y casos de uso prácticos"
+        },
+        {
+            "tema": "Programa de Embajadores Tecnológicos",
+            "gap_score": 72,
+            "actividad_competitiva": "Baja",
+            "justificacion": "78% de usuarios confían en recomendaciones de expertos y ausencia de programas similares en competidores directos",
+            "recomendacion_accion": "Implementar programa de embajadores tech con enfoque en credibilidad y educación"
+        },
+        {
+            "tema": "Consultoría en Transformación Digital",
+            "gap_score": 95,
+            "actividad_competitiva": "Media",
+            "justificacion": "67% de queries sobre implementación práctica y aumento significativo en solicitudes de asesoría",
+            "recomendacion_accion": "Lanzar servicio de consultoría especializada en transformación digital para PyMEs"
+        },
+        {
+            "tema": "Soluciones Cloud Pre-configuradas",
+            "gap_score": 78,
+            "actividad_competitiva": "Alta",
+            "justificacion": "92% buscan soluciones plug-and-play, con potencial de reducción de tiempo de implementación del 60%",
+            "recomendacion_accion": "Desarrollar marketplace de soluciones cloud optimizadas y pre-configuradas"
+        },
+        {
+            "tema": "Contenido Live sobre Innovación",
+            "gap_score": 65,
+            "actividad_competitiva": "Media",
+            "justificacion": "85% de engagement en contenido live y demanda creciente de networking profesional",
+            "recomendacion_accion": "Crear serie de webinars interactivos sobre tendencias en tecnología e innovación"
+        }
+    ],
+    "metadata": {
+        "fecha_analisis": "2025-11-07",
+        "total_oportunidades": 5,
+        "promedio_gap": 79,
+        "distribucion_actividad": {
+            "Baja": 2,
+            "Media": 2,
+            "Alta": 1
+        }
+    }
+}

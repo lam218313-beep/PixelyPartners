@@ -1,0 +1,14 @@
+{
+    "top_influenciadores": [
+        {"actor": "Nike Official", "username": "nike", "followers": {"instagram": 15000000}, "er_mean": 0.0065}
+    ],
+    "actors": [
+        {"actor": "Nike Official", "username": "nike", "followers": {"instagram": 15000000}, "er_mean": 0.0065}
+    ],
+    "top_influenciadores_detallado": [
+        {"influencer_name": "@techvision2025", "score": 9.8, "posts_analyzed": 245, "top_topics": ["Innovación", "Tecnología", "IA"], "sentiment": "Positivo", "engagement_rate": 8.5, "followers": 125000},
+        {"influencer_name": "@digitalartist", "score": 8.9, "posts_analyzed": 178, "top_topics": ["Diseño Digital", "Arte", "Creatividad"], "sentiment": "Positivo", "engagement_rate": 7.2, "followers": 89000}
+    ],
+    "resumen_polaridad": {"Promotor": 5, "Neutro": 3, "Detractor": 2},
+    "metadata": {"total_posts_analyzed": 1702, "periodo_analisis": "Último trimestre", "umbral_influencia": 6.5}
+}

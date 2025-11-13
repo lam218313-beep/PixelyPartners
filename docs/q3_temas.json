@@ -1,0 +1,11 @@
+{
+  "analisis_agregado": [
+    {"tema": "Sostenibilidad", "frecuencia_porcentaje": 0.45, "sentimiento_promedio": 0.3},
+    {"tema": "Innovacion", "frecuencia_porcentaje": 0.30, "sentimiento_promedio": 0.4},
+    {"tema": "Comunidad", "frecuencia_porcentaje": 0.25, "sentimiento_promedio": 0.2}
+  ],
+  "analisis_por_publicacion": [
+    {"post_url": "https://instagram.com/p/ABC123", "temas_distribucion": {"Sostenibilidad": 0.7, "Innovacion": 0.2}, "sentimiento_promedio_por_tema": {"Sostenibilidad": 0.35, "Innovacion": 0.4}},
+    {"post_url": "https://instagram.com/p/DEF456", "temas_distribucion": {"Comunidad": 0.6, "Sostenibilidad": 0.4}, "sentimiento_promedio_por_tema": {"Comunidad": 0.25, "Sostenibilidad": 0.2}}
+  ]
+}

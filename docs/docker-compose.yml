@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+### --- 1. La Despensa: Base de Datos PostgreSQL ---
+#   db: 
+#     image: postgres:15-alpine 
+#     container_name: pixely_db 
+#     volumes: 
+#       - postgres_data:/var/lib/postgresql/data/ 
+#     environment: 
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#     restart: unless-stopped 
+#     healthcheck: 
+#       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"] 
+#       interval: 5s 
+#       timeout: 5s 
+#       retries: 5 
+#     ports: 
+#       - "5432:5432" 
+#     networks: 
+#       - pixely_net 
+
+### --- 2. La Cocina: API con FastAPI (El Guardián) ---
+#   api: 
+#     build: 
+#       context: ./api 
+#     container_name: pixely_api 
+#     command: sh -c "python migrate.py && uvicorn main:app --host 0.0.0.0 --port 8000 --log-level debug" 
+#     volumes: 
+#       - ./api:/app 
+#     depends_on: 
+#       db: 
+#         condition: service_healthy 
+#       adminer: 
+#         condition: service_started 
+#     environment: 
+#       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
+#       - SECRET_KEY=${SECRET_KEY}
+#       - ORCHESTRATOR_USER=${ORCHESTRATOR_USER}
+#       - ORCHESTRATOR_PASSWORD=${ORCHESTRATOR_PASSWORD}
+#     healthcheck: 
+#       test: ["CMD", "curl", "-f", "http://localhost:8000/"] 
+#       interval: 10s 
+#       timeout: 5s 
+#       retries: 5 
+#     ports: 
+#       - "8000:8000" 
+#     restart: unless-stopped 
+#     networks: 
+#       - pixely_net 
+
+### --- 3. El Comedor: Frontend con Streamlit ---
+  frontend: 
+    build: 
+      context: ./frontend 
+    container_name: pixely_frontend 
+    volumes: 
+      - ./frontend:/app 
+      - ./orchestrator/outputs:/app/orchestrator/outputs
+    ports:
+      - "8501:8501" # Puerto de Streamlit (se asume 8501 por defecto [6])
+    networks: 
+      - pixely_net 
+
+### --- 4. El Portero: Servidor Web Nginx (Preparado para HTTPS) ---
+#   nginx: 
+#     build: 
+#       context: ./nginx 
+#     container_name: pixely_nginx 
+#     depends_on: 
+#       - frontend 
+#       - api
+#     ports:
+#       - "80:80"
+#       - "443:443"
+#     networks: 
+#       - pixely_net 
+
+### --- 5. El Notario: Servicio Certbot para SSL/TLS ---
+#   certbot: 
+#     image: certbot/certbot 
+#     volumes: 
+#       - ./data/certbot/conf:/etc/letsencrypt 
+#       - ./data/certbot/www:/var/www/certbot 
+#     command: certonly --webroot -w /var/www/certbot --email lsckryl@gmail.com -d partners.pixely.pe --agree-tos 
+#     networks: 
+#       - pixely_net 
+
+### --- 6. El Motor: Orquestador de Pipelines ---
+  orchestrator: 
+    build: 
+      context: ./orchestrator 
+      dockerfile: orchestrator.Dockerfile 
+    container_name: pixely_orchestrator
+    volumes: 
+      - ./orchestrator:/app 
+      - ./gcp_credentials.json:/gcp_credentials.json
+      - ./orchestrator/outputs:/app/outputs
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ORCHESTRATOR_USER=${ORCHESTRATOR_USER}
+      - ORCHESTRATOR_PASSWORD=${ORCHESTRATOR_PASSWORD}
+      - API_URL=http://api:8000
+      # Las credenciales de GCP se leen del archivo gcp_credentials.json
+    # depends_on:
+    #   - api
+    networks: 
+      - pixely_net 
+
+### --- 7. El Ojo: Visualizador de Base de Datos (Adminer) ---
+#   adminer: 
+#     image: adminer 
+#     container_name: pixely_adminer 
+#     ports: 
+#       - "8080:8080" 
+#     networks: 
+#       - pixely_net 
+#     restart: unless-stopped
+
+volumes: 
+  postgres_data: 
+  certbot_conf: 
+  certbot_www: 
+
+networks: 
+  pixely_net: 
+    driver: bridge

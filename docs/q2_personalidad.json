@@ -1,0 +1,31 @@
+{
+  "analisis_agregado": {
+    "Sinceridad": 0.65,
+    "Emocion": 0.55,
+    "Competencia": 0.60,
+    "Sofisticacion": 0.40,
+    "Robustez": 0.50
+  },
+  "analisis_por_publicacion": [
+    {
+      "post_url": "https://instagram.com/p/ABC123",
+      "rasgos": {
+        "Sinceridad": 0.7,
+        "Emocion": 0.6,
+        "Competencia": 0.6,
+        "Sofisticacion": 0.35,
+        "Robustez": 0.45
+      }
+    },
+    {
+      "post_url": "https://instagram.com/p/DEF456",
+      "rasgos": {
+        "Sinceridad": 0.6,
+        "Emocion": 0.5,
+        "Competencia": 0.6,
+        "Sofisticacion": 0.45,
+        "Robustez": 0.55
+      }
+    }
+  ]
+}

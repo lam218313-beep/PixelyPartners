@@ -1,0 +1,13 @@
+{
+  "analisis_agregado": {
+    "positivo": 0.62,
+    "negativo": 0.10,
+    "neutro": 0.25,
+    "mixto": 0.03,
+    "subjetividad_promedio_global": 0.42
+  },
+  "analisis_por_publicacion": [
+    {"post_url": "https://instagram.com/p/ABC123", "distribucion": {"positivo": 0.7, "negativo": 0.05, "neutro": 0.25, "mixto": 0.0}, "subjetividad_promedio": 0.45, "ejemplo_mixto": {"texto": "No estoy seguro si me gusta esto pero lo valoro", "username": "user123"}},
+    {"post_url": "https://instagram.com/p/DEF456", "distribucion": {"positivo": 0.55, "negativo": 0.15, "neutro": 0.28, "mixto": 0.02}, "subjetividad_promedio": 0.39, "ejemplo_mixto": {"texto": "Buen producto pero muy costoso", "username": "user456"}}
+  ]
+}

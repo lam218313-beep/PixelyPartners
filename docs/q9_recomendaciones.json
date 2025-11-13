@@ -1,0 +1,7 @@
+{
+  "lista_recomendaciones": [
+    {"area_estrategica": "Formatos", "recomendacion": "Aumentar Reels en fines de semana", "score_impacto": 78, "justificacion_framework": ["Q8"], "evidencia": "Reels muestran mayor engagement durante sábados"},
+    {"area_estrategica": "Tono", "recomendacion": "Priorizar mensajes de confianza y sostenibilidad", "score_impacto": 65, "justificacion_framework": ["Q2","Q3"], "evidencia": "Perfil de audiencia valora sostenibilidad"}
+  ],
+  "metadata": {"fecha_analisis": "2025-11-07", "total_recomendaciones": 2, "promedio_score": 71.5}
+}
