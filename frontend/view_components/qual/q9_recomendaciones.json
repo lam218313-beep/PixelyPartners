@@ -1,0 +1,195 @@
+{
+    "metadata": {
+        "module": "Q9 Recomendaciones",
+        "version": 4,
+        "description": "Strategic recommendations with area, urgency, and framework justification"
+    },
+    "results": {
+        "lista_recomendaciones": [
+            {
+                "recomendacion": "Publicar plantillas de seguimiento de KPIs y un vídeo corto que explique 'la métrica más importante' según objetivos (awareness, conversión, engagement) y herramientas recomendadas para trackearlas.",
+                "score_impacto": 76.0,
+                "score_esfuerzo": 25.0,
+                "prioridad": 3.04,
+                "id": 1,
+                "area_estrategica": "Contenido y Educación",
+                "descripcion": "Publicar plantillas de seguimiento de KPIs y un vídeo corto que explique 'la métrica más importante' según objetivos (awareness, conversión, engagemen...",
+                "urgencia": "CRÍTICA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del contenido y educación",
+                    "Paso 2: Implementar: Publicar plantillas de seguimiento de KPIs y un vídeo corto que explique 'la mét",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 76.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Publicar un 'Toolkit de Inicio' descargable que clasifique herramientas recomendadas (IA, automatización, diseño, tracking) por nivel: gratis/paid, casos de uso, integración y presupuesto.",
+                "score_impacto": 82.0,
+                "score_esfuerzo": 30.0,
+                "prioridad": 2.73,
+                "id": 2,
+                "area_estrategica": "Contenido y Educación",
+                "descripcion": "Publicar un 'Toolkit de Inicio' descargable que clasifique herramientas recomendadas (IA, automatización, diseño, tracking) por nivel: gratis/paid, ca...",
+                "urgencia": "CRÍTICA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del contenido y educación",
+                    "Paso 2: Implementar: Publicar un 'Toolkit de Inicio' descargable que clasifique herramientas recomend",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 82.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Aumentar la frecuencia de reels prácticos y dinámicos a 2-3 por semana (centrados en tips, errores comunes y herramientas) manteniendo el ritmo y duración que la audiencia valora.",
+                "score_impacto": 66.0,
+                "score_esfuerzo": 25.0,
+                "prioridad": 2.64,
+                "id": 3,
+                "area_estrategica": "Comunicación y Transparencia",
+                "descripcion": "Aumentar la frecuencia de reels prácticos y dinámicos a 2-3 por semana (centrados en tips, errores comunes y herramientas) manteniendo el ritmo y dura...",
+                "urgencia": "CRÍTICA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del comunicación y transparencia",
+                    "Paso 2: Implementar: Aumentar la frecuencia de reels prácticos y dinámicos a 2-3 por semana (centrado",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 66.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Crear una serie de guías y reels prácticos 'Cómo aplicar estas tendencias a tu negocio' y un episodio específico con predicciones y tácticas para TikTok (incluyendo checklist para contenido viral).",
+                "score_impacto": 75.0,
+                "score_esfuerzo": 30.0,
+                "prioridad": 2.5,
+                "id": 4,
+                "area_estrategica": "Contenido y Educación",
+                "descripcion": "Crear una serie de guías y reels prácticos 'Cómo aplicar estas tendencias a tu negocio' y un episodio específico con predicciones y tácticas para TikT...",
+                "urgencia": "CRÍTICA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del contenido y educación",
+                    "Paso 2: Implementar: Crear una serie de guías y reels prácticos 'Cómo aplicar estas tendencias a tu n",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 75.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Programar webinars mensuales con expertos, incluir sesión de preguntas, y publicar grabaciones y material complementario en una biblioteca accesible con fechas del próximo webinar.",
+                "score_impacto": 74.0,
+                "score_esfuerzo": 40.0,
+                "prioridad": 1.85,
+                "id": 5,
+                "area_estrategica": "Contenido y Educación",
+                "descripcion": "Programar webinars mensuales con expertos, incluir sesión de preguntas, y publicar grabaciones y material complementario en una biblioteca accesible c...",
+                "urgencia": "ALTA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del contenido y educación",
+                    "Paso 2: Implementar: Programar webinars mensuales con expertos, incluir sesión de preguntas, y public",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 74.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Ofrecer un 'Content Pack para Agencias' con scripts de reels, guiones de entrevistas, plantillas visuales y una lista de herramientas low-budget + guías de integración entre ellas.",
+                "score_impacto": 71.0,
+                "score_esfuerzo": 45.0,
+                "prioridad": 1.58,
+                "id": 6,
+                "area_estrategica": "Comunicación y Transparencia",
+                "descripcion": "Ofrecer un 'Content Pack para Agencias' con scripts de reels, guiones de entrevistas, plantillas visuales y una lista de herramientas low-budget + guí...",
+                "urgencia": "ALTA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del comunicación y transparencia",
+                    "Paso 2: Implementar: Ofrecer un 'Content Pack para Agencias' con scripts de reels, guiones de entrevi",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 71.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Desarrollar una biblioteca de case studies detallados (formato paso a paso) con resultados, tácticas aplicadas y plantillas replicables para que agencias y equipos los adapten.",
+                "score_impacto": 72.0,
+                "score_esfuerzo": 50.0,
+                "prioridad": 1.44,
+                "id": 7,
+                "area_estrategica": "Comunicación y Transparencia",
+                "descripcion": "Desarrollar una biblioteca de case studies detallados (formato paso a paso) con resultados, tácticas aplicadas y plantillas replicables para que agenc...",
+                "urgencia": "MEDIA-ALTA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del comunicación y transparencia",
+                    "Paso 2: Implementar: Desarrollar una biblioteca de case studies detallados (formato paso a paso) con ",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 72.0/100)"
+                ]
+            },
+            {
+                "recomendacion": "Lanzar un micro-curso online (modular, 4-6 lecciones) sobre IA aplicada al marketing y storytelling, con plantillas y ejercicios prácticos para implementarlo en 30 días.",
+                "score_impacto": 84.0,
+                "score_esfuerzo": 60.0,
+                "prioridad": 1.4,
+                "id": 8,
+                "area_estrategica": "Comunicación y Transparencia",
+                "descripcion": "Lanzar un micro-curso online (modular, 4-6 lecciones) sobre IA aplicada al marketing y storytelling, con plantillas y ejercicios prácticos para implem...",
+                "urgencia": "MEDIA-ALTA",
+                "justificacion_framework": [
+                    "1",
+                    "3",
+                    "6",
+                    "9"
+                ],
+                "acciones_concretas": [
+                    "Paso 1: Analizar contexto actual del comunicación y transparencia",
+                    "Paso 2: Implementar: Lanzar un micro-curso online (modular, 4-6 lecciones) sobre IA aplicada al marke",
+                    "Paso 3: Medir impacto en siguientes 2 semanas",
+                    "Paso 4: Ajustar según resultados (target: impacto ≥ 84.0/100)"
+                ]
+            }
+        ],
+        "resumen_global": {
+            "total_recomendaciones": 8,
+            "score_impacto_promedio": 75.0,
+            "score_esfuerzo_promedio": 38.1,
+            "recomendaciones_criticas": 4,
+            "recomendaciones_altas": 2
+        }
+    },
+    "errors": []
+}

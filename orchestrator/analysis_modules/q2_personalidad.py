@@ -87,23 +87,46 @@ IMPORTANT: Return ONLY valid JSON with raw scores (0-100), not percentages:
 }}"""
 
         try:
-            response = await self.openai_client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert brand strategist. Analyze brand personality and return valid JSON only."
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                temperature=0.7,
-                max_tokens=500
-            )
+            # Use Responses API for GPT-5 models
+            if self.model_name and "gpt-5" in self.model_name:
+                logger.debug(f"Using Responses API for model: {self.model_name}")
+                
+                # Determine appropriate reasoning.effort value based on model
+                if "gpt-5.1" in self.model_name or "gpt-5" == self.model_name:
+                    reasoning_effort = "low"  # 'none', 'low', 'medium', 'high'
+                else:
+                    reasoning_effort = "minimal"  # 'minimal', 'low', 'medium', 'high' for mini/nano
+                
+                response = await self.openai_client.responses.create(
+                    model=self.model_name,
+                    input=prompt,
+                    reasoning={"effort": reasoning_effort},
+                    text={"verbosity": "low"}
+                )
+                response_text = response.output_text.strip()
+            else:
+                # Chat Completions for other models
+                logger.debug(f"Using Chat Completions API for model: {self.model_name}")
+                params = {
+                    "model": self.model_name,
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are a branding analyst. Return ONLY valid JSON."
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                }
 
-            response_text = response.choices[0].message.content.strip()
+                if not any(x in self.model_name for x in ["gpt-5", "o1"]):
+                    params["temperature"] = 0.7
+                    params["max_tokens"] = 500
+
+                response = await self.openai_client.chat.completions.create(**params)
+                response_text = response.choices[0].message.content.strip()
             
             # Try to parse JSON from response
             try:

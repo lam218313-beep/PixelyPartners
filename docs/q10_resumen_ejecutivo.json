@@ -1,12 +1,17 @@
 {
-  "resumen": [
-    "Estrategia centrada en innovación y sostenibilidad con alto engagement en formatos de video corto.",
-    "Recomendación: aumentar Reels en fines de semana para maximizar alcance y ER.",
-    "Priorizar mensajes de confianza y cercanía con la comunidad."
-  ],
-  "prioridades": [
-    {"accion": "Aumentar Reels en fines de semana", "impacto_score": 78, "frameworks_relevantes": ["Q8"]},
-    {"accion": "Refinar tono de comunicación hacia sostenibilidad", "impacto_score": 65, "frameworks_relevantes": ["Q2","Q3"]}
-  ],
-  "metadata": {"fecha_analisis": "2025-11-07"}
+    "metadata": {
+        "module": "Q10 Resumen Ejecutivo",
+        "version": 1
+    },
+    "results": {
+        "alerta_prioritaria": "Audience sentiment is strong and positive. Monitor Q6 opportunities closely.",
+        "resumen_ejecutivo": "The brand shows strong audience engagement with predominantly positive sentiment. Key opportunities lie in expanding product offerings and improving response times.",
+        "indicadores_clave": {
+            "sentimiento_promedio": 0.65,
+            "num_posts_analizados": 12,
+            "num_comentarios_totales": 120,
+            "engagement_promedio": 0.52
+        }
+    },
+    "errors": []
 }

@@ -1,49 +1,129 @@
-﻿{
-    "lista_oportunidades": [
-        {
-            "tema": "Contenido Educativo en IA para Principiantes",
-            "gap_score": 85,
-            "actividad_competitiva": "Baja",
-            "justificacion": "Alta demanda no atendida de contenido básico en IA, evidenciada por 45% de comentarios solicitando tutoriales y aumento del 156% en búsquedas relacionadas",
-            "recomendacion_accion": "Desarrollar serie de tutoriales básicos en IA y ML, enfocados en conceptos fundamentales y casos de uso prácticos"
-        },
-        {
-            "tema": "Programa de Embajadores Tecnológicos",
-            "gap_score": 72,
-            "actividad_competitiva": "Baja",
-            "justificacion": "78% de usuarios confían en recomendaciones de expertos y ausencia de programas similares en competidores directos",
-            "recomendacion_accion": "Implementar programa de embajadores tech con enfoque en credibilidad y educación"
-        },
-        {
-            "tema": "Consultoría en Transformación Digital",
-            "gap_score": 95,
-            "actividad_competitiva": "Media",
-            "justificacion": "67% de queries sobre implementación práctica y aumento significativo en solicitudes de asesoría",
-            "recomendacion_accion": "Lanzar servicio de consultoría especializada en transformación digital para PyMEs"
-        },
-        {
-            "tema": "Soluciones Cloud Pre-configuradas",
-            "gap_score": 78,
-            "actividad_competitiva": "Alta",
-            "justificacion": "92% buscan soluciones plug-and-play, con potencial de reducción de tiempo de implementación del 60%",
-            "recomendacion_accion": "Desarrollar marketplace de soluciones cloud optimizadas y pre-configuradas"
-        },
-        {
-            "tema": "Contenido Live sobre Innovación",
-            "gap_score": 65,
-            "actividad_competitiva": "Media",
-            "justificacion": "85% de engagement en contenido live y demanda creciente de networking profesional",
-            "recomendacion_accion": "Crear serie de webinars interactivos sobre tendencias en tecnología e innovación"
-        }
-    ],
+{
     "metadata": {
-        "fecha_analisis": "2025-11-07",
-        "total_oportunidades": 5,
-        "promedio_gap": 79,
-        "distribucion_actividad": {
-            "Baja": 2,
-            "Media": 2,
-            "Alta": 1
+        "module": "Q6 Oportunidades",
+        "version": 2,
+        "description": "Demand vs. Impact opportunities analysis - Client data only (Máximo Rendimiento)"
+    },
+    "results": {
+        "oportunidades": [
+            {
+                "oportunidad": "Cursos/Programas Pagos (p. ej. sobre IA, storytelling, creación de contenido)",
+                "tema": "Cursos/Programas Pagos (p. ej. sobre IA, storytelling, creación de contenido)",
+                "gap_score": 90.0,
+                "competencia_score": 70.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Múltiples usuarios preguntan por cursos y formación (IA, storytelling, ser influencer, cursos sobre herramientas). Hay demanda clara de aprendizaje estructurado.",
+                "justificacion": "Múltiples usuarios preguntan por cursos y formación (IA, storytelling, ser influencer, cursos sobre herramientas). Hay demanda clara de aprendizaje estructurado.",
+                "accion": "Desarrollar y promocionar un curso modular pago (inicio-intermedio-avanzado) sobre temas populares (IA aplicada al marketing, storytelling, creación de reels) con versiones para agencias y equipos.",
+                "recomendacion_accion": "Desarrollar y promocionar un curso modular pago (inicio-intermedio-avanzado) sobre temas populares (IA aplicada al marketing, storytelling, creación de reels) con versiones para agencias y equipos."
+            },
+            {
+                "oportunidad": "Guías prácticas y plantillas (tools, KPIs, checklist de tendencias)",
+                "tema": "Guías prácticas y plantillas (tools, KPIs, checklist de tendencias)",
+                "gap_score": 85.0,
+                "competencia_score": 55.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Numerosos comentarios piden herramientas, métricas clave, plantillas, checklist y recomendaciones prácticas para implementar consejos.",
+                "justificacion": "Numerosos comentarios piden herramientas, métricas clave, plantillas, checklist y recomendaciones prácticas para implementar consejos.",
+                "accion": "Crear packs descargables (plantillas de KPIs, checklist para reels, guías de herramientas con integraciones) como lead magnets o producto micro-pago.",
+                "recomendacion_accion": "Crear packs descargables (plantillas de KPIs, checklist para reels, guías de herramientas con integraciones) como lead magnets o producto micro-pago."
+            },
+            {
+                "oportunidad": "Webinars y grabaciones on-demand",
+                "tema": "Webinars y grabaciones on-demand",
+                "gap_score": 80.0,
+                "competencia_score": 60.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Varias menciones de webinars, solicitudes de fecha y grabaciones disponibles; interés en repetir/consultar contenido.",
+                "justificacion": "Varias menciones de webinars, solicitudes de fecha y grabaciones disponibles; interés en repetir/consultar contenido.",
+                "accion": "Programar webinars regulares con registro, ofrecer grabaciones pagas/gratis en una biblioteca y promover acceso para equipos.",
+                "recomendacion_accion": "Programar webinars regulares con registro, ofrecer grabaciones pagas/gratis en una biblioteca y promover acceso para equipos."
+            },
+            {
+                "oportunidad": "Contenido específico sobre plataformas y predicciones (TikTok, colores 2025/2026, tendencias visuales)",
+                "tema": "Contenido específico sobre plataformas y predicciones (TikTok, colores 2025/2026, tendencias visuales)",
+                "gap_score": 70.0,
+                "competencia_score": 45.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Preguntas repetidas sobre TikTok, predicciones de color/2026 y tendencias visuales indican interés por contenido enfocado por plataforma y futuro.",
+                "justificacion": "Preguntas repetidas sobre TikTok, predicciones de color/2026 y tendencias visuales indican interés por contenido enfocado por plataforma y futuro.",
+                "accion": "Publicar series de micro-contenido y reportes cortos centrados en cada plataforma y predicciones anuales; ofrecer suscripción a informes periódicos.",
+                "recomendacion_accion": "Publicar series de micro-contenido y reportes cortos centrados en cada plataforma y predicciones anuales; ofrecer suscripción a informes periódicos."
+            },
+            {
+                "oportunidad": "Recursos para equipos/agencias (implementación y automatización)",
+                "tema": "Recursos para equipos/agencias (implementación y automatización)",
+                "gap_score": 65.0,
+                "competencia_score": 65.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Comentarios que mencionan equipos, agencias, integración y automatización; buscan aplicar internamente y ahorrar tiempo.",
+                "justificacion": "Comentarios que mencionan equipos, agencias, integración y automatización; buscan aplicar internamente y ahorrar tiempo.",
+                "accion": "Ofrecer paquetes B2B: talleres in-company, integraciones de herramientas recomendadas, plantillas de automatización y consultoría rápida para implementación.",
+                "recomendacion_accion": "Ofrecer paquetes B2B: talleres in-company, integraciones de herramientas recomendadas, plantillas de automatización y consultoría rápida para implementación."
+            }
+        ],
+        "lista_oportunidades": [
+            {
+                "oportunidad": "Cursos/Programas Pagos (p. ej. sobre IA, storytelling, creación de contenido)",
+                "tema": "Cursos/Programas Pagos (p. ej. sobre IA, storytelling, creación de contenido)",
+                "gap_score": 90.0,
+                "competencia_score": 70.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Múltiples usuarios preguntan por cursos y formación (IA, storytelling, ser influencer, cursos sobre herramientas). Hay demanda clara de aprendizaje estructurado.",
+                "justificacion": "Múltiples usuarios preguntan por cursos y formación (IA, storytelling, ser influencer, cursos sobre herramientas). Hay demanda clara de aprendizaje estructurado.",
+                "accion": "Desarrollar y promocionar un curso modular pago (inicio-intermedio-avanzado) sobre temas populares (IA aplicada al marketing, storytelling, creación de reels) con versiones para agencias y equipos.",
+                "recomendacion_accion": "Desarrollar y promocionar un curso modular pago (inicio-intermedio-avanzado) sobre temas populares (IA aplicada al marketing, storytelling, creación de reels) con versiones para agencias y equipos."
+            },
+            {
+                "oportunidad": "Guías prácticas y plantillas (tools, KPIs, checklist de tendencias)",
+                "tema": "Guías prácticas y plantillas (tools, KPIs, checklist de tendencias)",
+                "gap_score": 85.0,
+                "competencia_score": 55.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Numerosos comentarios piden herramientas, métricas clave, plantillas, checklist y recomendaciones prácticas para implementar consejos.",
+                "justificacion": "Numerosos comentarios piden herramientas, métricas clave, plantillas, checklist y recomendaciones prácticas para implementar consejos.",
+                "accion": "Crear packs descargables (plantillas de KPIs, checklist para reels, guías de herramientas con integraciones) como lead magnets o producto micro-pago.",
+                "recomendacion_accion": "Crear packs descargables (plantillas de KPIs, checklist para reels, guías de herramientas con integraciones) como lead magnets o producto micro-pago."
+            },
+            {
+                "oportunidad": "Webinars y grabaciones on-demand",
+                "tema": "Webinars y grabaciones on-demand",
+                "gap_score": 80.0,
+                "competencia_score": 60.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Varias menciones de webinars, solicitudes de fecha y grabaciones disponibles; interés en repetir/consultar contenido.",
+                "justificacion": "Varias menciones de webinars, solicitudes de fecha y grabaciones disponibles; interés en repetir/consultar contenido.",
+                "accion": "Programar webinars regulares con registro, ofrecer grabaciones pagas/gratis en una biblioteca y promover acceso para equipos.",
+                "recomendacion_accion": "Programar webinars regulares con registro, ofrecer grabaciones pagas/gratis en una biblioteca y promover acceso para equipos."
+            },
+            {
+                "oportunidad": "Contenido específico sobre plataformas y predicciones (TikTok, colores 2025/2026, tendencias visuales)",
+                "tema": "Contenido específico sobre plataformas y predicciones (TikTok, colores 2025/2026, tendencias visuales)",
+                "gap_score": 70.0,
+                "competencia_score": 45.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Preguntas repetidas sobre TikTok, predicciones de color/2026 y tendencias visuales indican interés por contenido enfocado por plataforma y futuro.",
+                "justificacion": "Preguntas repetidas sobre TikTok, predicciones de color/2026 y tendencias visuales indican interés por contenido enfocado por plataforma y futuro.",
+                "accion": "Publicar series de micro-contenido y reportes cortos centrados en cada plataforma y predicciones anuales; ofrecer suscripción a informes periódicos.",
+                "recomendacion_accion": "Publicar series de micro-contenido y reportes cortos centrados en cada plataforma y predicciones anuales; ofrecer suscripción a informes periódicos."
+            },
+            {
+                "oportunidad": "Recursos para equipos/agencias (implementación y automatización)",
+                "tema": "Recursos para equipos/agencias (implementación y automatización)",
+                "gap_score": 65.0,
+                "competencia_score": 65.0,
+                "actividad_competitiva": "Alta",
+                "detalle": "Comentarios que mencionan equipos, agencias, integración y automatización; buscan aplicar internamente y ahorrar tiempo.",
+                "justificacion": "Comentarios que mencionan equipos, agencias, integración y automatización; buscan aplicar internamente y ahorrar tiempo.",
+                "accion": "Ofrecer paquetes B2B: talleres in-company, integraciones de herramientas recomendadas, plantillas de automatización y consultoría rápida para implementación.",
+                "recomendacion_accion": "Ofrecer paquetes B2B: talleres in-company, integraciones de herramientas recomendadas, plantillas de automatización y consultoría rápida para implementación."
+            }
+        ],
+        "resumen_global": {
+            "promedio_gap_score": 78.0,
+            "oportunidades_criticas": 0,
+            "total_oportunidades": 5
         }
-    }
+    },
+    "errors": []
 }

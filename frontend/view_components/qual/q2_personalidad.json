@@ -1,0 +1,302 @@
+{
+    "metadata": {
+        "module": "Q2 Personalidad",
+        "version": 2,
+        "description": "Brand personality analysis using Aaker Framework (Máximo Rendimiento)"
+    },
+    "results": {
+        "analisis_por_publicacion": [
+            {
+                "post_url": "https://instagram.com/p/001/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 29.41,
+                    "emocion": 15.69,
+                    "competencia": 37.25,
+                    "sofisticacion": 13.73,
+                    "rudeza": 3.92
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 29.41,
+                    "emocion": 15.69,
+                    "competencia": 37.25,
+                    "sofisticacion": 13.73,
+                    "rudeza": 3.92
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como altamente competente y confiable: contenido claro, práctico y valioso que posiciona a la marca como líder educativo en IA. También se percibe sincera y accesible, mientras que emoción y sofisticación son moderadas y la rudeza es prácticamente inexistente."
+            },
+            {
+                "post_url": "https://instagram.com/p/002/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 27.27,
+                    "emocion": 21.82,
+                    "competencia": 32.72,
+                    "sofisticacion": 14.55,
+                    "rudeza": 3.64
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 27.27,
+                    "emocion": 21.82,
+                    "competencia": 32.72,
+                    "sofisticacion": 14.55,
+                    "rudeza": 3.64
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como una fuente confiable y experta (alto en competencia) que además resulta cercana y genuina (sinceridad alta). Tiene tono dinámico e inspirador (emocion moderada), pero no proyecta lujo ni rudeza."
+            },
+            {
+                "post_url": "https://instagram.com/p/003/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 30.53,
+                    "emocion": 17.18,
+                    "competencia": 35.11,
+                    "sofisticacion": 15.27,
+                    "rudeza": 1.91
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 30.53,
+                    "emocion": 17.18,
+                    "competencia": 35.11,
+                    "sofisticacion": 15.27,
+                    "rudeza": 1.91
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como altamente competente y confiable —una guía experta, clara y útil— con tono sincero y accesible; muestra algo de energía y creatividad pero carece de sofisticación y rasgos rudos."
+            },
+            {
+                "post_url": "https://instagram.com/p/004/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 29.17,
+                    "emocion": 12.5,
+                    "competencia": 37.49,
+                    "sofisticacion": 16.67,
+                    "rudeza": 4.17
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 29.17,
+                    "emocion": 12.5,
+                    "competencia": 37.49,
+                    "sofisticacion": 16.67,
+                    "rudeza": 4.17
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como una marca experta, confiable y educativa (competente) y a la vez genuina y útil (sincera). Hay poco énfasis en diversión o audacia y casi nada de rasgos rudos o de alta sofisticación."
+            },
+            {
+                "post_url": "https://instagram.com/p/005/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 30.61,
+                    "emocion": 12.24,
+                    "competencia": 36.74,
+                    "sofisticacion": 16.33,
+                    "rudeza": 4.08
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 30.61,
+                    "emocion": 12.24,
+                    "competencia": 36.74,
+                    "sofisticacion": 16.33,
+                    "rudeza": 4.08
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "Los comentarios resaltan aprendizaje, análisis detallado y casos inspiradores, lo que comunica alta competencia y confiabilidad junto con tono genuino y accesible. Hay poca presencia de emoción, sofisticación limitada y casi nula rudeza/adventurismo."
+            },
+            {
+                "post_url": "https://instagram.com/p/006/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 29.63,
+                    "emocion": 22.22,
+                    "competencia": 33.34,
+                    "sofisticacion": 12.96,
+                    "rudeza": 1.85
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 29.63,
+                    "emocion": 22.22,
+                    "competencia": 33.34,
+                    "sofisticacion": 12.96,
+                    "rudeza": 1.85
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como una fuente confiable, experta y educativa que aporta consejos claros y útiles (alta competencia y sinceridad). También aparece como moderna y ligeramente enérgica por su enfoque en viralidad y tendencias, pero no como sofisticada ni ruda."
+            },
+            {
+                "post_url": "https://instagram.com/p/007/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 31.91,
+                    "emocion": 8.51,
+                    "competencia": 40.43,
+                    "sofisticacion": 17.02,
+                    "rudeza": 2.13
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 31.91,
+                    "emocion": 8.51,
+                    "competencia": 40.43,
+                    "sofisticacion": 17.02,
+                    "rudeza": 2.13
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como altamente competente y profesional, ofreciendo claridad y confianza en métricas y KPIs. También se aprecia sinceridad y tono educativo claro; tiene baja asociación con emoción o rudeza y cierta sofisticación moderada por la presentación pulida."
+            },
+            {
+                "post_url": "https://instagram.com/p/008/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 28.3,
+                    "emocion": 15.09,
+                    "competencia": 35.86,
+                    "sofisticacion": 16.98,
+                    "rudeza": 3.77
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 28.3,
+                    "emocion": 15.09,
+                    "competencia": 35.86,
+                    "sofisticacion": 16.98,
+                    "rudeza": 3.77
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como altamente competente y experta (contenido de altísima calidad, expertos calificados), con un tono sincero y educativo que genera confianza. Tiene algo de sofisticación y energía pero poca presencia aventurera o ruda."
+            },
+            {
+                "post_url": "https://instagram.com/p/009/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 31.48,
+                    "emocion": 14.81,
+                    "competencia": 33.34,
+                    "sofisticacion": 16.67,
+                    "rudeza": 3.7
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 31.48,
+                    "emocion": 14.81,
+                    "competencia": 33.34,
+                    "sofisticacion": 16.67,
+                    "rudeza": 3.7
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como experta y confiable (Competencia) con tono genuino y auténtico (Sinceridad). Hay cierta creatividad y entusiasmo por el storytelling (Emoción moderada), mientras que rasgos de sofisticación y rudeza son débiles."
+            },
+            {
+                "post_url": "https://instagram.com/p/010/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 28.57,
+                    "emocion": 14.29,
+                    "competencia": 36.73,
+                    "sofisticacion": 16.33,
+                    "rudeza": 4.08
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 28.57,
+                    "emocion": 14.29,
+                    "competencia": 36.73,
+                    "sofisticacion": 16.33,
+                    "rudeza": 4.08
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "La audiencia percibe a PixelyBrand como altamente competente y confiable, centrada en soluciones prácticas y educativas (automatización, integración, herramientas). También se percibe genuina y útil para agencias pequeñas, con menor énfasis en emoción, sofisticación o rudeza."
+            },
+            {
+                "post_url": "https://instagram.com/p/011/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 21.43,
+                    "emocion": 19.64,
+                    "competencia": 32.15,
+                    "sofisticacion": 23.21,
+                    "rudeza": 3.57
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 21.43,
+                    "emocion": 19.64,
+                    "competencia": 32.15,
+                    "sofisticacion": 23.21,
+                    "rudeza": 3.57
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sofisticacion"
+                ],
+                "analisis_cualitativo": "Los comentarios muestran una marca percibida como experta, confiable y líder en tendencias (alta competencia), con gusto estético y refinamiento (sofisticación). También transmite autenticidad y entusiasmo creativo, mientras que rasgos rudos/outdoorsy son prácticamente inexistentes."
+            },
+            {
+                "post_url": "https://instagram.com/p/012/",
+                "num_comentarios": 10,
+                "rasgos_distribuidos": {
+                    "sinceridad": 28.3,
+                    "emocion": 18.87,
+                    "competencia": 33.97,
+                    "sofisticacion": 15.09,
+                    "rudeza": 3.77
+                },
+                "rasgos_aaker": {
+                    "sinceridad": 28.3,
+                    "emocion": 18.87,
+                    "competencia": 33.97,
+                    "sofisticacion": 15.09,
+                    "rudeza": 3.77
+                },
+                "dimensiones_dominantes": [
+                    "competencia",
+                    "sinceridad"
+                ],
+                "analisis_cualitativo": "Los comentarios reflejan confianza en la calidad y fiabilidad del contenido (alto en competencia) y aprecio genuino y agradecimiento (sinceridad). Hay entusiasmo y expectativas por el futuro (moderada emoción), mientras que no se perciben rasgos de sofisticación elitista ni rudeza."
+            }
+        ],
+        "analisis_agregado": {
+            "sinceridad": 28.88,
+            "emocion": 16.07,
+            "competencia": 35.43,
+            "sofisticacion": 16.23,
+            "rudeza": 3.38
+        },
+        "resumen_global_personalidad": {
+            "sinceridad": 28.88,
+            "emocion": 16.07,
+            "competencia": 35.43,
+            "sofisticacion": 16.23,
+            "rudeza": 3.38
+        }
+    },
+    "errors": []
+}

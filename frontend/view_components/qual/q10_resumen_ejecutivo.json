@@ -1,0 +1,27 @@
+{
+    "metadata": {
+        "module": "Q10 Resumen Ejecutivo",
+        "version": 2,
+        "description": "Executive summary synthesizing Q1-Q9 analysis with strategic roadmap"
+    },
+    "results": {
+        "alerta_prioritaria": "Análisis en progreso.",
+        "hallazgos_clave": [
+            "Análisis en progreso.",
+            "Análisis en progreso.",
+            "Análisis en progreso.",
+            "Análisis en progreso.",
+            "Análisis en progreso."
+        ],
+        "implicaciones_estrategicas": "VIABILIDAD: Basado en análisis de Q1-Q9, hay POTENCIAL DE CRECIMIENTO pero requiere EJECUCIÓN DISCIPLINADA de recomendaciones priorizadas.",
+        "resumen_general": "Análisis integral de Q1-Q9 completado. Se identificaron 5 hallazgos clave con 0 acciones críticas para ejecutar en 48 horas. Tendencia general: Monitoreo Requerido. KPI Principal: N/A con 0% sentimiento positivo.",
+        "kpis_principales": {},
+        "urgencias_por_prioridad": {
+            "48_horas": [],
+            "semana_1": [],
+            "semanas_2_3": [],
+            "no_urgente": []
+        }
+    },
+    "errors": []
+}

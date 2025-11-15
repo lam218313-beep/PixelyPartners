@@ -1,0 +1,221 @@
+{
+    "metadata": {
+        "module": "Q7 Sentimiento Detallado",
+        "version": 3,
+        "description": "Detailed sentiment analysis with Mixto classification and complete schema"
+    },
+    "results": {
+        "analisis_agregado": {
+            "Positivo": 0.906,
+            "Negativo": 0.0,
+            "Neutral": 0.094,
+            "Mixto": 0.0,
+            "subjetividad_promedio_global": 0.906
+        },
+        "analisis_por_publicacion": [
+            {
+                "post_url": "https://instagram.com/p/001/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Excelente introducción a la IA. Muy claro y práctico."
+            },
+            {
+                "post_url": "https://instagram.com/p/002/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Me encantó este reel, muy dinámico."
+            },
+            {
+                "post_url": "https://instagram.com/p/003/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.95,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.05,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.95,
+                    "Negativo": 0.0,
+                    "Neutral": 0.05,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.95,
+                "ejemplo_mixto": "La guía más completa que he visto."
+            },
+            {
+                "post_url": "https://instagram.com/p/004/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Webinar muy interesante."
+            },
+            {
+                "post_url": "https://instagram.com/p/005/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.95,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.05,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.95,
+                    "Negativo": 0.0,
+                    "Neutral": 0.05,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.95,
+                "ejemplo_mixto": "Case studies muy inspiradores."
+            },
+            {
+                "post_url": "https://instagram.com/p/006/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.92,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.08,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.92,
+                    "Negativo": 0.0,
+                    "Neutral": 0.08,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.92,
+                "ejemplo_mixto": "Muy buen reel, los errores están claros."
+            },
+            {
+                "post_url": "https://instagram.com/p/007/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Métricas claras y fáciles de entender."
+            },
+            {
+                "post_url": "https://instagram.com/p/008/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Excelente entrevista con expertos."
+            },
+            {
+                "post_url": "https://instagram.com/p/009/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "El storytelling es el arte definitivo."
+            },
+            {
+                "post_url": "https://instagram.com/p/010/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Automatización es la clave del futuro."
+            },
+            {
+                "post_url": "https://instagram.com/p/011/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.85,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.15,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.85,
+                    "Negativo": 0.0,
+                    "Neutral": 0.15,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.85,
+                "ejemplo_mixto": "Las tendencias de diseño son fascinantes."
+            },
+            {
+                "post_url": "https://instagram.com/p/012/",
+                "num_comentarios": 10,
+                "sentimiento_positivo": 0.9,
+                "sentimiento_negativo": 0.0,
+                "sentimiento_neutral": 0.1,
+                "porcentaje_mixto": 0.0,
+                "distribucion_sentimiento": {
+                    "Positivo": 0.9,
+                    "Negativo": 0.0,
+                    "Neutral": 0.1,
+                    "Mixto": 0.0
+                },
+                "subjetividad_promedio": 0.9,
+                "ejemplo_mixto": "Excelente resumen del año."
+            }
+        ],
+        "resumen_global": {
+            "total_publicaciones_analizadas": 12,
+            "promedio_porcentaje_mixto": 0.0,
+            "promedio_subjetividad": 0.906,
+            "distribucion_global": {
+                "Positivo": 0.906,
+                "Negativo": 0.0,
+                "Neutral": 0.094
+            }
+        }
+    },
+    "errors": []
+}

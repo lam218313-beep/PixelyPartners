@@ -1,0 +1,401 @@
+{
+    "metadata": {
+        "module": "Q3 Topicos",
+        "version": 2,
+        "description": "Topics analysis using weighted aggregation (Máximo Rendimiento)"
+    },
+    "results": {
+        "analisis_por_publicacion": [
+            {
+                "post_url": "https://instagram.com/p/001/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Introducción": 90.0,
+                    "IA": 85.0,
+                    "Contenido": 75.0,
+                    "Herramienta": 60.0,
+                    "Curso": 50.0,
+                    "Estrategia": 45.0,
+                    "Equipo": 35.0
+                },
+                "sentimiento": {
+                    "Introducción": 1.0,
+                    "IA": 1.0,
+                    "Contenido": 1.0,
+                    "Herramienta": 0.8,
+                    "Curso": 0.9,
+                    "Estrategia": 1.0,
+                    "Equipo": 0.9
+                },
+                "resumen": "Los comentarios elogian la introducción y el contenido sobre IA, solicitan recomendaciones de herramientas y cursos, y planean aplicar y compartirlo con su equipo para mejorar la estrategia."
+            },
+            {
+                "post_url": "https://instagram.com/p/002/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Trends": 95.0,
+                    "TikTok": 70.0,
+                    "Analysis": 65.0,
+                    "Implementation": 60.0,
+                    "VideoPacing": 45.0,
+                    "BusinessApplication": 55.0,
+                    "Subscription/Channel": 40.0
+                },
+                "sentimiento": {
+                    "Trends": 0.9,
+                    "TikTok": 0.8,
+                    "Analysis": 0.95,
+                    "Implementation": 0.9,
+                    "VideoPacing": 0.85,
+                    "BusinessApplication": 0.8,
+                    "Subscription/Channel": 0.9
+                },
+                "resumen": "The audience praised the trends and analysis (especially for TikTok), expressed intent to implement ideas for their business, liked the video pacing, and subscribed for more content."
+            },
+            {
+                "post_url": "https://instagram.com/p/003/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Guía": 95.0,
+                    "Tips": 85.0,
+                    "Engagement": 80.0,
+                    "Contenido": 75.0,
+                    "Claridad": 50.0,
+                    "Referencia": 45.0,
+                    "Recomendación": 40.0
+                },
+                "sentimiento": {
+                    "Guía": 1.0,
+                    "Tips": 1.0,
+                    "Engagement": 0.9,
+                    "Contenido": 1.0,
+                    "Claridad": 1.0,
+                    "Referencia": 0.9,
+                    "Recomendación": 1.0
+                },
+                "resumen": "Los comentarios elogian la guía y su contenido práctico (tips) por mejorar el engagement, destacando claridad, utilidad como referencia y disposición a recomendarla."
+            },
+            {
+                "post_url": "https://instagram.com/p/004/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Webinar": 95.0,
+                    "Herramientas": 90.0,
+                    "Grabación": 40.0,
+                    "Equipo": 45.0,
+                    "Agencia": 35.0,
+                    "Contenido": 50.0,
+                    "Recomendaciones": 55.0
+                },
+                "sentimiento": {
+                    "Webinar": 0.95,
+                    "Herramientas": 0.9,
+                    "Grabación": 0.2,
+                    "Equipo": 0.8,
+                    "Agencia": 0.85,
+                    "Contenido": 0.9,
+                    "Recomendaciones": 0.9
+                },
+                "resumen": "Audience praises the webinar and its tools, values the recommendations and content, asks about recording availability, and notes team/agency applicability."
+            },
+            {
+                "post_url": "https://instagram.com/p/005/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Case studies": 95.0,
+                    "Análisis": 85.0,
+                    "Estrategias": 70.0,
+                    "Marcas": 50.0,
+                    "Casos de éxito": 65.0,
+                    "Contenido": 60.0,
+                    "Aplicación/Implementación": 45.0,
+                    "Compartir/Divulgación": 40.0
+                },
+                "sentimiento": {
+                    "Case studies": 1.0,
+                    "Análisis": 0.9,
+                    "Estrategias": 0.95,
+                    "Marcas": 0.8,
+                    "Casos de éxito": 1.0,
+                    "Contenido": 1.0,
+                    "Aplicación/Implementación": 0.9,
+                    "Compartir/Divulgación": 0.85
+                },
+                "resumen": "Audience praises the case studies and detailed analysis, finds the strategies and success cases highly useful, is curious about brands featured, and is eager to apply and share the content."
+            },
+            {
+                "post_url": "https://instagram.com/p/006/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Content": 95.0,
+                    "Errors": 70.0,
+                    "Viralization": 65.0,
+                    "Video Duration": 60.0,
+                    "Sound/Trending Sound": 55.0,
+                    "Engagement": 50.0,
+                    "Audience/Children": 30.0
+                },
+                "sentimiento": {
+                    "Content": 0.95,
+                    "Errors": 0.6,
+                    "Viralization": 0.9,
+                    "Video Duration": 0.85,
+                    "Sound/Trending Sound": 0.9,
+                    "Engagement": 0.9,
+                    "Audience/Children": 0.6
+                },
+                "resumen": "Comments focus on improving content (noting clear errors), tactics for viralization including duration and trending sounds, and expectations of higher engagement, with positive sentiment overall."
+            },
+            {
+                "post_url": "https://instagram.com/p/007/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Métricas": 95.0,
+                    "Indicadores": 80.0,
+                    "KPIs": 75.0,
+                    "Herramientas de tracking": 50.0,
+                    "Estrategia": 45.0,
+                    "Claridad": 60.0,
+                    "Análisis": 55.0
+                },
+                "sentimiento": {
+                    "Métricas": 1.0,
+                    "Indicadores": 0.95,
+                    "KPIs": 0.95,
+                    "Herramientas de tracking": 0.5,
+                    "Estrategia": 0.9,
+                    "Claridad": 1.0,
+                    "Análisis": 0.95
+                },
+                "resumen": "Los comentarios destacan positivamente métricas, indicadores y KPIs, valoran la claridad y el análisis, preguntan por herramientas para trackear y mencionan la importancia para la estrategia."
+            },
+            {
+                "post_url": "https://instagram.com/p/008/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Entrevista": 95.0,
+                    "Expertos": 90.0,
+                    "Influencers": 70.0,
+                    "Consejos": 60.0,
+                    "Calidad de contenido": 55.0,
+                    "Acceso/Visualización": 50.0,
+                    "Tono": 30.0
+                },
+                "sentimiento": {
+                    "Entrevista": 0.95,
+                    "Expertos": 0.98,
+                    "Influencers": 0.75,
+                    "Consejos": 0.9,
+                    "Calidad de contenido": 1.0,
+                    "Acceso/Visualización": 0.2,
+                    "Tono": 0.9
+                },
+                "resumen": "Los comentarios destacan positivamente la entrevista y los expertos, valoran la calidad del contenido, piden acceso a la grabación y muestran interés en temas sobre influencers y consejos prácticos."
+            },
+            {
+                "post_url": "https://instagram.com/p/009/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Storytelling": 95.0,
+                    "Narrativas": 70.0,
+                    "Ejemplos": 50.0,
+                    "Técnicas": 60.0,
+                    "Curso": 30.0,
+                    "Inspiración": 40.0,
+                    "Sabiduría": 25.0
+                },
+                "sentimiento": {
+                    "Storytelling": 1.0,
+                    "Narrativas": 0.9,
+                    "Ejemplos": 0.9,
+                    "Técnicas": 0.95,
+                    "Curso": 0.8,
+                    "Inspiración": 1.0,
+                    "Sabiduría": 0.95
+                },
+                "resumen": "Los comentarios destacan positivamente el storytelling, las narrativas, técnicas y ejemplos, muestran interés en un curso y consideran el contenido inspirador y sabio."
+            },
+            {
+                "post_url": "https://instagram.com/p/010/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Automatización": 95.0,
+                    "Herramientas": 90.0,
+                    "Ahorro de tiempo": 60.0,
+                    "Integración": 45.0,
+                    "Presupuesto": 35.0,
+                    "Agencias pequeñas": 30.0,
+                    "Equipo/Implementación": 40.0
+                },
+                "sentimiento": {
+                    "Automatización": 1.0,
+                    "Herramientas": 0.9,
+                    "Ahorro de tiempo": 1.0,
+                    "Integración": 0.2,
+                    "Presupuesto": 0.1,
+                    "Agencias pequeñas": 0.8,
+                    "Equipo/Implementación": 0.7
+                },
+                "resumen": "Los comentarios celebran la automatización y las herramientas recomendadas por su ahorro de tiempo, con consultas sobre integración, presupuesto y uso por agencias pequeñas y equipos."
+            },
+            {
+                "post_url": "https://instagram.com/p/011/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Diseño": 95.0,
+                    "Tendencias": 85.0,
+                    "Color": 60.0,
+                    "Minimalismo": 55.0,
+                    "Marca visual": 50.0,
+                    "Tipografía": 45.0,
+                    "Diseñador gráfico": 40.0,
+                    "Herramientas de diseño": 35.0
+                },
+                "sentimiento": {
+                    "Diseño": 0.9,
+                    "Tendencias": 1.0,
+                    "Color": 0.8,
+                    "Minimalismo": 0.9,
+                    "Marca visual": 0.8,
+                    "Tipografía": 0.9,
+                    "Diseñador gráfico": 0.6,
+                    "Herramientas de diseño": 0.7
+                },
+                "resumen": "Los comentarios se centran principalmente en diseño y tendencias visuales (incluyendo color, minimalismo, tipografía), actualización de marca visual y búsqueda de diseñadores y herramientas."
+            },
+            {
+                "post_url": "https://instagram.com/p/012/",
+                "num_comentarios": 10,
+                "topicos": {
+                    "Resumen": 95.0,
+                    "2025": 85.0,
+                    "Marketing": 70.0,
+                    "Innovación": 60.0,
+                    "Predicciones": 55.0,
+                    "Contenido": 50.0,
+                    "Expectativas para 2026": 45.0
+                },
+                "sentimiento": {
+                    "Resumen": 0.9,
+                    "2025": 1.0,
+                    "Marketing": 1.0,
+                    "Innovación": 1.0,
+                    "Predicciones": 0.8,
+                    "Contenido": 0.9,
+                    "Expectativas para 2026": 0.8
+                },
+                "resumen": "The comments praise the year-end resumen highlighting 2025—especially marketing and innovation—express gratitude for content and express positive expectations and predictions for 2026."
+            }
+        ],
+        "analisis_agregado": [
+            {
+                "topic": "Trends",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.9
+            },
+            {
+                "topic": "Guía",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Webinar",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.95
+            },
+            {
+                "topic": "Case studies",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Content",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.95
+            },
+            {
+                "topic": "Métricas",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Entrevista",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.95
+            },
+            {
+                "topic": "Storytelling",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Automatización",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Diseño",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.9
+            },
+            {
+                "topic": "Resumen",
+                "frecuencia_relativa": 95.0,
+                "sentimiento_promedio": 0.9
+            },
+            {
+                "topic": "Introducción",
+                "frecuencia_relativa": 90.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Herramientas",
+                "frecuencia_relativa": 90.0,
+                "sentimiento_promedio": 0.9
+            },
+            {
+                "topic": "Expertos",
+                "frecuencia_relativa": 90.0,
+                "sentimiento_promedio": 0.98
+            },
+            {
+                "topic": "IA",
+                "frecuencia_relativa": 85.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Tips",
+                "frecuencia_relativa": 85.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Tendencias",
+                "frecuencia_relativa": 85.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "2025",
+                "frecuencia_relativa": 85.0,
+                "sentimiento_promedio": 1.0
+            },
+            {
+                "topic": "Indicadores",
+                "frecuencia_relativa": 80.0,
+                "sentimiento_promedio": 0.95
+            },
+            {
+                "topic": "KPIs",
+                "frecuencia_relativa": 75.0,
+                "sentimiento_promedio": 0.95
+            }
+        ],
+        "topicos_principales": [
+            "Trends",
+            "Guía",
+            "Webinar",
+            "Case studies",
+            "Content"
+        ]
+    },
+    "errors": []
+}

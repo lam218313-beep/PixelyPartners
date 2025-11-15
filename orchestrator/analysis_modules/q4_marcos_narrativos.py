@@ -5,7 +5,8 @@ Analyzes audience comments to identify dominant narrative frames using Entman Fr
 Classifies narratives into 3 dimensions: Positivo, Negativo, Aspiracional.
 
 Features:
-- Resilient API calls with automatic retry (3 attempts, 15s wait)
+- Dynamic model parameter compatibility (max_tokens vs max_completion_tokens)
+- Resilient API calls with automatic retry (3 attempts, 2s wait)
 - Extended context window (15k chars) for nuanced framing analysis
 - Strict type conversion for frame scores (0-100, normalized to 1.0)
 - Per-post granular analysis with forensic quote extraction
@@ -17,6 +18,7 @@ from typing import Dict, Any, List
 import json
 import logging
 import asyncio
+from datetime import datetime, timedelta
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
@@ -36,7 +38,8 @@ class Q4MarcosNarrativos(BaseAnalyzer):
     - Aspiracional (Desires, suggestions, future vision)
     
     Features:
-    - Resilient API calls with automatic retry (3 attempts, 15s wait)
+    - Dynamic model parameter compatibility for GPT-5, o1, and legacy models
+    - Resilient API calls with automatic retry (3 attempts with 2s wait between attempts)
     - Extended context window (15k chars) for better framing detection
     - Strict sanitization for frame scores (0-100) normalized to 1.0
     - Per-post granular analysis with forensic quote extraction
@@ -44,15 +47,46 @@ class Q4MarcosNarrativos(BaseAnalyzer):
     - Frame dominance detection per post
     """
 
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(15))
-    async def _call_openai_for_frames(self, combined_text: str) -> Dict[str, Any]:
+    def _get_model_params(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
         """
-        Resilient wrapper for OpenAI API call to analyze narrative frames.
+        Generates API parameters compatible with GPT-5-mini and other models.
         
-        Retries automatically on failure (max 3 attempts with 15s wait between attempts).
+        GPT-5-mini requires minimal parameter specification for best results.
         
         Args:
-            combined_text: Aggregated comment text to analyze
+            messages: List of message dicts for the API call
+            
+        Returns:
+            Dict with all parameters for chat.completions.create()
+        """
+        model_name = self.model_name
+        
+        params = {
+            "model": model_name,
+            "messages": messages,
+        }
+
+        # For gpt-5 and o1 models, use minimal parameters
+        if isinstance(model_name, str) and any(x in model_name for x in ["gpt-5", "o1"]):
+            # Don't add temperature or token limits for gpt-5-mini
+            pass
+        else:
+            # Legacy models support temperature and max_tokens
+            params["temperature"] = 0.7
+            params["max_tokens"] = 1500
+            
+        return params
+
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+    async def _analyze_post_framing(self, post_url: str, comments_text: str) -> Dict[str, Any]:
+        """
+        Analyzes narrative frames for a single post with automatic retry logic.
+        
+        Retries automatically on failure (max 3 attempts with 2s wait between attempts).
+        
+        Args:
+            post_url: URL identifier of the post
+            comments_text: Aggregated comment text to analyze
             
         Returns:
             Analysis result dict with frame scores and quotes
@@ -60,12 +94,13 @@ class Q4MarcosNarrativos(BaseAnalyzer):
         Raises:
             Exception: If all 3 retry attempts fail
         """
+        
         prompt = f"""You are an expert media analyst specializing in Entman Framing Theory.
 
 Analyze the following audience comments to identify the dominant narrative frames.
 
 AUDIENCE COMMENTS:
-"{combined_text[:15000]}"
+"{comments_text[:15000]}"
 
 Classify the narrative into exactly 3 dimensions:
 1. Positivo (Satisfaction, praise, positive sentiment, confidence, trust)
@@ -79,23 +114,40 @@ For each dimension:
 
 Return ONLY valid JSON:
 {{
-    "marcos_scores": {{
+    "distribucion_marcos": {{
         "Positivo": 75,
         "Negativo": 20,
         "Aspiracional": 50
     }},
-    "ejemplos_quotes": {{
+    "ejemplos_narrativos": {{
         "Positivo": "Este producto cambio mi vida...",
         "Negativo": "El precio es demasiado alto...",
         "Aspiracional": null
-    }},
-    "analisis_breve": "<One sentence overall framing assessment>"
+    }}
 }}"""
-
+        
         try:
-            response = await self.openai_client.chat.completions.create(
-                model=self.model_name,
-                messages=[
+            # Use Responses API for GPT-5 models
+            if self.model_name and "gpt-5" in self.model_name:
+                logger.debug(f"Using Responses API for model: {self.model_name}")
+                
+                # Determine appropriate reasoning.effort value based on model
+                if "gpt-5.1" in self.model_name or "gpt-5" == self.model_name:
+                    reasoning_effort = "low"  # 'none', 'low', 'medium', 'high'
+                else:
+                    reasoning_effort = "minimal"  # 'minimal', 'low', 'medium', 'high' for mini/nano
+                
+                response = await self.openai_client.responses.create(
+                    model=self.model_name,
+                    input=prompt,
+                    reasoning={"effort": reasoning_effort},
+                    text={"verbosity": "low"}
+                )
+                content = response.output_text.strip()
+            else:
+                # Chat Completions for other models
+                logger.debug(f"Using Chat Completions API for model: {self.model_name}")
+                messages = [
                     {
                         "role": "system",
                         "content": "You are an expert media analyst. Analyze narrative frames and return valid JSON only."
@@ -104,31 +156,30 @@ Return ONLY valid JSON:
                         "role": "user",
                         "content": prompt
                     }
-                ],
-                temperature=0.7,
-                max_tokens=500
-            )
+                ]
 
-            response_text = response.choices[0].message.content.strip()
+                params = self._get_model_params(messages)
+                response = await self.openai_client.chat.completions.create(**params)
+                content = response.choices[0].message.content.strip()
             
             # Try to parse JSON from response
             try:
-                analysis_result = json.loads(response_text)
+                data = json.loads(content)
             except json.JSONDecodeError:
                 # If JSON parsing fails, try to extract JSON from markdown code blocks
-                if "```json" in response_text:
-                    json_part = response_text.split("```json")[1].split("```")[0].strip()
-                    analysis_result = json.loads(json_part)
-                elif "```" in response_text:
-                    json_part = response_text.split("```")[1].split("```")[0].strip()
-                    analysis_result = json.loads(json_part)
+                if "```json" in content:
+                    json_part = content.split("```json")[1].split("```")[0].strip()
+                    data = json.loads(json_part)
+                elif "```" in content:
+                    json_part = content.split("```")[1].split("```")[0].strip()
+                    data = json.loads(json_part)
                 else:
-                    raise json.JSONDecodeError("Could not extract JSON from response", response_text, 0)
-
-            return analysis_result
-
+                    raise json.JSONDecodeError("Could not extract JSON from response", content, 0)
+            
+            return data
+            
         except Exception as e:
-            logger.error(f"Error calling OpenAI API for frames analysis: {str(e)}", exc_info=True)
+            logger.error(f"Error calling OpenAI API for frames analysis of {post_url}: {str(e)}", exc_info=True)
             raise
 
     def _normalize_frame_scores(self, marcos_scores: Dict[str, int]) -> tuple:
@@ -143,42 +194,44 @@ Return ONLY valid JSON:
             Tuple of (normalized_dict, dominant_frame_name)
         """
         marcos_keys = ["Positivo", "Negativo", "Aspiracional"]
-        
+
         # Extract and validate scores
-        valores_limpios = {}
+        cleaned = {}
         for marco in marcos_keys:
             score = marcos_scores.get(marco, 0)
             try:
                 val = float(score)
-                val = max(0.0, min(100.0, val))  # Clamp to [0, 100]
-                valores_limpios[marco] = val
             except (ValueError, TypeError):
                 logger.warning(f"Invalid score for '{marco}': {score}. Using 0.0")
-                valores_limpios[marco] = 0.0
-        
-        # Calculate sum
-        suma_total = sum(valores_limpios.values())
-        
-        # Normalize to probabilities (sum = 1.0)
-        if suma_total == 0:
-            # Equal distribution if all zeros
-            marcos_normalizados = {marco: 0.333 for marco in marcos_keys}
+                val = 0.0
+            # Clamp to [0, 100]
+            val = max(0.0, min(100.0, val))
+            cleaned[marco] = val
+
+        total = sum(cleaned.values())
+
+        marcos_normalizados = {}
+        marco_dominante = None
+
+        if total == 0:
+            # If no information, distribute equally and set no dominant frame
+            equal = round(1.0 / len(marcos_keys), 3)
+            for marco in marcos_keys:
+                marcos_normalizados[marco] = equal
+            marco_dominante = None
+            return marcos_normalizados, marco_dominante
+
+        # Normalize so values sum to 1.0 (with 3 decimal places)
+        for marco, val in cleaned.items():
+            marcos_normalizados[marco] = round(val / total, 3)
+
+        # Determine dominant frame (highest normalized value). If tie, pick None.
+        sorted_items = sorted(marcos_normalizados.items(), key=lambda x: x[1], reverse=True)
+        if len(sorted_items) >= 2 and abs(sorted_items[0][1] - sorted_items[1][1]) < 1e-6:
             marco_dominante = None
         else:
-            marcos_normalizados = {marco: round(valores_limpios[marco] / suma_total, 3) 
-                                   for marco in marcos_keys}
-            # Determine dominant frame
-            marco_dominante = max(marcos_keys, key=lambda m: marcos_normalizados[m])
-        
-        # Ensure sum is exactly 1.0 (fix rounding errors)
-        suma_calculada = sum(marcos_normalizados.values())
-        if abs(suma_calculada - 1.0) > 0.001:
-            diferencia = 1.0 - suma_calculada
-            if marco_dominante:
-                marcos_normalizados[marco_dominante] = round(
-                    marcos_normalizados[marco_dominante] + diferencia, 3
-                )
-        
+            marco_dominante = sorted_items[0][0]
+
         return marcos_normalizados, marco_dominante
 
     def _sanitize_quotes(self, ejemplos_quotes: Dict[str, Any]) -> Dict[str, Any]:
@@ -219,6 +272,7 @@ Return ONLY valid JSON:
         
         # For weighted aggregation
         weighted_frame_scores = {}  # marco -> (total_weighted_score, total_weight)
+        temporal_frame_scores = {}  # week -> marco -> (total_weighted_score, total_weight)
         
         try:
             logger.info("Starting Q4 Narrative Frames Analysis")
@@ -247,12 +301,43 @@ Return ONLY valid JSON:
             
             # Group comments by post
             comments_by_post = {}
+            posts_by_date = {}  # For temporal evolution
+            
             for comment in comments:
                 post_url = comment.get("post_url")
                 if post_url:
                     if post_url not in comments_by_post:
                         comments_by_post[post_url] = []
                     comments_by_post[post_url].append(comment.get("comment_text", ""))
+            
+            # Group posts by date for temporal analysis
+            for post in posts:
+                post_url = post.get("post_url")
+                post_date = post.get("post_date", post.get("fecha", post.get("timestamp")))
+                if post_url:
+                    if post_date:
+                        try:
+                            # Parse date (format: YYYY-MM-DD or similar)
+                            if isinstance(post_date, str):
+                                post_dt = datetime.fromisoformat(post_date[:10])
+                            else:
+                                post_dt = post_date
+                            # Get week number for temporal bucketing
+                            week_num = post_dt.isocalendar()[1]
+                            if week_num not in posts_by_date:
+                                posts_by_date[week_num] = []
+                            posts_by_date[week_num].append(post_url)
+                        except Exception as e:
+                            logger.warning(f"Could not parse date {post_date}: {e}")
+                            # Default to week 1 if parsing fails
+                            if 1 not in posts_by_date:
+                                posts_by_date[1] = []
+                            posts_by_date[1].append(post_url)
+                    else:
+                        # Default to week 1 if no date
+                        if 1 not in posts_by_date:
+                            posts_by_date[1] = []
+                        posts_by_date[1].append(post_url)
             
             # Analyze frames for each post
             for idx, post in enumerate(posts, 1):
@@ -273,17 +358,24 @@ Return ONLY valid JSON:
                 
                 try:
                     # Call OpenAI with retry logic
-                    analysis_result = await self._call_openai_for_frames(combined_text)
+                    analysis_result = await self._analyze_post_framing(post_url, combined_text)
                     
                     # Extract raw data from response
-                    raw_scores = analysis_result.get("marcos_scores", {})
-                    raw_quotes = analysis_result.get("ejemplos_quotes", {})
+                    raw_scores = analysis_result.get("distribucion_marcos", {})
+                    raw_quotes = analysis_result.get("ejemplos_narrativos", {})
                     
                     # Normalize frame scores to probabilities
                     marcos_normalizados, marco_dominante = self._normalize_frame_scores(raw_scores)
                     
                     # Sanitize quotes
                     ejemplos_sanitizados = self._sanitize_quotes(raw_quotes)
+                    
+                    # Determine which week this post belongs to for temporal analysis
+                    post_week = 1  # default
+                    for week_num, post_urls in posts_by_date.items():
+                        if post_url in post_urls:
+                            post_week = week_num
+                            break
                     
                     # Accumulate weighted scores for global aggregation
                     for marco, score in marcos_normalizados.items():
@@ -292,6 +384,17 @@ Return ONLY valid JSON:
                             weighted_frame_scores[marco] = (0.0, 0.0)
                         old_score, old_weight = weighted_frame_scores[marco]
                         weighted_frame_scores[marco] = (
+                            old_score + weighted_score,
+                            old_weight + num_comments
+                        )
+                        
+                        # Also accumulate for temporal analysis
+                        if post_week not in temporal_frame_scores:
+                            temporal_frame_scores[post_week] = {}
+                        if marco not in temporal_frame_scores[post_week]:
+                            temporal_frame_scores[post_week][marco] = (0.0, 0.0)
+                        old_score, old_weight = temporal_frame_scores[post_week][marco]
+                        temporal_frame_scores[post_week][marco] = (
                             old_score + weighted_score,
                             old_weight + num_comments
                         )
@@ -304,7 +407,6 @@ Return ONLY valid JSON:
                         "distribucion_marcos": marcos_normalizados,
                         "marcos_narrativos": marcos_normalizados.copy(),  # Legacy compatibility
                         "ejemplos_narrativos": ejemplos_sanitizados,
-                        "analisis_breve": analysis_result.get("analisis_breve", "")
                     }
                     
                     analisis_por_publicacion.append(post_analysis)
@@ -312,7 +414,7 @@ Return ONLY valid JSON:
                     
                 except Exception as e:
                     logger.error(f"Error analyzing post {post_url}: {str(e)}", exc_info=True)
-                    errors.append(f"Failed to analyze post {post_url}: {str(e)}")
+                    errors.append(f"Error analyzing post {post_url}: {str(e)}")
                     # Continue with next post (omit this one from aggregation)
                     continue
             
@@ -342,7 +444,37 @@ Return ONLY valid JSON:
             # Create summary (legacy compatibility)
             resumen_marcos = analisis_agregado.copy()
             
+            # Calculate temporal evolution
+            evolucion_temporal = []
+            marcos_keys = ["Positivo", "Negativo", "Aspiracional"]
+            
+            for week_num in sorted(temporal_frame_scores.keys()):
+                week_data = temporal_frame_scores[week_num]
+                marcos_distribucion = {}
+                
+                for marco in marcos_keys:
+                    if marco in week_data:
+                        weighted_sum, total_weight = week_data[marco]
+                        if total_weight > 0:
+                            marcos_distribucion[marco] = round(weighted_sum / total_weight, 3)
+                        else:
+                            marcos_distribucion[marco] = 0.0
+                    else:
+                        marcos_distribucion[marco] = 0.0
+                
+                # Normalize to sum to 1.0
+                suma = sum(marcos_distribucion.values())
+                if abs(suma - 1.0) > 0.001 and suma > 0:
+                    for marco in marcos_keys:
+                        marcos_distribucion[marco] = round(marcos_distribucion[marco] / suma, 3)
+                
+                evolucion_temporal.append({
+                    "semana": week_num,
+                    "marcos_distribucion": marcos_distribucion
+                })
+            
             logger.info(f"Q4 analysis completed. Aggregated: {analisis_agregado}")
+            logger.info(f"Temporal evolution generated: {len(evolucion_temporal)} weeks")
             
         except Exception as e:
             logger.error(f"Critical error in Q4 analysis: {str(e)}", exc_info=True)
@@ -357,7 +489,8 @@ Return ONLY valid JSON:
             "results": {
                 "analisis_por_publicacion": analisis_por_publicacion,
                 "analisis_agregado": analisis_agregado,
-                "resumen_marcos": resumen_marcos
+                "resumen_marcos": resumen_marcos,
+                "evolucion_temporal": evolucion_temporal
             },
             "errors": errors
         }

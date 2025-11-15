@@ -37,9 +37,10 @@ class Q1Emociones(BaseAnalyzer):
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(15))
     async def _call_openai_for_emotions(self, combined_text: str) -> Dict[str, Any]:
         """
-        Resilient wrapper for OpenAI API call to analyze emotions.
+        Resilient wrapper for OpenAI API call to analyze emotions using Responses API.
         
         Retries automatically on failure (max 3 attempts with 15s wait between attempts).
+        Uses the Responses API for GPT-5 models instead of Chat Completions.
         
         Args:
             combined_text: Aggregated comment text to analyze
@@ -50,7 +51,9 @@ class Q1Emociones(BaseAnalyzer):
         Raises:
             Exception: If all 3 retry attempts fail
         """
-        prompt = f"""Analyze the following text from audience comments on a social media post.
+        prompt = f"""You are an expert in emotional analysis. Analyze audience comments and return ONLY valid JSON.
+
+Analyze the following text from audience comments on a social media post.
 Identify and score the 8 primary emotions from Plutchik's model on a 0-1 scale:
 alegria (joy), confianza (trust), sorpresa (surprise), anticipacion (anticipation),
 miedo (fear), disgusto (disgust), ira (anger), tristeza (sadness).
@@ -59,7 +62,7 @@ Also provide an emotional summary and dominant sentiment.
 
 Text: "{combined_text[:15000]}"
 
-Return ONLY valid JSON (no markdown, no code blocks):
+Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
 {{
     "emociones": {{
         "alegria": <float 0.0-1.0>,
@@ -76,23 +79,47 @@ Return ONLY valid JSON (no markdown, no code blocks):
 }}"""
 
         try:
-            response = await self.openai_client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert in emotional analysis using Plutchik's model. Return valid JSON only."
+            # Use Responses API for GPT-5 models
+            if self.model_name and "gpt-5" in self.model_name:
+                logger.debug(f"Using Responses API for model: {self.model_name}")
+                
+                # Determine appropriate reasoning.effort value based on model
+                if "gpt-5.1" in self.model_name or "gpt-5" == self.model_name:
+                    reasoning_effort = "low"  # 'none', 'low', 'medium', 'high'
+                else:
+                    reasoning_effort = "minimal"  # 'minimal', 'low', 'medium', 'high' for mini/nano
+                
+                response = await self.openai_client.responses.create(
+                    model=self.model_name,
+                    input=prompt,
+                    reasoning={
+                        "effort": reasoning_effort
                     },
-                    {
-                        "role": "user",
-                        "content": prompt
+                    text={
+                        "verbosity": "low"  # Low verbosity for concise JSON output
                     }
-                ],
-                temperature=0.7,
-                max_tokens=500
-            )
+                )
+                response_text = response.output_text.strip()
+            else:
+                # Fallback to Chat Completions API for other models
+                logger.debug(f"Using Chat Completions API for model: {self.model_name}")
+                params = {
+                    "model": self.model_name,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                }
+                
+                # Add temperature and max_tokens only for non-GPT5 models
+                if not any(x in self.model_name for x in ["gpt-5", "o1"]):
+                    params["temperature"] = 0.7
+                    params["max_tokens"] = 500
 
-            response_text = response.choices[0].message.content.strip()
+                response = await self.openai_client.chat.completions.create(**params)
+                response_text = response.choices[0].message.content.strip()
             
             # Try to parse JSON from response
             try:
@@ -106,6 +133,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                     json_part = response_text.split("```")[1].split("```")[0].strip()
                     analysis_result = json.loads(json_part)
                 else:
+                    logger.error(f"Response text for debugging: {response_text[:200]}")
                     raise json.JSONDecodeError("Could not extract JSON from response", response_text, 0)
 
             return analysis_result
@@ -199,6 +227,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
 
         try:
             logger.info("Starting Q1 Emotional Analysis")
+            print("   📊 Iniciando análisis de emociones...")
             
             ingested_data = self.load_ingested_data()
             posts = ingested_data.get("posts", [])
@@ -208,6 +237,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                 error_msg = "No comments found for analysis"
                 logger.warning(error_msg)
                 errors.append(error_msg)
+                print("   ⚠️  No se encontraron comentarios")
                 
                 return {
                     "metadata": {
@@ -228,13 +258,15 @@ Return ONLY valid JSON (no markdown, no code blocks):
                         comments_by_post[post_url] = []
                     comments_by_post[post_url].append(comment.get("comment_text", ""))
 
+            print(f"   📍 Publicaciones encontradas: {len(posts)}")
+            print(f"   💬 Comentarios a analizar: {len(comments)}")
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
 
             # Analyze each post
             all_emotions = {}
             post_count = 0
             
-            for post in posts:
+            for idx, post in enumerate(posts, 1):
                 post_url = post.get("post_url")
                 if not post_url or post_url not in comments_by_post:
                     continue
@@ -247,6 +279,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                     # Concatenate comments text
                     combined_text = " ".join(post_comments)
 
+                    print(f"   ⏳ Analizando publicación {idx}/{len([p for p in posts if p.get('post_url') in comments_by_post])}...", end="", flush=True)
                     logger.info(f"Analyzing post {post_count + 1}/{len(posts)}: {post_url[:50]}...")
 
                     # Call OpenAI with resilience (3 retries, 15s wait)
@@ -278,12 +311,14 @@ Return ONLY valid JSON (no markdown, no code blocks):
                         all_emotions[emotion].append(score)
 
                     post_count += 1
+                    print(f" ✓")
                     logger.info(f"Successfully analyzed post (intensity: {intensidad_promedio})")
 
                 except Exception as e:
                     error_msg = f"Error analyzing post {post_url}: {str(e)}"
                     logger.error(error_msg, exc_info=True)
                     errors.append(error_msg)
+                    print(f" ✗")
                     continue
 
             # Calculate global emotional summary
@@ -291,14 +326,17 @@ Return ONLY valid JSON (no markdown, no code blocks):
                 for emotion, scores in all_emotions.items():
                     results["resumen_global_emociones"][emotion] = round(sum(scores) / len(scores), 3)
                 
+                print(f"   ✅ Análisis completado: {post_count} publicaciones analizadas")
                 logger.info(f"Q1 Analysis complete: {post_count} posts analyzed, global emotions calculated")
             else:
+                print("   ⚠️  No emotions data available for global summary")
                 logger.warning("No emotions data available for global summary")
 
         except Exception as e:
             fatal_error = f"Fatal error in Q1 analysis: {str(e)}"
             logger.error(fatal_error, exc_info=True)
             errors.append(fatal_error)
+            print(f"   ❌ Error fatal: {fatal_error}")
 
         return {
             "metadata": {

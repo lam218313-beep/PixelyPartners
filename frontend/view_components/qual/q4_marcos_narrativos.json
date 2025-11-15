@@ -11,14 +11,14 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.552,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.448
+                    "Aspiracional": 0.429
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.552,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.448
+                    "Aspiracional": 0.429
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "Increíblemente útil. Compartiendo con mi equipo.",
@@ -31,14 +31,14 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.519,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.481
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.519,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.481
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "Me encantó este reel, muy dinámico.",
@@ -81,7 +81,7 @@
                     "Aspiracional": 0.462
                 },
                 "ejemplos_narrativos": {
-                    "Positivo": "Webinar muy interesante. Herramientas imprescindibles.",
+                    "Positivo": "Excelente selección de herramientas.",
                     "Negativo": null,
                     "Aspiracional": "¿Cuándo es el próximo webinar?"
                 }
@@ -91,19 +91,19 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.667,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.333
+                    "Aspiracional": 0.429
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.667,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.333
+                    "Aspiracional": 0.429
                 },
                 "ejemplos_narrativos": {
-                    "Positivo": "Case studies muy inspiradores. Estoy aprendiendo mucho de estos ejemplos.",
+                    "Positivo": "Este es mi content favorito de ustedes.",
                     "Negativo": null,
-                    "Aspiracional": "¿Cuál fue la marca más sorprendente?"
+                    "Aspiracional": "Aplicaré estas estrategias."
                 }
             },
             {
@@ -111,14 +111,14 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "Muy buen reel, los errores están claros. No estoy cometiendo estos errores, ¡gracias!",
@@ -131,14 +131,14 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.429
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.429
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "¡Muy profesional el contenido!",
@@ -169,16 +169,16 @@
             {
                 "post_url": "https://instagram.com/p/009/",
                 "num_comentarios": 10,
-                "marco_dominante": "Positivo",
+                "marco_dominante": "Aspiracional",
                 "distribucion_marcos": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.452,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.548
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.452,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.548
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "Excelente perspectiva sobre narrativas.",
@@ -191,19 +191,19 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "La automatización me ahorra mucho tiempo.",
                     "Negativo": null,
-                    "Aspiracional": "Automatización es la clave del futuro. ¿Cuál es la herramienta más importante?"
+                    "Aspiracional": "¿Cuál es la herramienta más importante?"
                 }
             },
             {
@@ -231,14 +231,14 @@
                 "num_comentarios": 10,
                 "marco_dominante": "Positivo",
                 "distribucion_marcos": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.536,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.464
                 },
                 "marcos_narrativos": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.536,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.464
                 },
                 "ejemplos_narrativos": {
                     "Positivo": "Gracias por hacer un resumen tan completo.",
@@ -248,30 +248,30 @@
             }
         ],
         "analisis_agregado": {
-            "Positivo": 0.54,
+            "Positivo": 0.532,
             "Negativo": 0.006,
-            "Aspiracional": 0.454
+            "Aspiracional": 0.462
         },
         "resumen_marcos": {
-            "Positivo": 0.54,
+            "Positivo": 0.532,
             "Negativo": 0.006,
-            "Aspiracional": 0.454
+            "Aspiracional": 0.462
         },
         "evolucion_temporal": [
             {
                 "semana": 3,
                 "marcos_distribucion": {
-                    "Positivo": 0.552,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.448
+                    "Aspiracional": 0.429
                 }
             },
             {
                 "semana": 8,
                 "marcos_distribucion": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.519,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.481
                 }
             },
             {
@@ -293,25 +293,25 @@
             {
                 "semana": 19,
                 "marcos_distribucion": {
-                    "Positivo": 0.667,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.333
+                    "Aspiracional": 0.429
                 }
             },
             {
                 "semana": 24,
                 "marcos_distribucion": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 }
             },
             {
                 "semana": 29,
                 "marcos_distribucion": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.571,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.429
                 }
             },
             {
@@ -325,17 +325,17 @@
             {
                 "semana": 37,
                 "marcos_distribucion": {
-                    "Positivo": 0.538,
+                    "Positivo": 0.452,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.462
+                    "Aspiracional": 0.548
                 }
             },
             {
                 "semana": 42,
                 "marcos_distribucion": {
-                    "Positivo": 0.5,
-                    "Negativo": 0.036,
-                    "Aspiracional": 0.464
+                    "Positivo": 0.519,
+                    "Negativo": 0.037,
+                    "Aspiracional": 0.444
                 }
             },
             {
@@ -349,9 +349,9 @@
             {
                 "semana": 50,
                 "marcos_distribucion": {
-                    "Positivo": 0.533,
+                    "Positivo": 0.536,
                     "Negativo": 0.0,
-                    "Aspiracional": 0.467
+                    "Aspiracional": 0.464
                 }
             }
         ]

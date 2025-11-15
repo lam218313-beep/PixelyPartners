@@ -1,14 +1,1543 @@
 {
-    "top_influenciadores": [
-        {"actor": "Nike Official", "username": "nike", "followers": {"instagram": 15000000}, "er_mean": 0.0065}
-    ],
-    "actors": [
-        {"actor": "Nike Official", "username": "nike", "followers": {"instagram": 15000000}, "er_mean": 0.0065}
-    ],
-    "top_influenciadores_detallado": [
-        {"influencer_name": "@techvision2025", "score": 9.8, "posts_analyzed": 245, "top_topics": ["Innovación", "Tecnología", "IA"], "sentiment": "Positivo", "engagement_rate": 8.5, "followers": 125000},
-        {"influencer_name": "@digitalartist", "score": 8.9, "posts_analyzed": 178, "top_topics": ["Diseño Digital", "Arte", "Creatividad"], "sentiment": "Positivo", "engagement_rate": 7.2, "followers": 89000}
-    ],
-    "resumen_polaridad": {"Promotor": 5, "Neutro": 3, "Detractor": 2},
-    "metadata": {"total_posts_analyzed": 1702, "periodo_analisis": "Último trimestre", "umbral_influencia": 6.5}
+    "metadata": {
+        "module": "Q5 Influenciadores",
+        "version": 2,
+        "description": "Influencers and key voices analysis with identity awareness (Máximo Rendimiento)"
+    },
+    "results": {
+        "analisis_influenciadores": [
+            {
+                "post_url": "https://instagram.com/p/001/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_003",
+                        "autoridad": 45.0,
+                        "afinidad": 60.0,
+                        "evidencia": "¿Cuál es la mejor herramienta para comenzar?",
+                        "razon": "Pregunta informada que muestra interés técnico/práctico y puede indicar experiencia previa; aporta valor al diálogo."
+                    },
+                    {
+                        "username": "user_007",
+                        "autoridad": 40.0,
+                        "afinidad": 75.0,
+                        "evidencia": "¿Tienes algún curso disponible sobre este tema?",
+                        "razon": "Muestra compromiso y disposición a profundizar (posible comprador/colaborador), lo que la convierte en una voz comprometida."
+                    },
+                    {
+                        "username": "user_008",
+                        "autoridad": 35.0,
+                        "afinidad": 90.0,
+                        "evidencia": "Increíblemente útil. Compartiendo con mi equipo.",
+                        "razon": "Testimonio concreto y acción de difusión (compartir), indica influencia y apoyo activo."
+                    },
+                    {
+                        "username": "user_009",
+                        "autoridad": 50.0,
+                        "afinidad": 95.0,
+                        "evidencia": "Esto es oro puro para nuestra estrategia.",
+                        "razon": "Evalúa el contenido estratégicamente y expresa fuerte respaldo; su comentario sugiere uso profesional y alta afinidad."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/002/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_011",
+                        "autoridad": 60.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Estas tendencias son clave para 2025.",
+                        "razon": "Muestra visión estratégica y conocimiento del tema temporal, posicionándose como alguien atento a la evolución del sector."
+                    },
+                    {
+                        "username": "user_012",
+                        "autoridad": 55.0,
+                        "afinidad": 50.0,
+                        "evidencia": "¿Cuál es tu predicción para TikTok?",
+                        "razon": "Pregunta específica que sugiere interés experto o profesional en la plataforma; puede iniciar discusión técnica o estratégica."
+                    },
+                    {
+                        "username": "user_015",
+                        "autoridad": 50.0,
+                        "afinidad": 80.0,
+                        "evidencia": "¿Cómo puedo aplicar estas tendencias a mi negocio?",
+                        "razon": "Usuario orientado a la aplicación práctica y negocio, indicando compromiso e interés en implementación."
+                    },
+                    {
+                        "username": "influencer_b",
+                        "autoridad": 70.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Excelente análisis de las tendencias.",
+                        "razon": "Autoidentificado como influencer; valida el contenido y aporta influencia social y aprobación experta."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/003/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_025",
+                        "autoridad": 40.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Los puntos más importantes están muy claros.",
+                        "razon": "Comentario concreto señalando claridad del contenido, indica lectura atenta y valoración informada (participación constructiva)."
+                    },
+                    {
+                        "username": "user_021",
+                        "autoridad": 45.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Excelentes tips para mejorar engagement.",
+                        "razon": "Menciona utilidad específica (engagement), mostrando conocimiento del objetivo del contenido y actitud positiva útil para promoción/advocacy."
+                    },
+                    {
+                        "username": "user_026",
+                        "autoridad": 35.0,
+                        "afinidad": 85.0,
+                        "evidencia": "Esto aumentará definitivamente mi engagement.",
+                        "razon": "Declaración de intención de aplicar el contenido con expectativa de resultados; muestra compromiso práctico y potencial defensor después de usarlo."
+                    },
+                    {
+                        "username": "user_022",
+                        "autoridad": 30.0,
+                        "afinidad": 70.0,
+                        "evidencia": "¿Puedes hacer un video sobre esto?",
+                        "razon": "Solicitud específica que refleja interés profundo y deseo de contenido más detallado — voz comprometida que puede guiar formatos futuros."
+                    },
+                    {
+                        "username": "user_028",
+                        "autoridad": 25.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Recomendando esto a todos mis contactos.",
+                        "razon": "Expresa intención de amplificar el contenido entre su red, actuando como promotor activo."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/004/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_036",
+                        "autoridad": 60.0,
+                        "afinidad": 85.0,
+                        "evidencia": "Perfecto para mi agencia.",
+                        "razon": "Indicates professional context (agency) and strong advocacy—suggests practical relevance and potential stakeholder."
+                    },
+                    {
+                        "username": "user_033",
+                        "autoridad": 50.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Mi equipo lo necesita.",
+                        "razon": "Shows organizational need and advocacy—represents a purchaser/user perspective with influence over team adoption."
+                    },
+                    {
+                        "username": "user_038",
+                        "autoridad": 45.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Totalmente de acuerdo con tu análisis.",
+                        "razon": "Engaged, aligned commenter who signals thoughtful agreement and likely ongoing engagement."
+                    },
+                    {
+                        "username": "user_031",
+                        "autoridad": 30.0,
+                        "afinidad": 65.0,
+                        "evidencia": "¿Cuándo es el próximo webinar?",
+                        "razon": "Shows active engagement and intent to continue participation—useful for community retention and scheduling interest."
+                    },
+                    {
+                        "username": "user_035",
+                        "autoridad": 25.0,
+                        "afinidad": 60.0,
+                        "evidencia": "¿Hay grabación disponible?",
+                        "razon": "Practical follow-up question indicating engagement and desire to access content—valuable for outreach and accessibility."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/005/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_040",
+                        "autoridad": 60.0,
+                        "afinidad": 85.0,
+                        "evidencia": "Estoy aprendiendo mucho de estos ejemplos.",
+                        "razon": "Muestra compromiso y aprendizaje activo; indica engagement frecuente con el contenido educativo."
+                    },
+                    {
+                        "username": "user_044",
+                        "autoridad": 55.0,
+                        "afinidad": 90.0,
+                        "evidencia": "Aplicaré estas estrategias.",
+                        "razon": "Expresa intención concreta de aplicar las recomendaciones, señal de adopción y defensor potencial."
+                    },
+                    {
+                        "username": "user_046",
+                        "autoridad": 65.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Gracias por el análisis detallado.",
+                        "razon": "Reconoce el análisis profundo; su aprecio sugiere que valora contenido técnico y detallado."
+                    },
+                    {
+                        "username": "user_048",
+                        "autoridad": 50.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Compartiendo en mi blog.",
+                        "razon": "Actúa como amplificador del contenido y puede influir en su propia audiencia."
+                    },
+                    {
+                        "username": "user_041",
+                        "autoridad": 45.0,
+                        "afinidad": 60.0,
+                        "evidencia": "¿Cuál fue la marca más sorprendente?",
+                        "razon": "Formula una pregunta específica que puede impulsar conversación y feedback detallado."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/006/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_051",
+                        "autoridad": 60.0,
+                        "afinidad": 60.0,
+                        "evidencia": "¿Cómo creo contenido viral?",
+                        "razon": "Asks a concrete, strategic question indicating interest in learning tactics—signals engagement and potential creator intent."
+                    },
+                    {
+                        "username": "user_058",
+                        "autoridad": 55.0,
+                        "afinidad": 85.0,
+                        "evidencia": "¡Perfecto para mi equipo de contenido!",
+                        "razon": "Positions themselves as part of a content team—professional/organizational perspective and strong positive endorsement."
+                    },
+                    {
+                        "username": "user_055",
+                        "autoridad": 50.0,
+                        "afinidad": 75.0,
+                        "evidencia": "El trending sonido que mencionas es clave.",
+                        "razon": "Provides a specific tactical note about trending audio, showing domain awareness and constructive agreement."
+                    },
+                    {
+                        "username": "user_053",
+                        "autoridad": 45.0,
+                        "afinidad": 70.0,
+                        "evidencia": "Mis hijos usan TikTok, voy a seguir estos consejos.",
+                        "razon": "Practical user perspective indicating intent to apply advice—represents an engaged audience segment."
+                    },
+                    {
+                        "username": "user_057",
+                        "autoridad": 40.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Este video merece mucho más engagement.",
+                        "razon": "Advocates for greater reach, demonstrates strong positive sentiment and willingness to support content."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/007/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_060",
+                        "autoridad": 50.0,
+                        "afinidad": 60.0,
+                        "evidencia": "¿Cuál es la métrica más importante?",
+                        "razon": "Pregunta específica que muestra interés analítico y busca priorización, indicando conocimiento operativo y disposición a profundizar."
+                    },
+                    {
+                        "username": "user_063",
+                        "autoridad": 55.0,
+                        "afinidad": 70.0,
+                        "evidencia": "¿Recomendas alguna herramienta para trackear?",
+                        "razon": "Solicita herramientas prácticas para implementación, sugiriendo experiencia en seguimiento de métricas y búsqueda de soluciones aplicables."
+                    },
+                    {
+                        "username": "user_064",
+                        "autoridad": 40.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Voy a seguir cada una de estas métricas.",
+                        "razon": "Compromiso claro con aplicar las recomendaciones; muestra engagement y probable repetida participación."
+                    },
+                    {
+                        "username": "user_066",
+                        "autoridad": 45.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Esto me ayuda a entender qué medir.",
+                        "razon": "Indica que el contenido resolvió una necesidad práctica, reflejando interés aplicado y aprecio informado."
+                    },
+                    {
+                        "username": "user_065",
+                        "autoridad": 35.0,
+                        "afinidad": 70.0,
+                        "evidencia": "Fantástico análisis de KPIs.",
+                        "razon": "Comentario positivo pero específico al análisis de KPIs, mostrando valoración profesional más allá de un elogio genérico."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/008/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_071",
+                        "autoridad": 60.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Los expertos compartieron insights valiosos.",
+                        "razon": "Provides substantive positive feedback referencing 'insights', suggests engagement with content quality and understanding."
+                    },
+                    {
+                        "username": "user_078",
+                        "autoridad": 55.0,
+                        "afinidad": 90.0,
+                        "evidencia": "Contenido de altísima calidad.",
+                        "razon": "Strong advocate praising quality; indicates appreciation that can influence others' perceptions."
+                    },
+                    {
+                        "username": "user_069",
+                        "autoridad": 50.0,
+                        "afinidad": 75.0,
+                        "evidencia": "Excelente entrevista con expertos.",
+                        "razon": "Positive endorsement that highlights expert involvement; useful as an engaged advocate."
+                    },
+                    {
+                        "username": "user_075",
+                        "autoridad": 50.0,
+                        "afinidad": 70.0,
+                        "evidencia": "Expertos realmente calificados.",
+                        "razon": "Affirms credibility of speakers—signals trust and engagement with expert content."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/009/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_080",
+                        "autoridad": 40.0,
+                        "afinidad": 70.0,
+                        "evidencia": "¿Cómo mejoro mi storytelling?",
+                        "razon": "Asks a constructive, specific question showing engagement and intent to learn—potential advocate or community member seeking depth."
+                    },
+                    {
+                        "username": "user_082",
+                        "autoridad": 45.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Los ejemplos fueron muy ilustrativos.",
+                        "razon": "References examples specifically, indicating close attention and positive, informed feedback—useful engaged supporter."
+                    },
+                    {
+                        "username": "user_083",
+                        "autoridad": 50.0,
+                        "afinidad": 85.0,
+                        "evidencia": "Voy a aplicar estas técnicas de narración.",
+                        "razon": "Expresses intent to implement techniques—practical engagement and endorsement suggesting influence within peer networks."
+                    },
+                    {
+                        "username": "user_086",
+                        "autoridad": 35.0,
+                        "afinidad": 75.0,
+                        "evidencia": "¿Tienes un curso sobre storytelling?",
+                        "razon": "Asks about a course, indicating willingness to invest and deepen knowledge—potential customer/advocate and repeat engager."
+                    },
+                    {
+                        "username": "user_087",
+                        "autoridad": 30.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Definitivamente cambiaré mi forma de contar historias.",
+                        "razon": "Shows decisive behavior change and strong positive sentiment—passionate advocate likely to promote results."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/010/",
+                "num_comentarios": 10,
+                "influenciadores": [
+                    {
+                        "username": "user_095",
+                        "autoridad": 40.0,
+                        "afinidad": 50.0,
+                        "evidencia": "¿Alguna herramienta de presupuesto?",
+                        "razon": "Pregunta específica sobre herramientas de presupuesto indica interés técnico/práctico y potential domain focus; engaged and seeking actionable info."
+                    },
+                    {
+                        "username": "user_097",
+                        "autoridad": 45.0,
+                        "afinidad": 55.0,
+                        "evidencia": "¿Integración con otros sistemas?",
+                        "razon": "Raises an integration concern—shows systems-thinking and practical implementation interest, useful for follow-up technical discussion."
+                    },
+                    {
+                        "username": "user_096",
+                        "autoridad": 35.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Perfecto para agencias pequeñas.",
+                        "razon": "Advocate voice expressing clear positive fit for a specific audience (small agencies), signals practical endorsement."
+                    },
+                    {
+                        "username": "user_098",
+                        "autoridad": 30.0,
+                        "afinidad": 85.0,
+                        "evidencia": "Mi equipo está usando estas herramientas ya.",
+                        "razon": "Practical adoption statement from a team context suggests firsthand experience and strong advocacy."
+                    },
+                    {
+                        "username": "user_092",
+                        "autoridad": 25.0,
+                        "afinidad": 80.0,
+                        "evidencia": "Voy a implementar estas herramientas ya.",
+                        "razon": "Shows intent to act immediately—high engagement and endorsement potential."
+                    }
+                ]
+            },
+            {
+                "post_url": "https://instagram.com/p/011/",
+                "num_comentarios": 10,
+                "influenciadores": []
+            },
+            {
+                "post_url": "https://instagram.com/p/012/",
+                "num_comentarios": 10,
+                "influenciadores": []
+            }
+        ],
+        "influenciadores_globales": [
+            {
+                "username": "user_003",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Pregunta informada que muestra interés técnico/práctico y puede indicar experiencia previa; aporta valor al diálogo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál es la mejor herramienta para comenzar?"
+            },
+            {
+                "username": "user_007",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Muestra compromiso y disposición a profundizar (posible comprador/colaborador), lo que la convierte en una voz comprometida.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "¿Tienes algún curso disponible sobre este tema?"
+            },
+            {
+                "username": "user_008",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Testimonio concreto y acción de difusión (compartir), indica influencia y apoyo activo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Increíblemente útil. Compartiendo con mi equipo."
+            },
+            {
+                "username": "user_009",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 95.0,
+                "menciones": 1,
+                "razon": "Evalúa el contenido estratégicamente y expresa fuerte respaldo; su comentario sugiere uso profesional y alta afinidad.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.9,
+                "comentario_evidencia": "Esto es oro puro para nuestra estrategia."
+            },
+            {
+                "username": "user_011",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Muestra visión estratégica y conocimiento del tema temporal, posicionándose como alguien atento a la evolución del sector.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Estas tendencias son clave para 2025."
+            },
+            {
+                "username": "user_012",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 50.0,
+                "menciones": 1,
+                "razon": "Pregunta específica que sugiere interés experto o profesional en la plataforma; puede iniciar discusión técnica o estratégica.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.0,
+                "comentario_evidencia": "¿Cuál es tu predicción para TikTok?"
+            },
+            {
+                "username": "user_015",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Usuario orientado a la aplicación práctica y negocio, indicando compromiso e interés en implementación.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "¿Cómo puedo aplicar estas tendencias a mi negocio?"
+            },
+            {
+                "username": "influencer_b",
+                "autoridad_promedio": 70.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Autoidentificado como influencer; valida el contenido y aporta influencia social y aprobación experta.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.7,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Excelente análisis de las tendencias."
+            },
+            {
+                "username": "user_025",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Comentario concreto señalando claridad del contenido, indica lectura atenta y valoración informada (participación constructiva).",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Los puntos más importantes están muy claros."
+            },
+            {
+                "username": "user_021",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Menciona utilidad específica (engagement), mostrando conocimiento del objetivo del contenido y actitud positiva útil para promoción/advocacy.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Excelentes tips para mejorar engagement."
+            },
+            {
+                "username": "user_026",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Declaración de intención de aplicar el contenido con expectativa de resultados; muestra compromiso práctico y potencial defensor después de usarlo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Esto aumentará definitivamente mi engagement."
+            },
+            {
+                "username": "user_022",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Solicitud específica que refleja interés profundo y deseo de contenido más detallado — voz comprometida que puede guiar formatos futuros.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Puedes hacer un video sobre esto?"
+            },
+            {
+                "username": "user_028",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Expresa intención de amplificar el contenido entre su red, actuando como promotor activo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.2,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Recomendando esto a todos mis contactos."
+            },
+            {
+                "username": "user_036",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Indicates professional context (agency) and strong advocacy—suggests practical relevance and potential stakeholder.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Perfecto para mi agencia."
+            },
+            {
+                "username": "user_033",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows organizational need and advocacy—represents a purchaser/user perspective with influence over team adoption.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Mi equipo lo necesita."
+            },
+            {
+                "username": "user_038",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Engaged, aligned commenter who signals thoughtful agreement and likely ongoing engagement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Totalmente de acuerdo con tu análisis."
+            },
+            {
+                "username": "user_031",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 65.0,
+                "menciones": 1,
+                "razon": "Shows active engagement and intent to continue participation—useful for community retention and scheduling interest.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.3,
+                "comentario_evidencia": "¿Cuándo es el próximo webinar?"
+            },
+            {
+                "username": "user_035",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Practical follow-up question indicating engagement and desire to access content—valuable for outreach and accessibility.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.2,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Hay grabación disponible?"
+            },
+            {
+                "username": "user_040",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Muestra compromiso y aprendizaje activo; indica engagement frecuente con el contenido educativo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Estoy aprendiendo mucho de estos ejemplos."
+            },
+            {
+                "username": "user_044",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Expresa intención concreta de aplicar las recomendaciones, señal de adopción y defensor potencial.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Aplicaré estas estrategias."
+            },
+            {
+                "username": "user_046",
+                "autoridad_promedio": 65.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Reconoce el análisis profundo; su aprecio sugiere que valora contenido técnico y detallado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.7,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Gracias por el análisis detallado."
+            },
+            {
+                "username": "user_048",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Actúa como amplificador del contenido y puede influir en su propia audiencia.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Compartiendo en mi blog."
+            },
+            {
+                "username": "user_041",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Formula una pregunta específica que puede impulsar conversación y feedback detallado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál fue la marca más sorprendente?"
+            },
+            {
+                "username": "user_051",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Asks a concrete, strategic question indicating interest in learning tactics—signals engagement and potential creator intent.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cómo creo contenido viral?"
+            },
+            {
+                "username": "user_058",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Positions themselves as part of a content team—professional/organizational perspective and strong positive endorsement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "¡Perfecto para mi equipo de contenido!"
+            },
+            {
+                "username": "user_055",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Provides a specific tactical note about trending audio, showing domain awareness and constructive agreement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "El trending sonido que mencionas es clave."
+            },
+            {
+                "username": "user_053",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Practical user perspective indicating intent to apply advice—represents an engaged audience segment.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Mis hijos usan TikTok, voy a seguir estos consejos."
+            },
+            {
+                "username": "user_057",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Advocates for greater reach, demonstrates strong positive sentiment and willingness to support content.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Este video merece mucho más engagement."
+            },
+            {
+                "username": "user_060",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Pregunta específica que muestra interés analítico y busca priorización, indicando conocimiento operativo y disposición a profundizar.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál es la métrica más importante?"
+            },
+            {
+                "username": "user_063",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Solicita herramientas prácticas para implementación, sugiriendo experiencia en seguimiento de métricas y búsqueda de soluciones aplicables.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Recomendas alguna herramienta para trackear?"
+            },
+            {
+                "username": "user_064",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Compromiso claro con aplicar las recomendaciones; muestra engagement y probable repetida participación.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Voy a seguir cada una de estas métricas."
+            },
+            {
+                "username": "user_066",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Indica que el contenido resolvió una necesidad práctica, reflejando interés aplicado y aprecio informado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Esto me ayuda a entender qué medir."
+            },
+            {
+                "username": "user_065",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Comentario positivo pero específico al análisis de KPIs, mostrando valoración profesional más allá de un elogio genérico.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Fantástico análisis de KPIs."
+            },
+            {
+                "username": "user_071",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Provides substantive positive feedback referencing 'insights', suggests engagement with content quality and understanding.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Los expertos compartieron insights valiosos."
+            },
+            {
+                "username": "user_078",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Strong advocate praising quality; indicates appreciation that can influence others' perceptions.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Contenido de altísima calidad."
+            },
+            {
+                "username": "user_069",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Positive endorsement that highlights expert involvement; useful as an engaged advocate.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Excelente entrevista con expertos."
+            },
+            {
+                "username": "user_075",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Affirms credibility of speakers—signals trust and engagement with expert content.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Expertos realmente calificados."
+            },
+            {
+                "username": "user_080",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Asks a constructive, specific question showing engagement and intent to learn—potential advocate or community member seeking depth.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.4,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Cómo mejoro mi storytelling?"
+            },
+            {
+                "username": "user_082",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "References examples specifically, indicating close attention and positive, informed feedback—useful engaged supporter.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Los ejemplos fueron muy ilustrativos."
+            },
+            {
+                "username": "user_083",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Expresses intent to implement techniques—practical engagement and endorsement suggesting influence within peer networks.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Voy a aplicar estas técnicas de narración."
+            },
+            {
+                "username": "user_086",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Asks about a course, indicating willingness to invest and deepen knowledge—potential customer/advocate and repeat engager.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "¿Tienes un curso sobre storytelling?"
+            },
+            {
+                "username": "user_087",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows decisive behavior change and strong positive sentiment—passionate advocate likely to promote results.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Definitivamente cambiaré mi forma de contar historias."
+            },
+            {
+                "username": "user_095",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 50.0,
+                "menciones": 1,
+                "razon": "Pregunta específica sobre herramientas de presupuesto indica interés técnico/práctico y potential domain focus; engaged and seeking actionable info.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.4,
+                "sentimiento": 0.0,
+                "comentario_evidencia": "¿Alguna herramienta de presupuesto?"
+            },
+            {
+                "username": "user_097",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 55.0,
+                "menciones": 1,
+                "razon": "Raises an integration concern—shows systems-thinking and practical implementation interest, useful for follow-up technical discussion.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.1,
+                "comentario_evidencia": "¿Integración con otros sistemas?"
+            },
+            {
+                "username": "user_096",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Advocate voice expressing clear positive fit for a specific audience (small agencies), signals practical endorsement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Perfecto para agencias pequeñas."
+            },
+            {
+                "username": "user_098",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Practical adoption statement from a team context suggests firsthand experience and strong advocacy.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Mi equipo está usando estas herramientas ya."
+            },
+            {
+                "username": "user_092",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows intent to act immediately—high engagement and endorsement potential.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.2,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Voy a implementar estas herramientas ya."
+            }
+        ],
+        "top_influenciadores_detallado": [
+            {
+                "username": "user_003",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Pregunta informada que muestra interés técnico/práctico y puede indicar experiencia previa; aporta valor al diálogo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál es la mejor herramienta para comenzar?"
+            },
+            {
+                "username": "user_007",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Muestra compromiso y disposición a profundizar (posible comprador/colaborador), lo que la convierte en una voz comprometida.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "¿Tienes algún curso disponible sobre este tema?"
+            },
+            {
+                "username": "user_008",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Testimonio concreto y acción de difusión (compartir), indica influencia y apoyo activo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Increíblemente útil. Compartiendo con mi equipo."
+            },
+            {
+                "username": "user_009",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 95.0,
+                "menciones": 1,
+                "razon": "Evalúa el contenido estratégicamente y expresa fuerte respaldo; su comentario sugiere uso profesional y alta afinidad.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.9,
+                "comentario_evidencia": "Esto es oro puro para nuestra estrategia."
+            },
+            {
+                "username": "user_011",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Muestra visión estratégica y conocimiento del tema temporal, posicionándose como alguien atento a la evolución del sector.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Estas tendencias son clave para 2025."
+            },
+            {
+                "username": "user_012",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 50.0,
+                "menciones": 1,
+                "razon": "Pregunta específica que sugiere interés experto o profesional en la plataforma; puede iniciar discusión técnica o estratégica.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.0,
+                "comentario_evidencia": "¿Cuál es tu predicción para TikTok?"
+            },
+            {
+                "username": "user_015",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Usuario orientado a la aplicación práctica y negocio, indicando compromiso e interés en implementación.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "¿Cómo puedo aplicar estas tendencias a mi negocio?"
+            },
+            {
+                "username": "influencer_b",
+                "autoridad_promedio": 70.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Autoidentificado como influencer; valida el contenido y aporta influencia social y aprobación experta.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.7,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Excelente análisis de las tendencias."
+            },
+            {
+                "username": "user_025",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Comentario concreto señalando claridad del contenido, indica lectura atenta y valoración informada (participación constructiva).",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Los puntos más importantes están muy claros."
+            },
+            {
+                "username": "user_021",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Menciona utilidad específica (engagement), mostrando conocimiento del objetivo del contenido y actitud positiva útil para promoción/advocacy.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Excelentes tips para mejorar engagement."
+            },
+            {
+                "username": "user_026",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Declaración de intención de aplicar el contenido con expectativa de resultados; muestra compromiso práctico y potencial defensor después de usarlo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Esto aumentará definitivamente mi engagement."
+            },
+            {
+                "username": "user_022",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Solicitud específica que refleja interés profundo y deseo de contenido más detallado — voz comprometida que puede guiar formatos futuros.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Puedes hacer un video sobre esto?"
+            },
+            {
+                "username": "user_028",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Expresa intención de amplificar el contenido entre su red, actuando como promotor activo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.2,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Recomendando esto a todos mis contactos."
+            },
+            {
+                "username": "user_036",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Indicates professional context (agency) and strong advocacy—suggests practical relevance and potential stakeholder.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Perfecto para mi agencia."
+            },
+            {
+                "username": "user_033",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows organizational need and advocacy—represents a purchaser/user perspective with influence over team adoption.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Mi equipo lo necesita."
+            },
+            {
+                "username": "user_038",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Engaged, aligned commenter who signals thoughtful agreement and likely ongoing engagement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Totalmente de acuerdo con tu análisis."
+            },
+            {
+                "username": "user_031",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 65.0,
+                "menciones": 1,
+                "razon": "Shows active engagement and intent to continue participation—useful for community retention and scheduling interest.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.3,
+                "comentario_evidencia": "¿Cuándo es el próximo webinar?"
+            },
+            {
+                "username": "user_035",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Practical follow-up question indicating engagement and desire to access content—valuable for outreach and accessibility.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.2,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Hay grabación disponible?"
+            },
+            {
+                "username": "user_040",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Muestra compromiso y aprendizaje activo; indica engagement frecuente con el contenido educativo.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Estoy aprendiendo mucho de estos ejemplos."
+            },
+            {
+                "username": "user_044",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Expresa intención concreta de aplicar las recomendaciones, señal de adopción y defensor potencial.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Aplicaré estas estrategias."
+            },
+            {
+                "username": "user_046",
+                "autoridad_promedio": 65.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Reconoce el análisis profundo; su aprecio sugiere que valora contenido técnico y detallado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.7,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Gracias por el análisis detallado."
+            },
+            {
+                "username": "user_048",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Actúa como amplificador del contenido y puede influir en su propia audiencia.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Compartiendo en mi blog."
+            },
+            {
+                "username": "user_041",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Formula una pregunta específica que puede impulsar conversación y feedback detallado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál fue la marca más sorprendente?"
+            },
+            {
+                "username": "user_051",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Asks a concrete, strategic question indicating interest in learning tactics—signals engagement and potential creator intent.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cómo creo contenido viral?"
+            },
+            {
+                "username": "user_058",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Positions themselves as part of a content team—professional/organizational perspective and strong positive endorsement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "¡Perfecto para mi equipo de contenido!"
+            },
+            {
+                "username": "user_055",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Provides a specific tactical note about trending audio, showing domain awareness and constructive agreement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "El trending sonido que mencionas es clave."
+            },
+            {
+                "username": "user_053",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Practical user perspective indicating intent to apply advice—represents an engaged audience segment.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Mis hijos usan TikTok, voy a seguir estos consejos."
+            },
+            {
+                "username": "user_057",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Advocates for greater reach, demonstrates strong positive sentiment and willingness to support content.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Este video merece mucho más engagement."
+            },
+            {
+                "username": "user_060",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 60.0,
+                "menciones": 1,
+                "razon": "Pregunta específica que muestra interés analítico y busca priorización, indicando conocimiento operativo y disposición a profundizar.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.2,
+                "comentario_evidencia": "¿Cuál es la métrica más importante?"
+            },
+            {
+                "username": "user_063",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Solicita herramientas prácticas para implementación, sugiriendo experiencia en seguimiento de métricas y búsqueda de soluciones aplicables.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.6,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Recomendas alguna herramienta para trackear?"
+            },
+            {
+                "username": "user_064",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Compromiso claro con aplicar las recomendaciones; muestra engagement y probable repetida participación.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.4,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Voy a seguir cada una de estas métricas."
+            },
+            {
+                "username": "user_066",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Indica que el contenido resolvió una necesidad práctica, reflejando interés aplicado y aprecio informado.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Esto me ayuda a entender qué medir."
+            },
+            {
+                "username": "user_065",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Comentario positivo pero específico al análisis de KPIs, mostrando valoración profesional más allá de un elogio genérico.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.3,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Fantástico análisis de KPIs."
+            },
+            {
+                "username": "user_071",
+                "autoridad_promedio": 60.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Provides substantive positive feedback referencing 'insights', suggests engagement with content quality and understanding.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Los expertos compartieron insights valiosos."
+            },
+            {
+                "username": "user_078",
+                "autoridad_promedio": 55.0,
+                "afinidad_promedio": 90.0,
+                "menciones": 1,
+                "razon": "Strong advocate praising quality; indicates appreciation that can influence others' perceptions.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.6,
+                "sentimiento": 0.8,
+                "comentario_evidencia": "Contenido de altísima calidad."
+            },
+            {
+                "username": "user_069",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Positive endorsement that highlights expert involvement; useful as an engaged advocate.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "Excelente entrevista con expertos."
+            },
+            {
+                "username": "user_075",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Affirms credibility of speakers—signals trust and engagement with expert content.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "Expertos realmente calificados."
+            },
+            {
+                "username": "user_080",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 70.0,
+                "menciones": 1,
+                "razon": "Asks a constructive, specific question showing engagement and intent to learn—potential advocate or community member seeking depth.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.4,
+                "sentimiento": 0.4,
+                "comentario_evidencia": "¿Cómo mejoro mi storytelling?"
+            },
+            {
+                "username": "user_082",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "References examples specifically, indicating close attention and positive, informed feedback—useful engaged supporter.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Los ejemplos fueron muy ilustrativos."
+            },
+            {
+                "username": "user_083",
+                "autoridad_promedio": 50.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Expresses intent to implement techniques—practical engagement and endorsement suggesting influence within peer networks.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.5,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Voy a aplicar estas técnicas de narración."
+            },
+            {
+                "username": "user_086",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 75.0,
+                "menciones": 1,
+                "razon": "Asks about a course, indicating willingness to invest and deepen knowledge—potential customer/advocate and repeat engager.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.5,
+                "comentario_evidencia": "¿Tienes un curso sobre storytelling?"
+            },
+            {
+                "username": "user_087",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows decisive behavior change and strong positive sentiment—passionate advocate likely to promote results.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Definitivamente cambiaré mi forma de contar historias."
+            },
+            {
+                "username": "user_095",
+                "autoridad_promedio": 40.0,
+                "afinidad_promedio": 50.0,
+                "menciones": 1,
+                "razon": "Pregunta específica sobre herramientas de presupuesto indica interés técnico/práctico y potential domain focus; engaged and seeking actionable info.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.4,
+                "sentimiento": 0.0,
+                "comentario_evidencia": "¿Alguna herramienta de presupuesto?"
+            },
+            {
+                "username": "user_097",
+                "autoridad_promedio": 45.0,
+                "afinidad_promedio": 55.0,
+                "menciones": 1,
+                "razon": "Raises an integration concern—shows systems-thinking and practical implementation interest, useful for follow-up technical discussion.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Neutral",
+                "alcance": 0.5,
+                "sentimiento": 0.1,
+                "comentario_evidencia": "¿Integración con otros sistemas?"
+            },
+            {
+                "username": "user_096",
+                "autoridad_promedio": 35.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Advocate voice expressing clear positive fit for a specific audience (small agencies), signals practical endorsement.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Perfecto para agencias pequeñas."
+            },
+            {
+                "username": "user_098",
+                "autoridad_promedio": 30.0,
+                "afinidad_promedio": 85.0,
+                "menciones": 1,
+                "razon": "Practical adoption statement from a team context suggests firsthand experience and strong advocacy.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.3,
+                "sentimiento": 0.7,
+                "comentario_evidencia": "Mi equipo está usando estas herramientas ya."
+            },
+            {
+                "username": "user_092",
+                "autoridad_promedio": 25.0,
+                "afinidad_promedio": 80.0,
+                "menciones": 1,
+                "razon": "Shows intent to act immediately—high engagement and endorsement potential.",
+                "score_centralidad": 0.083,
+                "polaridad_dominante": "Promotor",
+                "alcance": 0.2,
+                "sentimiento": 0.6,
+                "comentario_evidencia": "Voy a implementar estas herramientas ya."
+            }
+        ]
+    },
+    "errors": []
 }
