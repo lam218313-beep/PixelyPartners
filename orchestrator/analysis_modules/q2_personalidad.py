@@ -1,16 +1,14 @@
 """
-Pixely Partners - Q2: Brand Personality Analysis (Aaker Framework)
+Pixely Partners - Q2: Brand Personality Analysis (Aaker Framework) - Máximo Rendimiento
 
 Analyzes audience comments to determine how the brand is perceived using Aaker's
-Five Dimensions of Brand Personality: Sincerity, Excitement, Competence, Sophistication, Ruggedness.
-
-Single-client analysis: Analyzes perceived brand personality based on post comments.
+Five Dimensions of Brand Personality: Sinceridad, Emoción, Competencia, Sofisticación, Rudeza.
 
 Features:
 - Resilient API calls with automatic retry (3 attempts, 15s wait)
-- Extended context window (15k chars) for nuanced personality analysis
-- Strict type conversion for personality values (0-100 integer, normalized to percentages)
-- Per-post granular personality profiling with strategic context
+- Per-post granular personality profiling with independent 0-100 scales
+- Strict type sanitization (floats, clamped to [0, 100], always 5 traits)
+- Dominant trait detection with top 1-2 ranking
 """
 
 from typing import Dict, Any, List
@@ -22,23 +20,37 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 from ..base_analyzer import BaseAnalyzer
 
-# Configure logger to use the shared orchestrator configuration
 logger = logging.getLogger(__name__)
 
 
 class Q2Personalidad(BaseAnalyzer):
     """
-    Q2 Brand Personality Analysis using Aaker Framework.
+    Q2 Brand Personality Analysis using Aaker Framework - MÁXIMO RENDIMIENTO.
     
     Analyzes comments on each client post to derive brand personality dimensions.
     Returns per-post personality profiles and global personality summary.
     
-    Features:
-    - Resilient API calls with automatic retry (3 attempts, 15s wait)
-    - Extended context window (15k chars) for better analysis
-    - Strict normalization for personality values (0-100 → normalized percentages)
-    - Strategic context injection (brand archetype, tone of voice)
+    SCALING: Independent 0-100 per trait (NOT normalized to sum=100)
+    TYPES: Floats with capitalized keys (Sinceridad, Emocion, Competencia, Sofisticacion, Rudeza)
+    TRAITS: Always 5 traits (zero-filled if missing from LLM)
+    DOMINANT: Top 1-2 traits by score
     """
+    
+    # Define canonical trait names (capitalized for visual display)
+    CANONICAL_TRAITS = ["Sinceridad", "Emocion", "Competencia", "Sofisticacion", "Rudeza"]
+    
+    # Map lowercase → canonical (for LLM flexibility)
+    TRAIT_MAPPING = {
+        "sinceridad": "Sinceridad",
+        "emocion": "Emocion",
+        "excitement": "Emocion",
+        "competencia": "Competencia",
+        "competence": "Competencia",
+        "sofisticacion": "Sofisticacion",
+        "sophistication": "Sofisticacion",
+        "rudeza": "Rudeza",
+        "ruggedness": "Rudeza",
+    }
 
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(15))
     async def _call_openai_for_personality(self, combined_text: str, brand_context: str) -> Dict[str, Any]:
@@ -64,10 +76,11 @@ Based on the following audience comments about a brand, analyze how the brand is
 BRAND CONTEXT:
 {brand_context}
 
-AUDIENCE COMMENTS:
+AUDIENCE COMMENTS (max 15k chars):
 "{combined_text[:15000]}"
 
-Rate each of the 5 brand personality dimensions on a scale of 0-100 (where 0 = not present, 100 = very strong):
+Rate each of the 5 brand personality dimensions on a INDEPENDENT scale of 0-100:
+(A brand can score HIGH on multiple dimensions simultaneously - they are NOT mutually exclusive)
 
 1. Sinceridad (Sincerity): Honest, genuine, down-to-earth, cheerful, wholesome
 2. Emocion (Excitement): Daring, spirited, imaginative, fun, cool, young
@@ -75,14 +88,13 @@ Rate each of the 5 brand personality dimensions on a scale of 0-100 (where 0 = n
 4. Sofisticacion (Sophistication): Upper-class, charming, glamorous, good-taste, smooth
 5. Rudeza (Ruggedness): Tough, strong, outdoorsy, rugged, masculine, adventurous
 
-IMPORTANT: Return ONLY valid JSON with raw scores (0-100), not percentages:
+CRITICAL: Return ONLY valid JSON with raw scores (0-100 as numbers, not strings or percentages):
 {{
     "sinceridad": <integer 0-100>,
     "emocion": <integer 0-100>,
     "competencia": <integer 0-100>,
     "sofisticacion": <integer 0-100>,
     "rudeza": <integer 0-100>,
-    "dimensiones_dominantes": ["<strongest dimension>", "<second strongest>"],
     "analisis_cualitativo": "<2-3 sentence analysis of perceived brand personality>"
 }}"""
 
@@ -148,53 +160,114 @@ IMPORTANT: Return ONLY valid JSON with raw scores (0-100), not percentages:
             logger.error(f"Error calling OpenAI API for personality analysis: {str(e)}", exc_info=True)
             raise
 
-    def _normalize_personality_values(self, rasgos_raw: Dict[str, int]) -> Dict[str, float]:
+    def _sanitize_trait_value(self, raw_value: Any, trait_name: str) -> float:
         """
-        Normalize raw personality scores (0-100) to percentages that sum to 100%.
-        
-        Ensures mathematical precision for visualizations.
+        Sanitize a trait value from LLM: convert to float, clamp to [0, 100].
         
         Args:
-            rasgos_raw: Raw scores dict from LLM (0-100 per dimension)
+            raw_value: Value from LLM (could be int, float, str, null)
+            trait_name: Trait name (for logging)
             
         Returns:
-            Normalized dict with float percentages summing to 100.0
+            Sanitized float in range [0, 100]
         """
-        # Define expected dimensions
-        dimensiones = ["sinceridad", "emocion", "competencia", "sofisticacion", "rudeza"]
+        try:
+            # Convert to float
+            if raw_value is None:
+                valor_float = 0.0
+            else:
+                valor_float = float(str(raw_value).replace('%', '').replace('+', '').strip())
+            
+            # Clamp to [0, 100]
+            valor_float = max(0.0, min(100.0, valor_float))
+            
+            return valor_float
+            
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Invalid trait value for '{trait_name}': {raw_value}. Using 0.0.")
+            return 0.0
+
+    def _build_canonical_traits_dict(self, rasgos_raw: Dict[str, Any]) -> Dict[str, float]:
+        """
+        Build canonical traits dictionary with capitalized keys.
         
-        # Extract and validate values
-        valores_limpios = {}
-        for dim in dimensiones:
-            valor = rasgos_raw.get(dim, 0)
-            try:
-                valor_int = int(float(valor))
-                valor_int = max(0, min(100, valor_int))  # Clamp to [0, 100]
-                valores_limpios[dim] = valor_int
-            except (ValueError, TypeError):
-                logger.warning(f"Invalid value for '{dim}': {valor}. Using 0.")
-                valores_limpios[dim] = 0
+        - Normalizes lowercase keys to canonical form
+        - Sanitizes all values to float [0, 100]
+        - Ensures ALL 5 traits are present (zero-filled if missing)
         
-        # Calculate sum
-        suma_total = sum(valores_limpios.values())
+        Args:
+            rasgos_raw: Raw traits dict from LLM
+            
+        Returns:
+            Dict with canonical trait names as keys, floats [0, 100] as values
+        """
+        rasgos_sanitized = {}
         
-        # Normalize to percentages
-        if suma_total == 0:
-            # Equal distribution if all zeros
-            rasgos_normalizados = {dim: 20.0 for dim in dimensiones}
-        else:
-            rasgos_normalizados = {dim: round((valores_limpios[dim] / suma_total) * 100.0, 2) 
-                                    for dim in dimensiones}
+        # First pass: sanitize and normalize provided traits
+        for raw_key, raw_value in rasgos_raw.items():
+            if raw_key in ["analisis_cualitativo", "dimensiones_dominantes"]:
+                continue  # Skip non-trait keys
+            
+            # Normalize key to lowercase for lookup
+            key_lower = str(raw_key).lower().strip()
+            
+            # Find canonical name
+            canonical_key = self.TRAIT_MAPPING.get(key_lower)
+            
+            if canonical_key:
+                # Sanitize value
+                sanitized_value = self._sanitize_trait_value(raw_value, canonical_key)
+                rasgos_sanitized[canonical_key] = sanitized_value
+            else:
+                logger.warning(f"Unknown trait key from LLM: {raw_key}. Skipping.")
         
-        # Ensure sum is exactly 100.0 (fix rounding errors)
-        suma_calculada = sum(rasgos_normalizados.values())
-        if suma_calculada != 100.0:
-            diferencia = 100.0 - suma_calculada
-            # Adjust the largest dimension to fix rounding
-            dim_mayor = max(dimensiones, key=lambda d: rasgos_normalizados[d])
-            rasgos_normalizados[dim_mayor] = round(rasgos_normalizados[dim_mayor] + diferencia, 2)
+        # Second pass: ensure all 5 traits are present
+        rasgos_final = {}
+        for canonical_trait in self.CANONICAL_TRAITS:
+            rasgos_final[canonical_trait] = rasgos_sanitized.get(canonical_trait, 0.0)
         
-        return rasgos_normalizados
+        logger.debug(f"Final canonical traits: {rasgos_final}")
+        return rasgos_final
+
+    def _get_dominant_traits(self, rasgos: Dict[str, float], top_n: int = 2) -> List[str]:
+        """
+        Identify top dominant traits.
+        
+        Logic:
+        - Sort by score descending
+        - Return top 1-2 traits
+        - If clear gap (>5%), return only top 1
+        - If close race, return top 2
+        
+        Args:
+            rasgos: Traits dict with scores
+            top_n: Maximum traits to return (1 or 2)
+            
+        Returns:
+            List of 1-2 dominant trait names
+        """
+        if not rasgos or all(v == 0 for v in rasgos.values()):
+            return ["Neutral"]
+        
+        # Sort by score descending
+        sorted_traits = sorted(rasgos.items(), key=lambda x: x[1], reverse=True)
+        
+        if len(sorted_traits) == 0:
+            return ["Neutral"]
+        
+        # Always include top trait
+        dominantes = [sorted_traits[0][0]]
+        
+        # Check if we should include second trait
+        if len(sorted_traits) > 1 and top_n >= 2:
+            top_score = sorted_traits[0][1]
+            second_score = sorted_traits[1][1]
+            
+            # If difference is < 5 points, include both
+            if top_score > 0 and (top_score - second_score) < 5:
+                dominantes.append(sorted_traits[1][0])
+        
+        return dominantes
 
     def _extract_brand_context(self, client_ficha: Dict[str, Any]) -> str:
         """
@@ -221,6 +294,13 @@ Tone of Voice: {tono}
         """
         Execute brand personality analysis on all posts.
         
+        WORKFLOW:
+        1. Load ingested data (posts, comments, client_ficha)
+        2. For each post: aggregate comments, call LLM, sanitize traits
+        3. Build canonical traits dict (always 5 traits, 0-100 independent)
+        4. Calculate global averages
+        5. Return per-post and global results
+        
         Returns:
             Dictionary with metadata, per-post analysis, global summary, and errors
         """
@@ -228,7 +308,8 @@ Tone of Voice: {tono}
         analisis_por_publicacion = []
         
         try:
-            logger.info("Starting Q2 Brand Personality Analysis")
+            logger.info("Starting Q2 Brand Personality Analysis (MÁXIMO RENDIMIENTO)")
+            print("   📊 Analizando personalidad de marca (Aaker)...")
             
             ingested_data = self.load_ingested_data()
             client_ficha = ingested_data.get("client_ficha", {})
@@ -236,25 +317,27 @@ Tone of Voice: {tono}
             comments = ingested_data.get("comments", [])
             
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
+            print(f"   📍 {len(posts)} posts, {len(comments)} comentarios")
             
             if not comments:
+                logger.warning("No comments found for Q2 analysis")
                 errors.append("No comments found for analysis")
                 return {
                     "metadata": {
                         "module": "Q2 Personalidad",
-                        "version": 2,
-                        "description": "Brand personality analysis using Aaker Framework"
+                        "version": 3,
+                        "description": "Brand personality analysis using Aaker Framework (Máximo Rendimiento)"
                     },
                     "results": {
                         "analisis_por_publicacion": [],
-                        "analisis_agregado": {},
-                        "resumen_global_personalidad": {}
+                        "resumen_global_personalidad": {trait: 0.0 for trait in self.CANONICAL_TRAITS}
                     },
                     "errors": errors
                 }
             
             # Extract brand context for LLM
             brand_context = self._extract_brand_context(client_ficha)
+            logger.debug(f"Brand context: {brand_context}")
             
             # Group comments by post
             comments_by_post = {}
@@ -265,14 +348,10 @@ Tone of Voice: {tono}
                         comments_by_post[post_url] = []
                     comments_by_post[post_url].append(comment.get("comment_text", ""))
             
+            logger.info(f"Comments grouped into {len(comments_by_post)} posts")
+            
             # Analyze personality traits for each post
-            rasgos_globales = {
-                "sinceridad": [],
-                "emocion": [],
-                "competencia": [],
-                "sofisticacion": [],
-                "rudeza": []
-            }
+            rasgos_globales = {trait: [] for trait in self.CANONICAL_TRAITS}
             
             for idx, post in enumerate(posts, 1):
                 post_url = post.get("post_url")
@@ -286,65 +365,74 @@ Tone of Voice: {tono}
                     continue
                 
                 combined_text = " ".join(post_comments)
+                num_comentarios = len(post_comments)
                 
-                logger.info(f"Analyzing post {idx}/{len(posts)}: {post_url}...")
+                logger.info(f"Analyzing post {idx}/{len(posts)}: {num_comentarios} comments")
+                print(f"   • Post {idx}/{len(posts)}: {num_comentarios} comments")
                 
                 try:
                     # Call OpenAI with retry logic
                     analysis_result = await self._call_openai_for_personality(combined_text, brand_context)
                     
-                    # Normalize personality values
-                    rasgos_raw = {k: analysis_result.get(k, 0) 
-                                 for k in ["sinceridad", "emocion", "competencia", "sofisticacion", "rudeza"]}
-                    rasgos_normalizados = self._normalize_personality_values(rasgos_raw)
+                    # Build canonical traits dictionary
+                    rasgos_canonicos = self._build_canonical_traits_dict(analysis_result)
+                    
+                    # Get dominant traits
+                    dominantes = self._get_dominant_traits(rasgos_canonicos)
                     
                     # Collect global data
-                    for dim in rasgos_normalizados:
-                        rasgos_globales[dim].append(rasgos_normalizados[dim])
+                    for trait, score in rasgos_canonicos.items():
+                        rasgos_globales[trait].append(score)
                     
                     # Build per-post analysis
                     post_analysis = {
                         "post_url": post_url,
-                        "num_comentarios": len(post_comments),
-                        "rasgos_distribuidos": rasgos_normalizados,
-                        "rasgos_aaker": rasgos_normalizados.copy(),  # Legacy compatibility
-                        "dimensiones_dominantes": analysis_result.get("dimensiones_dominantes", []),
-                        "analisis_cualitativo": analysis_result.get("analisis_cualitativo", "")
+                        "num_comentarios": num_comentarios,
+                        "rasgos_aaker": rasgos_canonicos,
+                        "rasgos_distribuidos": rasgos_canonicos.copy(),  # Alias for future architecture
+                        "dimensiones_dominantes": dominantes,
+                        "analisis_cualitativo": analysis_result.get("analisis_cualitativo", ""),
+                        "personalidad_dominante": dominantes[0] if dominantes else "Neutral"
                     }
                     
                     analisis_por_publicacion.append(post_analysis)
-                    logger.info(f"Successfully analyzed post (dominant: {', '.join(post_analysis['dimensiones_dominantes'])})")
+                    logger.info(f"✓ Post analyzed successfully (dominant: {', '.join(dominantes)})")
+                    print(f"     ✓ Dominante(s): {', '.join(dominantes)}")
                     
                 except Exception as e:
                     logger.error(f"Error analyzing post {post_url}: {str(e)}", exc_info=True)
                     errors.append(f"Failed to analyze post {post_url}: {str(e)}")
+                    print(f"     ✗ Error: {str(e)}")
                     continue
             
             # Calculate global personality summary
-            analisis_agregado = {}
-            for dim in rasgos_globales:
-                if rasgos_globales[dim]:
-                    promedio = sum(rasgos_globales[dim]) / len(rasgos_globales[dim])
-                    analisis_agregado[dim] = round(promedio, 2)
+            resumen_global = {}
+            for trait in self.CANONICAL_TRAITS:
+                if rasgos_globales[trait]:
+                    promedio = sum(rasgos_globales[trait]) / len(rasgos_globales[trait])
+                    resumen_global[trait] = round(promedio, 1)
                 else:
-                    analisis_agregado[dim] = 0.0
+                    resumen_global[trait] = 0.0
             
-            logger.info("Q2 analysis completed successfully")
+            logger.info(f"Q2 analysis completed: {len(analisis_por_publicacion)} posts analyzed")
+            print(f"   ✅ {len(analisis_por_publicacion)} posts analizados")
             
         except Exception as e:
             logger.error(f"Critical error in Q2 analysis: {str(e)}", exc_info=True)
             errors.append(f"Critical error: {str(e)}")
+            print(f"   ❌ Error crítico: {str(e)}")
         
         return {
             "metadata": {
                 "module": "Q2 Personalidad",
-                "version": 2,
-                "description": "Brand personality analysis using Aaker Framework (Máximo Rendimiento)"
+                "version": 3,
+                "description": "Brand personality analysis using Aaker Framework (Máximo Rendimiento)",
+                "traits_scale": "0-100 independent (NOT normalized to sum=100)"
             },
             "results": {
                 "analisis_por_publicacion": analisis_por_publicacion,
-                "analisis_agregado": analisis_agregado,
-                "resumen_global_personalidad": analisis_agregado  # Legacy compatibility
+                "resumen_global_personalidad": resumen_global,
+                "analisis_agregado": resumen_global  # Alias for consistency
             },
             "errors": errors
         }
