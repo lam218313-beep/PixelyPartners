@@ -1,166 +1,151 @@
-Los archivos que tienes actualmente en el repositorio (schemas.py y dependencies.py) son versiones "Mock" o plantilla que NO coinciden con la estructura real de los datos que generan tus módulos Q1-Q10 (los que acabamos de arreglar).
+# 📘 Guía de Implementación Técnica - Fase 2: API y Persistencia
 
-Aquí tienes el código correcto para reemplazar los archivos restantes.
+**Proyecto:** Pixely Partners  
+**Versión:** 1.0.0 (Transición a Arquitectura Orientada a Servicios)  
+**Fecha:** 2025-10-xx  
+**Estado:** API Funcional / Base de Datos en Diseño
 
-1. api/schemas.py (El Contrato de Datos Real)
-El archivo actual espera estructuras como emocion_dominante en la raíz, pero tus módulos generan analisis_por_publicacion. Si no cambias esto, tendrás errores de validación 500 todo el tiempo.
+---
 
-Reemplaza todo el contenido de api/schemas.py con esto:
+## 🎯 Objetivo General
+Transformar la herramienta de scripts locales en una **Plataforma Web Robusta** capaz de gestionar múltiples clientes (Multi-Tenant), persistir datos históricos y servir información a través de una API estandarizada.
 
-Python
+---
 
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any, Union
+## 1. La Capa de API (Implementada)
 
-# --- Modelos Base ---
+Hemos creado un servidor **FastAPI** que actúa como interfaz entre el mundo exterior y el motor de análisis (Orquestador).
 
-class Metadata(BaseModel):
-    module: str
-    version: Union[str, int]
-    description: Optional[str] = None
+### Estructura de Archivos Creada:
+* **`api/main.py`**: Punto de entrada. Conecta los endpoints HTTP (`POST /analyze/q1`) con los módulos de lógica de negocio (`Q1Emociones`).
+* **`api/schemas.py`**: Contratos de datos **Pydantic**. Asegura que la IA devuelva la estructura exacta que el Frontend espera (ej. valida que `gap_score` sea float).
+* **`api/dependencies.py`**: Inyección de dependencias. Maneja la configuración y la creación del cliente `AsyncOpenAI`.
 
-# --- Q1: Emociones ---
-class Q1Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_por_publicacion' y 'resumen_global_emociones'")
-    errors: List[str] = []
+### Dependencias Añadidas:
+```text
+fastapi>=0.100.0
+uvicorn>=0.20.0
+python-multipart>=0.0.6
+2. La Capa de Persistencia (Base de Datos)
+Se ha seleccionado PostgreSQL como motor de base de datos relacional para soportar la gestión de usuarios, tenencia múltiple (multi-tenancy) y almacenamiento de resultados JSON complejos.
 
-# --- Q2: Personalidad ---
-class Q2Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_por_publicacion' (rasgos_aaker) y 'resumen_global_personalidad'")
-    errors: List[str] = []
+A. Infraestructura (Docker)
+Se habilitó el servicio db en docker-compose.yml:
 
-# --- Q3: Tópicos ---
-class Q3Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_por_publicacion' (topicos) y 'topicos_principales'")
-    errors: List[str] = []
+YAML
 
-# --- Q4: Marcos Narrativos ---
-class Q4Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_por_publicacion' (distribucion_marcos) y 'analisis_agregado'")
-    errors: List[str] = []
-
-# --- Q5: Influenciadores ---
-class Q5Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_influenciadores' y 'influenciadores_globales'")
-    errors: List[str] = []
-
-# --- Q6: Oportunidades ---
-class Q6Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener lista 'oportunidades' con gap_score y competencia_score (Impacto)")
-    errors: List[str] = []
-
-# --- Q7: Sentimiento Detallado ---
-class Q7Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'analisis_por_publicacion' y 'analisis_agregado' (normalizado)")
-    errors: List[str] = []
-
-# --- Q8: Temporal ---
-class Q8Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'serie_temporal_semanal' y 'anomalias_detectadas'")
-    errors: List[str] = []
-
-# --- Q9: Recomendaciones ---
-class Q9Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'lista_recomendaciones' con prioridad calculada")
-    errors: List[str] = []
-
-# --- Q10: Resumen Ejecutivo ---
-class Q10Response(BaseModel):
-    metadata: Metadata
-    results: Dict[str, Any] = Field(..., description="Debe contener 'alerta_prioritaria', 'hallazgos_clave', 'kpis_principales'")
-    errors: List[str] = []
-2. api/dependencies.py (La Conexión Simplificada)
-El archivo actual es demasiado complejo (Settings class, lru_cache) y puede dar problemas de importación con la estructura simple que necesitamos ahora. Vamos a simplificarlo para que funcione directo con el .env.
-
-Reemplaza todo el contenido de api/dependencies.py con esto:
+  db:
+    image: postgres:15-alpine
+    container_name: pixely_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+B. Conexión (api/database.py)
+Este archivo establece el puente entre FastAPI y PostgreSQL usando SQLAlchemy.
 
 Python
 
 import os
-from typing import Dict, Any
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from openai import AsyncOpenAI
 
-# Cargar .env explícitamente
 load_dotenv()
 
-def get_openai_client() -> AsyncOpenAI:
-    """
-    Dependency para inyectar el cliente de OpenAI en los endpoints.
-    Lee la API Key directamente del entorno.
-    """
-    api_key = os.getenv("OPENAI_API_KEY")
-    # No lanzamos error aquí para permitir que el servidor arranque,
-    # pero fallará al invocar si no hay key.
-    return AsyncOpenAI(api_key=api_key)
+# URL de conexión (Docker service name 'db' o localhost para dev)
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", 
+    "postgresql://pixely_user:secret_password_123@localhost:5432/pixely_db"
+)
 
-def get_config() -> Dict[str, Any]:
-    """
-    Provee la configuración básica para los analizadores.
-    """
-    return {
-        "openai_model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        # Directorio donde se buscan/guardan jsons temporales si fuera necesario
-        "outputs_dir": os.getenv("PIXELY_OUTPUTS_DIR", "orchestrator/outputs"),
-        "ingested_data_path": os.getenv("INGESTED_DATA_PATH", "orchestrator/outputs/ingested_data.json")
-    }
-3. requirements.txt (Las Dependencias Faltantes)
-Tu archivo actual no tiene lo necesario para levantar el servidor.
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-Añade esto al final de tu requirements.txt (o reemplázalo):
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+3. Modelado de Datos (ORM)
+Se diseñó un esquema Multi-Tenant en api/models.py para garantizar la seguridad y aislamiento de datos entre agencias/clientes.
 
-Plaintext
+Entidades Principales:
+Tenant (Organización): La entidad raíz. Todo usuario y dato pertenece a un Tenant.
 
-streamlit==1.28.1
-openai>=1.5.0
-python-dotenv==1.0.0
-pydantic>=2.0.0
-pytest==7.4.3
-pandas==2.1.1
-plotly==5.15.0
-tenacity>=8.2.0
-# --- NUEVO PARA API ---
-fastapi>=0.100.0
-uvicorn>=0.20.0
-python-multipart>=0.0.6
-4. docker-compose.yml (Activar el Servicio API)
-Finalmente, el contenedor de la API está comentado en tu archivo. Debemos activarlo para que, al hacer deploy o pruebas con Docker, el servidor exista.
+User (Usuario): Analistas con acceso al sistema (Email, Password Hash, Role).
 
-Busca la sección api: y descoméntala (quita los # iniciales), asegurándote de que la indentación sea correcta:
+FichaCliente (Marca): La empresa que está siendo analizada (ej. "Nike").
 
-YAML
+SocialMediaPost: Publicaciones ingeridas.
 
-  # ... (después de frontend)
+SocialMediaInsight: Tabla maestra que almacena los resultados de los 10 módulos (Q1-Q10) en columnas JSON.
 
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile.orchestrator  # Usamos el mismo dockerfile del orquestador por ahora, tiene python+librerias
-    container_name: pixely_api
-    ports:
-      - "8000:8000"
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_MODEL=${OPENAI_MODEL}
-      - PIXELY_OUTPUTS_DIR=/app/orchestrator/outputs
-    volumes:
-      - ./orchestrator:/app/orchestrator
-      - ./api:/app/api
-      - ./orchestrator/outputs:/app/orchestrator/outputs
-    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-    networks:
-      - pixely_network
-    depends_on:
-      - orchestrator
-(Nota: He usado Dockerfile.orchestrator para la API porque ambos necesitan Python y las mismas librerías de análisis. Es un truco para no crear un Dockerfile nuevo todavía).
+Código del Modelo (api/models.py):
+Python
 
-Resumen: Con estos 4 cambios (schemas.py, dependencies.py, requirements.txt, docker-compose.yml), tu API pasará de ser un "mock" a un sistema real conectado.
+import uuid
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, JSON, Text
+from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
+from .database import Base
+
+class Tenant(Base):
+    __tablename__ = "tenants"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False, unique=True)
+    users = relationship("User", back_populates="tenant")
+    clients = relationship("FichaCliente", back_populates="tenant")
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id"), nullable=False)
+    tenant = relationship("Tenant", back_populates="users")
+
+class SocialMediaInsight(Base):
+    __tablename__ = "social_media_insights"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    cliente_id = Column(UUID(as_uuid=True), ForeignKey("fichas_cliente.id"))
+    
+    # Resultados de IA (JSON estructurado)
+    q1_emociones = Column(JSON)
+    q2_personalidad = Column(JSON)
+    q3_topicos = Column(JSON)
+    q4_marcos_narrativos = Column(JSON)
+    q5_influenciadores = Column(JSON)
+    q6_oportunidades = Column(JSON)
+    q7_sentimiento = Column(JSON)
+    q8_temporal = Column(JSON)
+    q9_recomendaciones = Column(JSON)
+    q10_resumen = Column(JSON)
+4. Próximos Pasos Críticos
+Para finalizar la Fase 2, se deben ejecutar las siguientes tareas en orden:
+
+Implementar Autenticación (api/auth.py):
+
+Funciones para hashear contraseñas (bcrypt).
+
+Generación de tokens JWT (Access Token).
+
+Endpoints de Login y Registro.
+
+Sistema de Migraciones (Alembic):
+
+Inicializar Alembic para crear las tablas en PostgreSQL automáticamente.
+
+Ejecutar alembic upgrade head al iniciar el contenedor.
+
+Conectar Endpoints a BD:
+
+Modificar api/main.py para que los resultados de análisis (await analyzer.analyze()) se guarden en la tabla SocialMediaInsight antes de retornarse.
