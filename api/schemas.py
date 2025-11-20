@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Any, Union
+from datetime import datetime
 
 # --- Modelos Base ---
 
@@ -94,6 +95,94 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
     tenant_id: Any
+    
+    class Config:
+        from_attributes = True
+
+# =============================================================================
+# FICHAS CLIENTE (Brands)
+# =============================================================================
+
+class FichaClienteCreate(BaseModel):
+    """Datos para crear una nueva ficha de cliente/marca."""
+    brand_name: str
+    industry: Optional[str] = None
+    brand_archetype: Optional[str] = None
+    tone_of_voice: Optional[str] = None
+    target_audience: Optional[str] = None
+    competitors: Optional[List[str]] = None
+
+class FichaClienteResponse(BaseModel):
+    """Respuesta con datos de una ficha cliente."""
+    id: Any
+    tenant_id: Any
+    brand_name: str
+    industry: Optional[str] = None
+    brand_archetype: Optional[str] = None
+    tone_of_voice: Optional[str] = None
+    target_audience: Optional[str] = None
+    competitors: Optional[List[str]] = None
+    created_at: datetime
+    is_active: bool
+    
+    class Config:
+        from_attributes = True
+
+# =============================================================================
+# SOCIAL MEDIA POSTS
+# =============================================================================
+
+class SocialMediaPostCreate(BaseModel):
+    """Datos para crear/ingerir un post."""
+    ficha_cliente_id: Any
+    platform: str  # "instagram", "tiktok", "twitter", etc.
+    post_url: str
+    author_username: str
+    post_text: Optional[str] = None
+    posted_at: Optional[datetime] = None
+    likes_count: Optional[int] = 0
+    comments_count: Optional[int] = 0
+    shares_count: Optional[int] = 0
+    views_count: Optional[int] = 0
+
+class SocialMediaPostResponse(BaseModel):
+    """Respuesta con datos de un post."""
+    id: Any
+    ficha_cliente_id: Any
+    platform: str
+    post_url: str
+    author_username: str
+    post_text: Optional[str] = None
+    posted_at: Optional[datetime] = None
+    likes_count: Optional[int] = None
+    comments_count: Optional[int] = None
+    shares_count: Optional[int] = None
+    views_count: Optional[int] = None
+    ingested_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# =============================================================================
+# INSIGHTS (Analysis Results)
+# =============================================================================
+
+class InsightResponse(BaseModel):
+    """Respuesta con resultados de análisis guardados."""
+    id: Any
+    ficha_cliente_id: Any
+    analysis_type: str  # "Q1", "Q2", etc.
+    q1_emociones: Optional[Dict[str, Any]] = None
+    q2_personalidad: Optional[Dict[str, Any]] = None
+    q3_topicos: Optional[Dict[str, Any]] = None
+    q4_marcos_narrativos: Optional[Dict[str, Any]] = None
+    q5_influenciadores: Optional[Dict[str, Any]] = None
+    q6_oportunidades: Optional[Dict[str, Any]] = None
+    q7_sentimiento: Optional[Dict[str, Any]] = None
+    q8_temporal: Optional[Dict[str, Any]] = None
+    q9_recomendaciones: Optional[Dict[str, Any]] = None
+    q10_resumen: Optional[Dict[str, Any]] = None
+    analyzed_at: datetime
     
     class Config:
         from_attributes = True

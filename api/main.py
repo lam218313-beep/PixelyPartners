@@ -7,7 +7,7 @@ CONNECTED TO REAL ORCHESTRATOR MODULES - NOT A PLACEHOLDER.
 """
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
 from fastapi import FastAPI, Depends, HTTPException
@@ -191,18 +191,228 @@ def read_users_me(current_user: models.User = Depends(get_current_user)):
 
 
 # =============================================================================
+# FICHAS CLIENTE ENDPOINTS (Brands Management)
+# =============================================================================
+
+@app.post("/fichas_cliente", response_model=schemas.FichaClienteResponse, tags=["Fichas Cliente"])
+def create_ficha_cliente(
+    ficha: schemas.FichaClienteCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Crea una nueva ficha de cliente/marca para el tenant del usuario."""
+    new_ficha = models.FichaCliente(
+        tenant_id=current_user.tenant_id,
+        brand_name=ficha.brand_name,
+        industry=ficha.industry,
+        brand_archetype=ficha.brand_archetype,
+        tone_of_voice=ficha.tone_of_voice,
+        target_audience=ficha.target_audience,
+        competitors=ficha.competitors
+    )
+    db.add(new_ficha)
+    db.commit()
+    db.refresh(new_ficha)
+    return new_ficha
+
+
+@app.get("/fichas_cliente", response_model=List[schemas.FichaClienteResponse], tags=["Fichas Cliente"])
+def list_fichas_cliente(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Lista todas las fichas de cliente del tenant del usuario."""
+    fichas = db.query(models.FichaCliente).filter(
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).all()
+    return fichas
+
+
+@app.get("/fichas_cliente/{ficha_id}", response_model=schemas.FichaClienteResponse, tags=["Fichas Cliente"])
+def get_ficha_cliente(
+    ficha_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obtiene detalles de una ficha específica."""
+    ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.id == ficha_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Ficha not found")
+    return ficha
+
+
+@app.delete("/fichas_cliente/{ficha_id}", tags=["Fichas Cliente"])
+def delete_ficha_cliente(
+    ficha_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Elimina una ficha de cliente."""
+    ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.id == ficha_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Ficha not found")
+    
+    db.delete(ficha)
+    db.commit()
+    return {"message": "Ficha deleted successfully"}
+
+
+# =============================================================================
+# SOCIAL MEDIA POSTS ENDPOINTS (Data Ingestion)
+# =============================================================================
+
+@app.post("/social_media_posts", response_model=schemas.SocialMediaPostResponse, tags=["Social Media"])
+def create_social_media_post(
+    post: schemas.SocialMediaPostCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Ingesta un nuevo post de redes sociales asociado a una ficha cliente."""
+    # Verificar que la ficha pertenezca al tenant del usuario
+    ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.id == post.ficha_cliente_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Ficha cliente not found")
+    
+    new_post = models.SocialMediaPost(
+        ficha_cliente_id=post.ficha_cliente_id,
+        platform=post.platform,
+        post_url=post.post_url,
+        author_username=post.author_username,
+        post_text=post.post_text,
+        posted_at=post.posted_at,
+        likes_count=post.likes_count,
+        comments_count=post.comments_count,
+        shares_count=post.shares_count,
+        views_count=post.views_count
+    )
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
+
+
+@app.get("/social_media_posts", response_model=List[schemas.SocialMediaPostResponse], tags=["Social Media"])
+def list_social_media_posts(
+    ficha_cliente_id: Optional[str] = None,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Lista posts de redes sociales. Opcional: filtrar por ficha_cliente_id."""
+    query = db.query(models.SocialMediaPost).join(
+        models.FichaCliente,
+        models.SocialMediaPost.ficha_cliente_id == models.FichaCliente.id
+    ).filter(
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    )
+    
+    if ficha_cliente_id:
+        query = query.filter(models.SocialMediaPost.ficha_cliente_id == ficha_cliente_id)
+    
+    posts = query.all()
+    return posts
+
+
+# =============================================================================
+# INSIGHTS ENDPOINTS (Analysis Results)
+# =============================================================================
+
+@app.get("/insights", response_model=List[schemas.InsightResponse], tags=["Insights"])
+def get_insights(
+    ficha_cliente_id: Optional[str] = None,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obtiene insights/análisis guardados. Opcional: filtrar por ficha_cliente_id."""
+    query = db.query(models.SocialMediaInsight).join(
+        models.FichaCliente,
+        models.SocialMediaInsight.ficha_cliente_id == models.FichaCliente.id
+    ).filter(
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    )
+    
+    if ficha_cliente_id:
+        query = query.filter(models.SocialMediaInsight.ficha_cliente_id == ficha_cliente_id)
+    
+    insights = query.all()
+    return insights
+
+
+# =============================================================================
 # INDIVIDUAL MODULE ENDPOINTS (Q1-Q10)
 # =============================================================================
 
+async def _save_analysis_to_db(
+    db: Session,
+    ficha_cliente_id: str,
+    tenant_id: Any,
+    analysis_type: str,
+    field_name: str,
+    results: Dict[str, Any]
+):
+    """Helper para guardar resultados de análisis en BD."""
+    # Verificar que la ficha pertenezca al tenant
+    ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.id == ficha_cliente_id,
+        models.FichaCliente.tenant_id == tenant_id
+    ).first()
+    
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Ficha cliente not found")
+    
+    # Buscar o crear insight
+    insight = db.query(models.SocialMediaInsight).filter(
+        models.SocialMediaInsight.ficha_cliente_id == ficha_cliente_id
+    ).first()
+    
+    if insight:
+        setattr(insight, field_name, results)
+        insight.analysis_type = analysis_type
+    else:
+        insight = models.SocialMediaInsight(
+            ficha_cliente_id=ficha_cliente_id,
+            analysis_type=analysis_type,
+            **{field_name: results}
+        )
+        db.add(insight)
+    
+    db.commit()
+    db.refresh(insight)
+    return insight
+
+
 @app.post("/analyze/q1", tags=["Modules"], response_model=schemas.Q1Response)
-async def analyze_q1(client: AsyncOpenAI = Depends(get_openai_client)):
-    """Execute Q1 - Análisis de Emociones."""
+async def analyze_q1(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Execute Q1 - Análisis de Emociones y guardar en BD."""
     try:
         logger.info("Starting Q1 - Emociones analysis")
         config = get_config()
         analyzer = Q1Emociones(client, config)
         result = await analyzer.analyze()
-        logger.info("✅ Q1 completed successfully")
+        
+        # Guardar en BD
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q1", "q1_emociones", result["results"]
+        )
+        
+        logger.info("✅ Q1 completed and saved successfully")
         return result
     except Exception as e:
         logger.error(f"❌ Error Q1: {str(e)}", exc_info=True)
@@ -210,13 +420,24 @@ async def analyze_q1(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q2", tags=["Modules"], response_model=schemas.Q2Response)
-async def analyze_q2(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q2(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q2 - Personalidad de Marca (Aaker)."""
     try:
         logger.info("Starting Q2 - Personalidad analysis")
         config = get_config()
         analyzer = Q2Personalidad(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q2", "q2_personalidad", result["results"]
+        )
+        
         logger.info("✅ Q2 completed successfully")
         return result
     except Exception as e:
@@ -225,13 +446,24 @@ async def analyze_q2(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q3", tags=["Modules"], response_model=schemas.Q3Response)
-async def analyze_q3(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q3(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q3 - Análisis de Tópicos."""
     try:
         logger.info("Starting Q3 - Tópicos analysis")
         config = get_config()
         analyzer = Q3Topicos(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q3", "q3_topicos", result["results"]
+        )
+        
         logger.info("✅ Q3 completed successfully")
         return result
     except Exception as e:
@@ -240,13 +472,24 @@ async def analyze_q3(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q4", tags=["Modules"], response_model=schemas.Q4Response)
-async def analyze_q4(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q4(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q4 - Análisis de Marcos Narrativos."""
     try:
         logger.info("Starting Q4 - Marcos Narrativos analysis")
         config = get_config()
         analyzer = Q4MarcosNarrativos(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q4", "q4_marcos_narrativos", result["results"]
+        )
+        
         logger.info("✅ Q4 completed successfully")
         return result
     except Exception as e:
@@ -255,13 +498,24 @@ async def analyze_q4(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q5", tags=["Modules"], response_model=schemas.Q5Response)
-async def analyze_q5(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q5(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q5 - Análisis de Influenciadores."""
     try:
         logger.info("Starting Q5 - Influenciadores analysis")
         config = get_config()
         analyzer = Q5Influenciadores(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q5", "q5_influenciadores", result["results"]
+        )
+        
         logger.info("✅ Q5 completed successfully")
         return result
     except Exception as e:
@@ -270,13 +524,24 @@ async def analyze_q5(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q6", tags=["Modules"], response_model=schemas.Q6Response)
-async def analyze_q6(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q6(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q6 - Análisis de Oportunidades."""
     try:
         logger.info("Starting Q6 - Oportunidades analysis")
         config = get_config()
         analyzer = Q6Oportunidades(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q6", "q6_oportunidades", result["results"]
+        )
+        
         logger.info("✅ Q6 completed successfully")
         return result
     except Exception as e:
@@ -285,13 +550,24 @@ async def analyze_q6(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q7", tags=["Modules"], response_model=schemas.Q7Response)
-async def analyze_q7(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q7(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q7 - Análisis de Sentimiento Detallado."""
     try:
         logger.info("Starting Q7 - Sentimiento Detallado analysis")
         config = get_config()
         analyzer = Q7SentimientoDetallado(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q7", "q7_sentimiento", result["results"]
+        )
+        
         logger.info("✅ Q7 completed successfully")
         return result
     except Exception as e:
@@ -300,13 +576,24 @@ async def analyze_q7(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q8", tags=["Modules"], response_model=schemas.Q8Response)
-async def analyze_q8(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q8(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q8 - Análisis Temporal."""
     try:
         logger.info("Starting Q8 - Temporal analysis")
         config = get_config()
         analyzer = Q8Temporal(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q8", "q8_temporal", result["results"]
+        )
+        
         logger.info("✅ Q8 completed successfully")
         return result
     except Exception as e:
@@ -315,13 +602,24 @@ async def analyze_q8(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q9", tags=["Modules"], response_model=schemas.Q9Response)
-async def analyze_q9(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q9(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q9 - Análisis de Recomendaciones."""
     try:
         logger.info("Starting Q9 - Recomendaciones analysis")
         config = get_config()
         analyzer = Q9Recomendaciones(client, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q9", "q9_recomendaciones", result["results"]
+        )
+        
         logger.info("✅ Q9 completed successfully")
         return result
     except Exception as e:
@@ -330,7 +628,12 @@ async def analyze_q9(client: AsyncOpenAI = Depends(get_openai_client)):
 
 
 @app.post("/analyze/q10", tags=["Modules"], response_model=schemas.Q10Response)
-async def analyze_q10(client: AsyncOpenAI = Depends(get_openai_client)):
+async def analyze_q10(
+    ficha_cliente_id: str,
+    client: AsyncOpenAI = Depends(get_openai_client),
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Execute Q10 - Resumen Ejecutivo."""
     try:
         logger.info("Starting Q10 - Resumen Ejecutivo analysis")
@@ -338,6 +641,12 @@ async def analyze_q10(client: AsyncOpenAI = Depends(get_openai_client)):
         # Q10 no usa cliente OpenAI, pasamos None
         analyzer = Q10ResumenEjecutivo(None, config)
         result = await analyzer.analyze()
+        
+        await _save_analysis_to_db(
+            db, ficha_cliente_id, current_user.tenant_id,
+            "Q10", "q10_resumen", result["results"]
+        )
+        
         logger.info("✅ Q10 completed successfully")
         return result
     except Exception as e:
