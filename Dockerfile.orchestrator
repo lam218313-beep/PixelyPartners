@@ -5,10 +5,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including cron
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
@@ -24,5 +25,15 @@ RUN mkdir -p /app/orchestrator/outputs
 # Set working directory
 WORKDIR /app
 
-# Default command: run analysis
-CMD ["python", "orchestrator/analyze.py"]
+# Copy entrypoint script
+COPY orchestrator/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Setup cron job (runs at 6:00 AM daily)
+RUN echo "0 6 * * * cd /app && /usr/local/bin/python -m orchestrator >> /app/orchestrator/outputs/cron.log 2>&1" > /etc/cron.d/orchestrator-cron && \
+    chmod 0644 /etc/cron.d/orchestrator-cron && \
+    crontab /etc/cron.d/orchestrator-cron && \
+    touch /app/orchestrator/outputs/cron.log
+
+# Use entrypoint script that starts cron
+CMD ["/app/entrypoint.sh"]

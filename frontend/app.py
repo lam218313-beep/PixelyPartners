@@ -88,6 +88,48 @@ elif page == "Dashboard":
 elif page == "Análisis de Redes":
     st.title("🔍 Análisis de Redes Sociales")
     
+    # Display last update timestamp (if available)
+    try:
+        import requests
+        from datetime import datetime
+        
+        # TODO: Replace with actual ficha_cliente_id from session/auth
+        # For now, this is a placeholder - will be populated after authentication is implemented
+        ficha_cliente_id = os.environ.get("FICHA_CLIENTE_ID", "")
+        api_base_url = os.environ.get("API_BASE_URL", "http://localhost:8000")
+        
+        if ficha_cliente_id:
+            # Get ficha data to check last_analysis_timestamp
+            response = requests.get(
+                f"{api_base_url}/fichas_cliente/{ficha_cliente_id}",
+                timeout=5
+            )
+            
+            if response.status_code == 200:
+                ficha_data = response.json()
+                last_timestamp_str = ficha_data.get("last_analysis_timestamp")
+                
+                if last_timestamp_str:
+                    # Parse and calculate time difference
+                    last_dt = datetime.fromisoformat(last_timestamp_str.replace('Z', '+00:00'))
+                    time_diff = datetime.now(last_dt.tzinfo) - last_dt
+                    hours_ago = int(time_diff.total_seconds() / 3600)
+                    
+                    # Display timestamp with color coding
+                    if hours_ago < 24:
+                        st.success(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+                    elif hours_ago < 48:
+                        st.info(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+                    else:
+                        days_ago = int(hours_ago / 24)
+                        st.warning(f"📅 **Última actualización:** hace {days_ago} días ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+                else:
+                    st.warning("⏳ **Esperando primer análisis automático** (se ejecuta cada 24h a las 6:00 AM)")
+    
+    except Exception as e:
+        # Silently fail if API is not available (dev mode)
+        st.caption("ℹ️ Modo desarrollo: Leyendo datos locales")
+    
     # Horizontal tabs for analyses
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
         "😢 Emociones",

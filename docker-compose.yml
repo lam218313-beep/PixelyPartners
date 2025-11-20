@@ -15,12 +15,20 @@ services:
       - ORCHESTRATOR_USER=${ORCHESTRATOR_USER}
       - ORCHESTRATOR_PASSWORD=${ORCHESTRATOR_PASSWORD}
       - PIXELY_OUTPUTS_DIR=/app/orchestrator/outputs
+      # NEW: Variables for incremental analysis and Google Sheets
+      - API_BASE_URL=http://api:8000
+      - FICHA_CLIENTE_ID=${FICHA_CLIENTE_ID}
+      - GOOGLE_SHEETS_SPREADSHEET_ID=${GOOGLE_SHEETS_SPREADSHEET_ID}
+      - GOOGLE_CREDENTIALS_PATH=/app/credentials.json
     volumes:
       - ./orchestrator/outputs:/app/orchestrator/outputs
       - ./orchestrator:/app/orchestrator
+      - ./credentials.json:/app/credentials.json:ro  # Mount Google credentials (read-only)
     networks:
       - pixely_network
-    command: python -m orchestrator all
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   # ============================================

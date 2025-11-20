@@ -6,6 +6,9 @@ venv/
 env/
 ENV/
 
+# Google Credentials (NEVER commit real credentials)
+credentials.json
+
 # Python
 __pycache__/
 *.py[cod]

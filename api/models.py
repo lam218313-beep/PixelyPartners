@@ -80,6 +80,7 @@ class FichaCliente(Base):
     competitors = Column(JSON)  # Lista de competidores
     created_at = Column(DateTime, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
+    last_analysis_timestamp = Column(DateTime, nullable=True)  # Timestamp de última ejecución del orchestrator
     
     # Foreign Key
     tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id"), nullable=False)

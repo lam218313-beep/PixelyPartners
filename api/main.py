@@ -265,6 +265,48 @@ def delete_ficha_cliente(
     return {"message": "Ficha deleted successfully"}
 
 
+@app.patch("/fichas_cliente/{ficha_id}/last_analysis_timestamp", tags=["Fichas Cliente"])
+def update_last_analysis_timestamp(
+    ficha_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Actualiza el timestamp de la última ejecución del orchestrator.
+    Solo puede ser llamado por el usuario orchestrator (admin).
+    """
+    import os
+    
+    # Verificar que solo el orchestrator puede actualizar este campo
+    orchestrator_email = os.environ.get("ORCHESTRATOR_USER", "admin")
+    if current_user.email != orchestrator_email and current_user.role != "admin":
+        raise HTTPException(
+            status_code=403, 
+            detail="Only orchestrator or admin can update last_analysis_timestamp"
+        )
+    
+    # Buscar la ficha
+    ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.id == ficha_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not ficha:
+        raise HTTPException(status_code=404, detail="Ficha not found")
+    
+    # Actualizar timestamp
+    from datetime import datetime
+    ficha.last_analysis_timestamp = datetime.utcnow()
+    db.commit()
+    db.refresh(ficha)
+    
+    return {
+        "message": "last_analysis_timestamp updated successfully",
+        "last_analysis_timestamp": ficha.last_analysis_timestamp.isoformat(),
+        "ficha_id": str(ficha.id)
+    }
+
+
 # =============================================================================
 # SOCIAL MEDIA POSTS ENDPOINTS (Data Ingestion)
 # =============================================================================
