@@ -8,16 +8,19 @@ CONNECTED TO REAL ORCHESTRATOR MODULES - NOT A PLACEHOLDER.
 
 import logging
 from typing import Dict, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from openai import AsyncOpenAI
 from contextlib import asynccontextmanager
 
 # Importar dependencias y esquemas
-from .dependencies import get_openai_client, get_config
-from . import schemas
+from .dependencies import get_openai_client, get_config, get_current_user
+from . import schemas, models, security
+from .database import get_db
 
 # --- IMPORTAR TUS MÓDULOS REALES ---
 from orchestrator.analysis_modules.q1_emociones import Q1Emociones
@@ -116,6 +119,75 @@ async def health_check():
         ],
         "timestamp": datetime.utcnow().isoformat()
     }
+
+
+# =============================================================================
+# ENDPOINTS DE AUTENTICACIÓN
+# =============================================================================
+
+@app.post("/register", response_model=schemas.UserResponse, tags=["Authentication"])
+def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    """
+    Registra un nuevo usuario y su organización (Tenant).
+    """
+    # 1. Verificar si el usuario ya existe
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # 2. Verificar o Crear Tenant (Organización)
+    # Nota: En un SaaS real, esto validaría unicidad. Aquí simplificamos.
+    db_tenant = db.query(models.Tenant).filter(models.Tenant.name == user.tenant_name).first()
+    if not db_tenant:
+        db_tenant = models.Tenant(name=user.tenant_name)
+        db.add(db_tenant)
+        db.commit()
+        db.refresh(db_tenant)
+    
+    # 3. Crear Usuario
+    hashed_password = security.get_password_hash(user.password)
+    new_user = models.User(
+        email=user.email,
+        hashed_password=hashed_password,
+        full_name=user.full_name,
+        tenant_id=db_tenant.id,
+        role="admin"  # El primer usuario es admin
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+
+@app.post("/token", response_model=schemas.Token, tags=["Authentication"])
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    Endpoint de Login (OAuth2 standard).
+    Recibe username (email) y password, devuelve Access Token.
+    """
+    # 1. Buscar usuario
+    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    
+    # 2. Validar contraseña
+    if not user or not security.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # 3. Generar Token
+    access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users/me", response_model=schemas.UserResponse, tags=["Authentication"])
+def read_users_me(current_user: models.User = Depends(get_current_user)):
+    """Retorna la información del usuario actualmente logueado."""
+    return current_user
 
 
 # =============================================================================

@@ -67,3 +67,33 @@ class Q10Response(BaseModel):
     metadata: Metadata
     results: Dict[str, Any] = Field(..., description="Debe contener 'alerta_prioritaria', 'hallazgos_clave', 'kpis_principales'")
     errors: List[str] = []
+
+# =============================================================================
+# AUTENTICACIÓN Y USUARIOS
+# =============================================================================
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+class UserCreate(BaseModel):
+    """Datos para registrar un nuevo usuario y su organización."""
+    email: str
+    password: str
+    full_name: str
+    tenant_name: str  # Nombre de la agencia/empresa
+
+class UserResponse(BaseModel):
+    """Datos públicos del usuario devueltos por la API."""
+    id: Any
+    email: str
+    full_name: Optional[str] = None
+    role: str
+    is_active: bool
+    tenant_id: Any
+    
+    class Config:
+        from_attributes = True
