@@ -45,22 +45,33 @@ services:
       - orchestrator
 
   # ============================================
-  # COMMENTED OUT: API, Database, Nginx, Certbot
+  # API: FastAPI Analytics Server
+  # ============================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.orchestrator  # Usamos el mismo dockerfile del orquestador por ahora, tiene python+librerias
+    container_name: pixely_api
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - PIXELY_OUTPUTS_DIR=/app/orchestrator/outputs
+    volumes:
+      - ./orchestrator:/app/orchestrator
+      - ./api:/app/api
+      - ./orchestrator/outputs:/app/orchestrator/outputs
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - pixely_network
+    depends_on:
+      - orchestrator
+
+  # ============================================
+  # COMMENTED OUT: Database, Nginx, Certbot
   # Activate these when implementing persistence and security layers
   # ============================================
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.api
-  #   container_name: pixely_api
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - pixely_network
 
   # db:
   #   image: postgres:15-alpine

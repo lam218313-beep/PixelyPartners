@@ -3,27 +3,36 @@ Pixely Partners API - FastAPI Server
 
 Main entry point for the professional web API.
 Exposes the 10 analysis modules as HTTP endpoints.
+CONNECTED TO REAL ORCHESTRATOR MODULES - NOT A PLACEHOLDER.
 """
 
-import time
 import logging
+from typing import Dict, Any
 from datetime import datetime
-from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from openai import AsyncOpenAI
 from contextlib import asynccontextmanager
 
+# Importar dependencias y esquemas
+from .dependencies import get_openai_client, get_config
 from . import schemas
-from .dependencies import (
-    get_settings,
-    get_openai_client,
-    get_settings_dependency,
-    OpenAIClientManager,
-    Settings
-)
 
+# --- IMPORTAR TUS MÓDULOS REALES ---
+from orchestrator.analysis_modules.q1_emociones import Q1Emociones
+from orchestrator.analysis_modules.q2_personalidad import Q2Personalidad
+from orchestrator.analysis_modules.q3_topicos import Q3Topicos
+from orchestrator.analysis_modules.q4_marcos_narrativos import Q4MarcosNarrativos
+from orchestrator.analysis_modules.q5_influenciadores import Q5Influenciadores
+from orchestrator.analysis_modules.q6_oportunidades import Q6Oportunidades
+from orchestrator.analysis_modules.q7_sentimiento_detallado import Q7SentimientoDetallado
+from orchestrator.analysis_modules.q8_temporal import Q8Temporal
+from orchestrator.analysis_modules.q9_recomendaciones import Q9Recomendaciones
+from orchestrator.analysis_modules.q10_resumen_ejecutivo import Q10ResumenEjecutivo
+
+# Configurar Logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -40,17 +49,17 @@ async def lifespan(app: FastAPI):
     Shutdown: Clean up connections
     """
     # STARTUP
-    logger.info("🚀 Pixely Partners API Starting...")
-    settings = get_settings()
-    logger.info(f"API Version: {settings.API_VERSION}")
-    logger.info(f"OpenAI Model: {settings.OPENAI_MODEL}")
-    logger.info(f"Available Modules: {', '.join(settings.AVAILABLE_MODULES)}")
+    logger.info("🚀 Pixely Partners API Starting (PRODUCTION MODE - CONNECTED)...")
+    config = get_config()
+    logger.info(f"API Version: 1.0.0")
+    logger.info(f"OpenAI Model: {config['openai_model']}")
+    logger.info(f"Orchestrator Outputs: {config['outputs_dir']}")
+    logger.info("✅ All 10 Q modules connected")
     
     yield
     
     # SHUTDOWN
     logger.info("🛑 Pixely Partners API Shutting down...")
-    await OpenAIClientManager.close_client()
     logger.info("API Shutdown complete")
 
 
@@ -58,12 +67,10 @@ async def lifespan(app: FastAPI):
 # FASTAPI APPLICATION
 # =============================================================================
 
-settings = get_settings()
-
 app = FastAPI(
-    title=settings.API_TITLE,
-    description=settings.API_DESCRIPTION,
-    version=settings.API_VERSION,
+    title="Pixely Partners Analytics API",
+    description="API conectada al motor de análisis real (Q1-Q10)",
+    version="2.0.0",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -86,300 +93,327 @@ app.add_middleware(
 
 @app.get("/", tags=["Health"])
 async def root():
-    """
-    Root endpoint - minimal health check.
-    
-    Returns:
-        Welcome message
-    """
+    """Root endpoint - minimal health check."""
     return {
-        "message": "Pixely Partners API",
-        "version": settings.API_VERSION,
+        "message": "Pixely Partners API v2",
+        "mode": "production_connected",
         "docs": "/docs"
     }
 
 
-@app.get("/health", tags=["Health"], response_model=schemas.HealthCheckResponse)
+@app.get("/health", tags=["Health"])
 async def health_check():
-    """
-    Detailed health check endpoint.
-    
-    Returns:
-        HealthCheckResponse with status and available modules
-    """
-    return schemas.HealthCheckResponse(
-        status="healthy",
-        version=settings.API_VERSION,
-        modules_available=settings.AVAILABLE_MODULES,
-        timestamp=datetime.utcnow().isoformat()
-    )
-
-
-@app.get("/status", tags=["Health"])
-async def get_status(settings: Settings = Depends(get_settings_dependency)):
-    """
-    Get API configuration and status.
-    
-    Returns:
-        Configuration dictionary
-    """
+    """Detailed health check endpoint."""
+    config = get_config()
     return {
-        "status": "running",
-        "config": settings.to_dict(),
+        "status": "healthy",
+        "version": "1.0.0",
+        "mode": "production_connected",
+        "modules_available": [
+            "Q1-Emociones", "Q2-Personalidad", "Q3-Tópicos", 
+            "Q4-MarcosNarrativos", "Q5-Influenciadores", "Q6-Oportunidades",
+            "Q7-SentimientoDetallado", "Q8-Temporal", "Q9-Recomendaciones", "Q10-ResumenEjecutivo"
+        ],
         "timestamp": datetime.utcnow().isoformat()
     }
 
 
 # =============================================================================
-# ANALYSIS ENDPOINTS
+# INDIVIDUAL MODULE ENDPOINTS (Q1-Q10)
 # =============================================================================
 
-@app.post("/analyze", tags=["Analysis"], response_model=schemas.AnalysisResult)
-async def analyze(
-    request: schemas.AnalysisRequest,
-    background_tasks: BackgroundTasks,
-    openai_client = Depends(get_openai_client)
-) -> schemas.AnalysisResult:
+@app.post("/analyze/q1", tags=["Modules"], response_model=schemas.Q1Response)
+async def analyze_q1(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q1 - Análisis de Emociones."""
+    try:
+        logger.info("Starting Q1 - Emociones analysis")
+        config = get_config()
+        analyzer = Q1Emociones(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q1 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q1: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q1 Error: {str(e)}")
+
+
+@app.post("/analyze/q2", tags=["Modules"], response_model=schemas.Q2Response)
+async def analyze_q2(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q2 - Personalidad de Marca (Aaker)."""
+    try:
+        logger.info("Starting Q2 - Personalidad analysis")
+        config = get_config()
+        analyzer = Q2Personalidad(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q2 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q2: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q2 Error: {str(e)}")
+
+
+@app.post("/analyze/q3", tags=["Modules"], response_model=schemas.Q3Response)
+async def analyze_q3(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q3 - Análisis de Tópicos."""
+    try:
+        logger.info("Starting Q3 - Tópicos analysis")
+        config = get_config()
+        analyzer = Q3Topicos(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q3 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q3: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q3 Error: {str(e)}")
+
+
+@app.post("/analyze/q4", tags=["Modules"], response_model=schemas.Q4Response)
+async def analyze_q4(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q4 - Análisis de Marcos Narrativos."""
+    try:
+        logger.info("Starting Q4 - Marcos Narrativos analysis")
+        config = get_config()
+        analyzer = Q4MarcosNarrativos(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q4 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q4: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q4 Error: {str(e)}")
+
+
+@app.post("/analyze/q5", tags=["Modules"], response_model=schemas.Q5Response)
+async def analyze_q5(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q5 - Análisis de Influenciadores."""
+    try:
+        logger.info("Starting Q5 - Influenciadores analysis")
+        config = get_config()
+        analyzer = Q5Influenciadores(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q5 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q5: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q5 Error: {str(e)}")
+
+
+@app.post("/analyze/q6", tags=["Modules"], response_model=schemas.Q6Response)
+async def analyze_q6(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q6 - Análisis de Oportunidades."""
+    try:
+        logger.info("Starting Q6 - Oportunidades analysis")
+        config = get_config()
+        analyzer = Q6Oportunidades(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q6 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q6: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q6 Error: {str(e)}")
+
+
+@app.post("/analyze/q7", tags=["Modules"], response_model=schemas.Q7Response)
+async def analyze_q7(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q7 - Análisis de Sentimiento Detallado."""
+    try:
+        logger.info("Starting Q7 - Sentimiento Detallado analysis")
+        config = get_config()
+        analyzer = Q7SentimientoDetallado(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q7 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q7: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q7 Error: {str(e)}")
+
+
+@app.post("/analyze/q8", tags=["Modules"], response_model=schemas.Q8Response)
+async def analyze_q8(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q8 - Análisis Temporal."""
+    try:
+        logger.info("Starting Q8 - Temporal analysis")
+        config = get_config()
+        analyzer = Q8Temporal(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q8 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q8: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q8 Error: {str(e)}")
+
+
+@app.post("/analyze/q9", tags=["Modules"], response_model=schemas.Q9Response)
+async def analyze_q9(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q9 - Análisis de Recomendaciones."""
+    try:
+        logger.info("Starting Q9 - Recomendaciones analysis")
+        config = get_config()
+        analyzer = Q9Recomendaciones(client, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q9 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q9: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q9 Error: {str(e)}")
+
+
+@app.post("/analyze/q10", tags=["Modules"], response_model=schemas.Q10Response)
+async def analyze_q10(client: AsyncOpenAI = Depends(get_openai_client)):
+    """Execute Q10 - Resumen Ejecutivo."""
+    try:
+        logger.info("Starting Q10 - Resumen Ejecutivo analysis")
+        config = get_config()
+        # Q10 no usa cliente OpenAI, pasamos None
+        analyzer = Q10ResumenEjecutivo(None, config)
+        result = await analyzer.analyze()
+        logger.info("✅ Q10 completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error Q10: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Q10 Error: {str(e)}")
+
+
+# =============================================================================
+# PIPELINE ENDPOINT - Execute all modules in sequence
+# =============================================================================
+
+@app.post("/pipeline", tags=["Pipeline"])
+async def run_full_pipeline(client: AsyncOpenAI = Depends(get_openai_client)):
     """
-    Execute a single analysis module.
-    
-    Args:
-        request: AnalysisRequest with module code and client info
-        background_tasks: FastAPI background tasks queue
-        openai_client: Injected OpenAI AsyncOpenAI client
+    Execute the complete analysis pipeline (all 10 modules in sequence).
     
     Returns:
-        AnalysisResult with module output
-    
-    Raises:
-        HTTPException: If module execution fails
+        Dict with results from all modules
     """
-    start_time = time.time()
+    logger.info("🚀 Starting full pipeline (Q1-Q10)")
     
+    config = get_config()
+    results: Dict[str, Any] = {}
+    errors: Dict[str, str] = {}
+    successful = 0
+    failed = 0
+    
+    # Q1
     try:
-        logger.info(f"Received analysis request: module={request.module}, client={request.client_name}")
-        
-        # TODO: Call orchestrator module
-        # For now, return mock response
-        execution_time = (time.time() - start_time) * 1000
-        
-        return schemas.AnalysisResult(
-            module=request.module,
-            version=1,
-            status="success",
-            data={"message": f"Module {request.module} execution placeholder"},
-            errors=[],
-            execution_time_ms=execution_time
-        )
-    
+        logger.info("[1/10] Running Q1...")
+        analyzer = Q1Emociones(client, config)
+        results["q1"] = await analyzer.analyze()
+        successful += 1
     except Exception as e:
-        logger.error(f"Error in analyze endpoint: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Analysis failed: {str(e)}"
-        )
-
-
-@app.post("/pipeline", tags=["Analysis"], response_model=schemas.PipelineResult)
-async def run_pipeline(
-    client_name: str,
-    background_tasks: BackgroundTasks,
-    openai_client = Depends(get_openai_client)
-) -> schemas.PipelineResult:
-    """
-    Execute the complete analysis pipeline (all 10 modules).
+        logger.error(f"Q1 failed: {e}")
+        errors["q1"] = str(e)
+        failed += 1
     
-    Args:
-        client_name: Name of the client/brand to analyze
-        background_tasks: FastAPI background tasks queue
-        openai_client: Injected OpenAI AsyncOpenAI client
-    
-    Returns:
-        PipelineResult with results from all modules
-    
-    Raises:
-        HTTPException: If pipeline execution fails
-    """
-    start_time = time.time()
-    
+    # Q2
     try:
-        logger.info(f"Received pipeline request: client={client_name}")
-        
-        # TODO: Call orchestrator with "all" modules
-        # For now, return mock response
-        execution_time = (time.time() - start_time) * 1000
-        
-        return schemas.PipelineResult(
-            status="success",
-            total_modules=10,
-            successful_modules=10,
-            failed_modules=0,
-            results={},  # TODO: Populate with actual results
-            total_execution_time_ms=execution_time
-        )
-    
+        logger.info("[2/10] Running Q2...")
+        analyzer = Q2Personalidad(client, config)
+        results["q2"] = await analyzer.analyze()
+        successful += 1
     except Exception as e:
-        logger.error(f"Error in pipeline endpoint: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Pipeline execution failed: {str(e)}"
-        )
-
-
-# =============================================================================
-# MODULE-SPECIFIC ENDPOINTS (Q1-Q10)
-# =============================================================================
-
-@app.get("/q1/emociones", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q1_emociones():
-    """Get Q1 Emotions Analysis result."""
-    # TODO: Load from output JSON or re-run if needed
-    return schemas.AnalysisResult(
-        module="q1",
-        version=1,
-        status="success",
-        data={"placeholder": "Q1 Emotions Analysis"},
-        errors=[]
-    )
-
-
-@app.get("/q2/personalidad", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q2_personalidad():
-    """Get Q2 Brand Personality (Aaker) result."""
-    # TODO: Load from output JSON or re-run if needed
-    return schemas.AnalysisResult(
-        module="q2",
-        version=1,
-        status="success",
-        data={"placeholder": "Q2 Brand Personality"},
-        errors=[]
-    )
-
-
-@app.get("/q3/temas", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q3_temas():
-    """Get Q3 Topics Analysis result."""
-    return schemas.AnalysisResult(
-        module="q3",
-        version=1,
-        status="success",
-        data={"placeholder": "Q3 Topics Analysis"},
-        errors=[]
-    )
-
-
-@app.get("/q4/marcos", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q4_marcos():
-    """Get Q4 Narrative Frameworks result."""
-    return schemas.AnalysisResult(
-        module="q4",
-        version=1,
-        status="success",
-        data={"placeholder": "Q4 Narrative Frameworks"},
-        errors=[]
-    )
-
-
-@app.get("/q5/influenciadores", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q5_influenciadores():
-    """Get Q5 Influencers Analysis result."""
-    return schemas.AnalysisResult(
-        module="q5",
-        version=1,
-        status="success",
-        data={"placeholder": "Q5 Influencers Analysis"},
-        errors=[]
-    )
-
-
-@app.get("/q6/oportunidades", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q6_oportunidades():
-    """Get Q6 Opportunities Analysis result."""
-    return schemas.AnalysisResult(
-        module="q6",
-        version=1,
-        status="success",
-        data={"placeholder": "Q6 Opportunities Analysis"},
-        errors=[]
-    )
-
-
-@app.get("/q7/sentimiento", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q7_sentimiento():
-    """Get Q7 Detailed Sentiment Analysis result."""
-    return schemas.AnalysisResult(
-        module="q7",
-        version=1,
-        status="success",
-        data={"placeholder": "Q7 Detailed Sentiment"},
-        errors=[]
-    )
-
-
-@app.get("/q8/temporal", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q8_temporal():
-    """Get Q8 Temporal Analysis result."""
-    return schemas.AnalysisResult(
-        module="q8",
-        version=1,
-        status="success",
-        data={"placeholder": "Q8 Temporal Analysis"},
-        errors=[]
-    )
-
-
-@app.get("/q9/recomendaciones", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q9_recomendaciones():
-    """Get Q9 Recommendations result."""
-    return schemas.AnalysisResult(
-        module="q9",
-        version=1,
-        status="success",
-        data={"placeholder": "Q9 Recommendations"},
-        errors=[]
-    )
-
-
-@app.get("/q10/resumen", tags=["Modules"], response_model=schemas.AnalysisResult)
-async def get_q10_resumen():
-    """Get Q10 Executive Summary result."""
-    return schemas.AnalysisResult(
-        module="q10",
-        version=1,
-        status="success",
-        data={"placeholder": "Q10 Executive Summary"},
-        errors=[]
-    )
-
-
-# =============================================================================
-# ERROR HANDLING
-# =============================================================================
-
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
-    """Custom HTTP exception handler."""
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "error": exc.detail,
-            "status_code": exc.status_code
-        },
-    )
-
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    """Catch-all exception handler."""
-    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={
-            "error": "Internal server error",
-            "detail": str(exc) if settings.DEBUG else "An error occurred",
-            "status_code": 500
-        },
-    )
+        logger.error(f"Q2 failed: {e}")
+        errors["q2"] = str(e)
+        failed += 1
+    
+    # Q3
+    try:
+        logger.info("[3/10] Running Q3...")
+        analyzer = Q3Topicos(client, config)
+        results["q3"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q3 failed: {e}")
+        errors["q3"] = str(e)
+        failed += 1
+    
+    # Q4
+    try:
+        logger.info("[4/10] Running Q4...")
+        analyzer = Q4MarcosNarrativos(client, config)
+        results["q4"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q4 failed: {e}")
+        errors["q4"] = str(e)
+        failed += 1
+    
+    # Q5
+    try:
+        logger.info("[5/10] Running Q5...")
+        analyzer = Q5Influenciadores(client, config)
+        results["q5"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q5 failed: {e}")
+        errors["q5"] = str(e)
+        failed += 1
+    
+    # Q6
+    try:
+        logger.info("[6/10] Running Q6...")
+        analyzer = Q6Oportunidades(client, config)
+        results["q6"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q6 failed: {e}")
+        errors["q6"] = str(e)
+        failed += 1
+    
+    # Q7
+    try:
+        logger.info("[7/10] Running Q7...")
+        analyzer = Q7SentimientoDetallado(client, config)
+        results["q7"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q7 failed: {e}")
+        errors["q7"] = str(e)
+        failed += 1
+    
+    # Q8
+    try:
+        logger.info("[8/10] Running Q8...")
+        analyzer = Q8Temporal(client, config)
+        results["q8"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q8 failed: {e}")
+        errors["q8"] = str(e)
+        failed += 1
+    
+    # Q9
+    try:
+        logger.info("[9/10] Running Q9...")
+        analyzer = Q9Recomendaciones(client, config)
+        results["q9"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q9 failed: {e}")
+        errors["q9"] = str(e)
+        failed += 1
+    
+    # Q10
+    try:
+        logger.info("[10/10] Running Q10...")
+        analyzer = Q10ResumenEjecutivo(None, config)
+        results["q10"] = await analyzer.analyze()
+        successful += 1
+    except Exception as e:
+        logger.error(f"Q10 failed: {e}")
+        errors["q10"] = str(e)
+        failed += 1
+    
+    logger.info(f"✅ Pipeline complete: {successful} successful, {failed} failed")
+    
+    return {
+        "status": "success" if failed == 0 else "partial",
+        "total_modules": 10,
+        "successful_modules": successful,
+        "failed_modules": failed,
+        "results": results,
+        "errors": errors if errors else None,
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 
 # =============================================================================
@@ -388,14 +422,20 @@ async def general_exception_handler(request, exc):
 
 if __name__ == "__main__":
     import uvicorn
+    import os
     
-    logger.info(f"Starting Pixely Partners API on {settings.HOST}:{settings.PORT}")
+    host = os.getenv("API_HOST", "0.0.0.0")
+    port = int(os.getenv("API_PORT", "8000"))
+    workers = int(os.getenv("API_WORKERS", "1"))
+    debug = os.getenv("DEBUG", "false").lower() == "true"
+    
+    logger.info(f"Starting Pixely Partners API on {host}:{port}")
+    logger.info("🚀 CONNECTED TO REAL ORCHESTRATOR MODULES")
     
     uvicorn.run(
         "api.main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        workers=settings.WORKERS,
-        reload=settings.DEBUG,
+        host=host,
+        port=port,
+        reload=debug,
         log_level="info"
     )
