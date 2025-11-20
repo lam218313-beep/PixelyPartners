@@ -277,9 +277,8 @@ Return ONLY valid JSON:
         try:
             logger.info("Starting Q4 Narrative Frames Analysis")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
             
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
             
@@ -304,17 +303,17 @@ Return ONLY valid JSON:
             posts_by_date = {}  # For temporal evolution
             
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url:
-                    if post_url not in comments_by_post:
-                        comments_by_post[post_url] = []
-                    comments_by_post[post_url].append(comment.get("comment_text", ""))
+                link = comment.get("link")
+                if link:
+                    if link not in comments_by_post:
+                        comments_by_post[link] = []
+                    comments_by_post[link].append(comment.get("comment_text", ""))
             
             # Group posts by date for temporal analysis
             for post in posts:
-                post_url = post.get("post_url")
+                link = post.get("link")
                 post_date = post.get("post_date", post.get("fecha", post.get("timestamp")))
-                if post_url:
+                if link:
                     if post_date:
                         try:
                             # Parse date (format: YYYY-MM-DD or similar)
@@ -326,39 +325,39 @@ Return ONLY valid JSON:
                             week_num = post_dt.isocalendar()[1]
                             if week_num not in posts_by_date:
                                 posts_by_date[week_num] = []
-                            posts_by_date[week_num].append(post_url)
+                            posts_by_date[week_num].append(link)
                         except Exception as e:
                             logger.warning(f"Could not parse date {post_date}: {e}")
                             # Default to week 1 if parsing fails
                             if 1 not in posts_by_date:
                                 posts_by_date[1] = []
-                            posts_by_date[1].append(post_url)
+                            posts_by_date[1].append(link)
                     else:
                         # Default to week 1 if no date
                         if 1 not in posts_by_date:
                             posts_by_date[1] = []
-                        posts_by_date[1].append(post_url)
+                        posts_by_date[1].append(link)
             
             # Analyze frames for each post
             for idx, post in enumerate(posts, 1):
-                post_url = post.get("post_url")
+                link = post.get("link")
                 
-                if not post_url or post_url not in comments_by_post:
+                if not link or link not in comments_by_post:
                     logger.warning(f"Skipping post {idx}: No comments found")
                     continue
                 
-                post_comments = comments_by_post[post_url]
+                post_comments = comments_by_post[link]
                 if not post_comments:
                     continue
                 
                 combined_text = " ".join(post_comments)
                 num_comments = len(post_comments)
                 
-                logger.info(f"Analyzing post {idx}/{len(posts)}: {post_url} ({num_comments} comments)...")
+                logger.info(f"Analyzing post {idx}/{len(posts)}: {link} ({num_comments} comments)...")
                 
                 try:
                     # Call OpenAI with retry logic
-                    analysis_result = await self._analyze_post_framing(post_url, combined_text)
+                    analysis_result = await self._analyze_post_framing(link, combined_text)
                     
                     # Extract raw data from response
                     raw_scores = analysis_result.get("distribucion_marcos", {})
@@ -373,7 +372,7 @@ Return ONLY valid JSON:
                     # Determine which week this post belongs to for temporal analysis
                     post_week = 1  # default
                     for week_num, post_urls in posts_by_date.items():
-                        if post_url in post_urls:
+                        if link in post_urls:
                             post_week = week_num
                             break
                     
@@ -401,7 +400,7 @@ Return ONLY valid JSON:
                     
                     # Build per-post analysis
                     post_analysis = {
-                        "post_url": post_url,
+                        "link": link,
                         "num_comentarios": num_comments,
                         "marco_dominante": marco_dominante,
                         "distribucion_marcos": marcos_normalizados,
@@ -413,8 +412,8 @@ Return ONLY valid JSON:
                     logger.info(f"Successfully analyzed post (dominant: {marco_dominante})")
                     
                 except Exception as e:
-                    logger.error(f"Error analyzing post {post_url}: {str(e)}", exc_info=True)
-                    errors.append(f"Error analyzing post {post_url}: {str(e)}")
+                    logger.error(f"Error analyzing post {link}: {str(e)}", exc_info=True)
+                    errors.append(f"Error analyzing post {link}: {str(e)}")
                     # Continue with next post (omit this one from aggregation)
                     continue
             

@@ -33,13 +33,13 @@ from orchestrator.analysis_modules.q10_resumen_ejecutivo import Q10ResumenEjecut
 
 # Configuration
 script_dir = os.path.dirname(__file__)
-log_file_path = os.path.join(script_dir, "outputs", "orchestrator_debug.log")
-os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
 
+# Logging to stdout (Docker logs) instead of file
+# All analysis results are saved to database via API
 logging.basicConfig(
-    filename=log_file_path,
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()]
 )
 
 # Analysis modules registry
@@ -63,29 +63,32 @@ load_dotenv(dotenv_path=dotenv_path)
 
 async def analyze_data(config: Dict[str, Any], module_to_run: str = "all"):
     """
-    Main orchestrator function.
+    Main orchestrator function - API-First Architecture.
     
-    Executes specified analysis modules and saves results to JSON files.
+    Executes specified analysis modules and sends results directly to API (PostgreSQL).
+    No local JSON files are created - all data stored in database.
     
     Args:
-        config: Configuration dict containing outputs_dir, API keys, etc.
+        config: Configuration dict with new_posts, new_comments, ficha_cliente_id, api_token
         module_to_run: "all", "Q1", "Q2", etc. Defaults to "all".
     """
     try:
         print("\n" + "="*80)
-        print("🚀 PIXELY PARTNERS - ORCHESTRATOR INICIADO")
+        print("🚀 PIXELY PARTNERS - ORCHESTRATOR ANÁLISIS")
         print("="*80)
         logging.info("Starting analysis engine...")
 
         # Initialize OpenAI client
         openai_client = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-        # Set default outputs directory
-        default_outputs_dir = os.path.join(script_dir, "outputs")
-        if isinstance(config, dict):
-            config.setdefault("outputs_dir", default_outputs_dir)
-        else:
-            config = {"outputs_dir": default_outputs_dir}
+        # Validate required config keys
+        required_keys = ["new_posts", "new_comments", "ficha_cliente_id"]
+        missing_keys = [k for k in required_keys if k not in config]
+        if missing_keys:
+            error_msg = f"Missing required config keys: {missing_keys}"
+            print(f"❌ {error_msg}")
+            logging.error(error_msg)
+            return
 
         # Determine which modules to execute
         modules_to_execute = []
@@ -104,33 +107,35 @@ async def analyze_data(config: Dict[str, Any], module_to_run: str = "all"):
 
         # Execute each module
         total_modules = len(modules_to_execute)
+        module_results = {}  # Store results for Q10
+        
         for idx, module_name in enumerate(modules_to_execute, 1):
             try:
                 print(f"\n[{idx}/{total_modules}] 🔄 Ejecutando {module_name}...")
                 logging.info(f"--- Executing Module {module_name} ---")
+
+                # For Q10, add previous results to config
+                if module_name == "Q10":
+                    for q_num in range(1, 10):
+                        q_key = f"Q{q_num}"
+                        if q_key in module_results:
+                            config[f"q{q_num}_results"] = module_results[q_key]
 
                 # Instantiate and run analyzer
                 analyzer_class = ANALYSIS_MODULES[module_name]
                 analyzer_instance = analyzer_class(openai_client, config)
                 result = await analyzer_instance.analyze()
 
-                # Generate output filename from class name
-                class_name_raw = analyzer_class.__name__
-                class_name_base = re.sub(r"^Q\d+", "", class_name_raw)
-                class_name_suffix = re.sub(r"(?<!^)(?=[A-Z])", "_", class_name_base).lower()
-                output_filename = f"{module_name.lower()}_{class_name_suffix}.json"
-                output_path = os.path.join(script_dir, "outputs", output_filename)
+                # Store result for Q10
+                module_results[module_name] = result
 
-                # Save result to file
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                with open(output_path, "w", encoding="utf-8") as f:
-                    json.dump(result, f, indent=4, ensure_ascii=False)
+                # Send results to API (database)
+                await analyzer_instance.save_results_to_api(module_name, result)
 
-                # Extract error count
+                # Extract counts for console output
                 errors = result.get("errors", [])
                 error_count = len(errors)
                 
-                # Extract result count
                 results = result.get("results", {})
                 if "analisis_por_publicacion" in results:
                     analysis_count = len(results["analisis_por_publicacion"])
@@ -142,18 +147,12 @@ async def analyze_data(config: Dict[str, Any], module_to_run: str = "all"):
                 else:
                     print(f"   ✅ {module_name} completado")
 
-                logging.info(f"Module {module_name} completed. Saved to {output_path}")
+                logging.info(f"Module {module_name} completed and saved to API")
 
             except Exception as e:
                 error_msg = f"ERROR in Module {module_name}: {e}"
                 print(f"   ❌ {error_msg}")
                 logging.error(error_msg, exc_info=True)
-                # Write error result to file
-                error_result = {"error": f"Module {module_name} failed: {str(e)}"}
-                output_filename = f"{module_name.lower()}_error.json"
-                output_path = os.path.join(script_dir, "outputs", output_filename)
-                with open(output_path, "w", encoding="utf-8") as f:
-                    json.dump(error_result, f, indent=4, ensure_ascii=False)
 
         print("\n" + "="*80)
         print("✅ ANÁLISIS COMPLETADO EXITOSAMENTE")
@@ -163,6 +162,7 @@ async def analyze_data(config: Dict[str, Any], module_to_run: str = "all"):
     except Exception as e:
         error_msg = f"Unexpected error in analysis engine: {e}"
         print(f"\n❌ {error_msg}\n")
+        logging.error(error_msg, exc_info=True)
         logging.error(error_msg, exc_info=True)
 
 

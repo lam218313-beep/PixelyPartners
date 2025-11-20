@@ -247,8 +247,7 @@ STRICT RULES:
             logger.info("Starting Q6 Opportunities Analysis")
             print("   🔍 Iniciando análisis de oportunidades (Demanda vs. Impacto)...")
             
-            ingested_data = self.load_ingested_data()
-            comments = ingested_data.get("comments", [])
+            comments = self.get_comments_data()
 
             if not comments:
                 error_msg = "No comments found for analysis"

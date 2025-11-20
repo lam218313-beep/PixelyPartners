@@ -36,7 +36,8 @@ class Q10ResumenEjecutivo(BaseAnalyzer):
     
     def _load_q_results(self, q_number: int) -> Dict[str, Any]:
         """
-        Load previous Q results from JSON file.
+        Load previous Q results from config (passed from orchestrator).
+        In API-first architecture, Q1-Q9 results are stored in config.
         
         Args:
             q_number: Question number (1-9)
@@ -45,24 +46,13 @@ class Q10ResumenEjecutivo(BaseAnalyzer):
             Results dict or empty dict if not found
         """
         try:
-            outputs_dir = self.load_ingested_data_path.parent
-            json_file = outputs_dir / f"q{q_number}_*.json"
+            # Check if results are passed in config
+            results_key = f"q{q_number}_results"
+            if results_key in self.config:
+                return self.config[results_key].get("results", {})
             
-            # Try exact match
-            exact_file = None
-            for pattern in [f"q{q_number}_*.json", f"q{q_number}.json"]:
-                candidates = list(Path(outputs_dir).glob(pattern))
-                if candidates:
-                    exact_file = candidates[0]
-                    break
-            
-            if not exact_file or not exact_file.exists():
-                logger.warning(f"Q{q_number} file not found in {outputs_dir}")
-                return {}
-            
-            with open(exact_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return data.get("results", {})
+            logger.warning(f"Q{q_number} results not found in config")
+            return {}
         except Exception as e:
             logger.warning(f"Error loading Q{q_number}: {str(e)}")
             return {}

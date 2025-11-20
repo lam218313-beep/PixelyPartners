@@ -1,6 +1,7 @@
 {
   "client_id": "eca2c18c-364e-4877-99ef-189b58c1905b",
   "client_name": "Tech Innovators",
+  "platform": "Instagram",
   "google_sheets_url": "https://docs.google.com/spreadsheets/d/1kGDc9GI1qnnQHk4n2TfbmRhuua-FOno6mTXXO0czmp4/edit?gid=381912157#gid=381912157",
   "google_sheets_spreadsheet_id": "1kGDc9GI1qnnQHk4n2TfbmRhuua-FOno6mTXXO0czmp4",
   "credentials_path": "/app/credentials.json",

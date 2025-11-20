@@ -204,9 +204,8 @@ Return ONLY valid JSON with two dictionaries:
         try:
             logger.info("Starting Q3 Topics Analysis")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
             
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
             
@@ -229,28 +228,28 @@ Return ONLY valid JSON with two dictionaries:
             # Group comments by post
             comments_by_post = {}
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url:
-                    if post_url not in comments_by_post:
-                        comments_by_post[post_url] = []
-                    comments_by_post[post_url].append(comment.get("comment_text", ""))
+                link = comment.get("link")
+                if link:
+                    if link not in comments_by_post:
+                        comments_by_post[link] = []
+                    comments_by_post[link].append(comment.get("comment_text", ""))
             
             # Analyze topics for each post
             for idx, post in enumerate(posts, 1):
-                post_url = post.get("post_url")
+                link = post.get("link")
                 
-                if not post_url or post_url not in comments_by_post:
+                if not link or link not in comments_by_post:
                     logger.warning(f"Skipping post {idx}: No comments found")
                     continue
                 
-                post_comments = comments_by_post[post_url]
+                post_comments = comments_by_post[link]
                 if not post_comments:
                     continue
                 
                 combined_text = " ".join(post_comments)
                 num_comments = len(post_comments)
                 
-                logger.info(f"Analyzing post {idx}/{len(posts)}: {post_url} ({num_comments} comments)...")
+                logger.info(f"Analyzing post {idx}/{len(posts)}: {link} ({num_comments} comments)...")
                 
                 try:
                     # Call OpenAI with retry logic
@@ -282,7 +281,7 @@ Return ONLY valid JSON with two dictionaries:
                     
                     # Build per-post analysis
                     post_analysis = {
-                        "post_url": post_url,
+                        "link": link,
                         "num_comentarios": num_comments,
                         "topicos": topics_relevance,
                         "sentimiento": topics_sentiment,
@@ -293,11 +292,11 @@ Return ONLY valid JSON with two dictionaries:
                     logger.info(f"Successfully analyzed post with {len(topics_relevance)} topics")
                     
                 except Exception as e:
-                    logger.error(f"Error analyzing post {post_url}: {str(e)}", exc_info=True)
-                    errors.append(f"Failed to analyze post {post_url}: {str(e)}")
+                    logger.error(f"Error analyzing post {link}: {str(e)}", exc_info=True)
+                    errors.append(f"Failed to analyze post {link}: {str(e)}")
                     # Continue with empty topics for this post
                     analisis_por_publicacion.append({
-                        "post_url": post_url,
+                        "link": link,
                         "num_comentarios": num_comments,
                         "topicos": {},
                         "sentimiento": {},

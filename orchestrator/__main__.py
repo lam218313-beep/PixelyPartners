@@ -194,6 +194,8 @@ async def process_single_client(
             "new_comments": new_comments,
             "ficha_cliente_id": client_config.client_id,
             "client_name": client_config.client_name,
+            "api_base_url": api_base_url,
+            "api_token": token,  # Pass JWT token for API calls
             "incremental_mode": True
         }
         

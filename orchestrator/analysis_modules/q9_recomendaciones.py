@@ -206,8 +206,7 @@ Example format:
         try:
             logger.info("Starting Q9 Strategic Recommendations Analysis")
             
-            ingested_data = self.load_ingested_data()
-            comments = ingested_data.get("comments", [])
+            comments = self.get_comments_data()
             
             logger.info(f"Processing {len(comments)} comments for recommendation generation")
             print(f"   📊 Iniciando análisis de recomendaciones estratégicas...")

@@ -240,9 +240,8 @@ Return ONLY valid JSON:
         try:
             logger.info("Starting Q7 Detailed Sentiment Analysis")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
             
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
             
@@ -265,11 +264,11 @@ Return ONLY valid JSON:
             # Group comments by post
             comments_by_post = {}
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url:
-                    if post_url not in comments_by_post:
-                        comments_by_post[post_url] = []
-                    comments_by_post[post_url].append(comment.get("comment_text", ""))
+                link = comment.get("link")
+                if link:
+                    if link not in comments_by_post:
+                        comments_by_post[link] = []
+                    comments_by_post[link].append(comment.get("comment_text", ""))
                     all_comments_list.append(comment.get("comment_text", ""))
             
             # Analyze sentiment for each post
@@ -278,25 +277,25 @@ Return ONLY valid JSON:
             mixto_acumulada = 0.0
             
             for idx, post in enumerate(posts, 1):
-                post_url = post.get("post_url")
+                link = post.get("link")
                 
-                if not post_url or post_url not in comments_by_post:
+                if not link or link not in comments_by_post:
                     logger.warning(f"Skipping post {idx}: No comments found")
                     continue
                 
-                post_comments = comments_by_post[post_url]
+                post_comments = comments_by_post[link]
                 if not post_comments:
                     continue
                 
                 combined_text = " ".join(post_comments)
                 num_comments = len(post_comments)
                 
-                logger.info(f"Analyzing post {idx}/{len(posts)}: {post_url} ({num_comments} comments)...")
+                logger.info(f"Analyzing post {idx}/{len(posts)}: {link} ({num_comments} comments)...")
                 print(f"   ⏳ Analizando publicación {idx}/{len(posts)}... ", end="")
                 
                 try:
                     # Call OpenAI with retry logic
-                    analysis_result = await self._analyze_post_sentiment(post_url, combined_text)
+                    analysis_result = await self._analyze_post_sentiment(link, combined_text)
                     
                     # Extract raw scores from response
                     raw_scores = {
@@ -339,7 +338,7 @@ Return ONLY valid JSON:
                     
                     # Build per-post analysis with ALL required fields
                     post_analysis = {
-                        "post_url": post_url,
+                        "link": link,
                         "num_comentarios": num_comments,
                         "sentimiento_positivo": sentimiento_normalizado["positivo"],
                         "sentimiento_negativo": sentimiento_normalizado["negativo"],
@@ -356,8 +355,8 @@ Return ONLY valid JSON:
                     logger.info(f"Successfully analyzed post with sentiment distribution: {sentimiento_normalizado}")
                     
                 except Exception as e:
-                    logger.error(f"Error analyzing post {post_url}: {str(e)}", exc_info=True)
-                    errors.append(f"Error analyzing post {post_url}: {str(e)}")
+                    logger.error(f"Error analyzing post {link}: {str(e)}", exc_info=True)
+                    errors.append(f"Error analyzing post {link}: {str(e)}")
                     print("✗")
                     # Continue with next post (omit this one from aggregation)
                     continue

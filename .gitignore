@@ -54,9 +54,9 @@ logs/
 # Docker
 docker-compose.override.yml
 
-# Local outputs (except examples)
-orchestrator/outputs/*.json
-!orchestrator/outputs/ingested_data.json
+# Orchestrator outputs - ALL data saved to PostgreSQL via API
+# No local JSON files needed
+orchestrator/outputs/
 
 # Frontend cache
 .streamlit/

@@ -246,7 +246,7 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
                 "results": {
                     "analisis_influenciadores": [
                         {
-                            "post_url": "...",
+                            "post_link": "...",
                             "num_comentarios": int,
                             "influenciadores": [
                                 {
@@ -284,9 +284,8 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
             logger.info("Starting Q5 Influencers Analysis")
             print("   📊 Iniciando análisis de influenciadores...")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
 
             if not comments:
                 error_msg = "No comments found for analysis"
@@ -304,14 +303,14 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
                     "errors": errors,
                 }
 
-            # Group comments by post_url (RULE 1: Keep comment objects, not just text)
+            # Group comments by link (RULE 1: Keep comment objects, not just text)
             comments_by_post = {}
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url:
-                    if post_url not in comments_by_post:
-                        comments_by_post[post_url] = []
-                    comments_by_post[post_url].append(comment)
+                link = comment.get("link")
+                if link:
+                    if link not in comments_by_post:
+                        comments_by_post[link] = []
+                    comments_by_post[link].append(comment)
 
             print(f"   📍 Publicaciones encontradas: {len(posts)}")
             print(f"   💬 Comentarios a analizar: {len(comments)}")
@@ -322,11 +321,11 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
             post_count = 0
             
             for idx, post in enumerate(posts, 1):
-                post_url = post.get("post_url")
-                if not post_url or post_url not in comments_by_post:
+                link = post.get("link")
+                if not link or link not in comments_by_post:
                     continue
 
-                post_comments = comments_by_post[post_url]
+                post_comments = comments_by_post[link]
                 if not post_comments:
                     continue
 
@@ -334,9 +333,9 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
                     # RULE 1: IDENTITY AWARENESS - Enrich comments with username
                     enriched_text = self._enrich_comments_with_identity(post_comments)
 
-                    total_posts = len([p for p in posts if p.get('post_url') in comments_by_post])
+                    total_posts = len([p for p in posts if p.get('link') in comments_by_post])
                     print(f"   ⏳ Analizando publicación {idx}/{total_posts}...", end="", flush=True)
-                    logger.info(f"Analyzing post {post_count + 1}/{total_posts}: {post_url[:50]}...")
+                    logger.info(f"Analyzing post {post_count + 1}/{total_posts}: {link[:50]}...")
 
                     # Call OpenAI with resilience (3 retries, 15s wait)
                     influencers_raw = await self._call_openai_for_influencers(enriched_text)
@@ -371,7 +370,7 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
 
                     # Build result for this post
                     post_analysis = {
-                        "post_url": post_url,
+                        "link": link,
                         "num_comentarios": len(post_comments),
                         "influenciadores": influencers_cleaned,
                     }
@@ -382,7 +381,7 @@ Return ONLY valid JSON array. If few qualify as voices (even 1-2), include them.
                     logger.info(f"Successfully analyzed post, found {len(influencers_cleaned)} influencers")
 
                 except Exception as e:
-                    error_msg = f"Error analyzing post {post_url}: {str(e)}"
+                    error_msg = f"Error analyzing post {link}: {str(e)}"
                     logger.error(error_msg, exc_info=True)
                     errors.append(error_msg)
                     print(f" ✗")

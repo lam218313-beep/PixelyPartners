@@ -205,7 +205,7 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
                 "results": {
                     "analisis_por_publicacion": [
                         {
-                            "post_url": "...",
+                            "post_link": "...",
                             "num_comentarios": int,
                             "emociones": {...},
                             "intensidad_promedio": float,
@@ -229,9 +229,9 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
             logger.info("Starting Q1 Emotional Analysis")
             print("   📊 Iniciando análisis de emociones...")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            # Get data from config (Google Sheets via ingest_utils)
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
 
             if not comments:
                 error_msg = "No comments found for analysis"
@@ -249,14 +249,14 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
                     "errors": errors,
                 }
 
-            # Group comments by post_url
+            # Group comments by link (post URL)
             comments_by_post = {}
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url:
-                    if post_url not in comments_by_post:
-                        comments_by_post[post_url] = []
-                    comments_by_post[post_url].append(comment.get("comment_text", ""))
+                post_link = comment.get("link")  # Changed from post_url to link
+                if post_link:
+                    if post_link not in comments_by_post:
+                        comments_by_post[post_link] = []
+                    comments_by_post[post_link].append(comment.get("comment_text", ""))
 
             print(f"   📍 Publicaciones encontradas: {len(posts)}")
             print(f"   💬 Comentarios a analizar: {len(comments)}")
@@ -267,11 +267,11 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
             post_count = 0
             
             for idx, post in enumerate(posts, 1):
-                post_url = post.get("post_url")
-                if not post_url or post_url not in comments_by_post:
+                post_link = post.get("link")  # Changed from post_url to link
+                if not post_link or post_link not in comments_by_post:
                     continue
 
-                post_comments = comments_by_post[post_url]
+                post_comments = comments_by_post[post_link]
                 if not post_comments:
                     continue
 
@@ -279,8 +279,8 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
                     # Concatenate comments text
                     combined_text = " ".join(post_comments)
 
-                    print(f"   ⏳ Analizando publicación {idx}/{len([p for p in posts if p.get('post_url') in comments_by_post])}...", end="", flush=True)
-                    logger.info(f"Analyzing post {post_count + 1}/{len(posts)}: {post_url[:50]}...")
+                    print(f"   ⏳ Analizando publicación {idx}/{len([p for p in posts if p.get('link') in comments_by_post])}...", end="", flush=True)
+                    logger.info(f"Analyzing post {post_count + 1}/{len(posts)}: {post_link[:50]}...")
 
                     # Call OpenAI with resilience (3 retries, 15s wait)
                     analysis_result = await self._call_openai_for_emotions(combined_text)
@@ -294,7 +294,7 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
 
                     # Build result for this post
                     post_analysis = {
-                        "post_url": post_url,
+                        "post_link": post_link,  # Changed from post_url to post_link
                         "num_comentarios": len(post_comments),
                         "emociones": emociones_cleaned,
                         "intensidad_promedio": intensidad_promedio,
@@ -315,7 +315,7 @@ Return ONLY this JSON structure (no markdown, no code blocks, no explanation):
                     logger.info(f"Successfully analyzed post (intensity: {intensidad_promedio})")
 
                 except Exception as e:
-                    error_msg = f"Error analyzing post {post_url}: {str(e)}"
+                    error_msg = f"Error analyzing post {post_link}: {str(e)}"
                     logger.error(error_msg, exc_info=True)
                     errors.append(error_msg)
                     print(f" ✗")

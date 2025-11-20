@@ -226,9 +226,8 @@ Return ONLY valid JSON:
         try:
             logger.info("Starting Q8 Temporal Analysis (Weekly Aggregation)")
             
-            ingested_data = self.load_ingested_data()
-            posts = ingested_data.get("posts", [])
-            comments = ingested_data.get("comments", [])
+            posts = self.get_posts_data()
+            comments = self.get_comments_data()
             
             logger.info(f"Processing {len(comments)} comments and {len(posts)} posts for temporal analysis")
             print(f"   📊 Iniciando análisis temporal...")
@@ -251,26 +250,26 @@ Return ONLY valid JSON:
                     "errors": errors
                 }
             
-            # Create a mapping from post_url to post timestamp
+            # Create a mapping from link to post timestamp
             post_timestamps = {}
             for post in posts:
-                post_url = post.get("post_url")
+                link = post.get("link")
                 timestamp = post.get("timestamp")
-                if post_url and timestamp:
+                if link and timestamp:
                     try:
-                        post_timestamps[post_url] = pd.to_datetime(timestamp)
+                        post_timestamps[link] = pd.to_datetime(timestamp)
                     except Exception as e:
-                        logger.warning(f"Could not parse timestamp for {post_url}: {timestamp}")
+                        logger.warning(f"Could not parse timestamp for {link}: {timestamp}")
             
             logger.info(f"Mapped {len(post_timestamps)} posts with timestamps")
             
             # Build comments dataframe with post timestamps
             comments_with_dates = []
             for comment in comments:
-                post_url = comment.get("post_url")
-                if post_url in post_timestamps:
+                link = comment.get("link")
+                if link in post_timestamps:
                     comment_copy = comment.copy()
-                    comment_copy['timestamp'] = post_timestamps[post_url]
+                    comment_copy['timestamp'] = post_timestamps[link]
                     comments_with_dates.append(comment_copy)
             
             if not comments_with_dates:
