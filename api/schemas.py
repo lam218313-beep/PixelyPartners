@@ -95,9 +95,28 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
     tenant_id: Any
+    created_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
     
     class Config:
         from_attributes = True
+
+
+class UserUpdate(BaseModel):
+    """Datos para actualizar un usuario existente."""
+    full_name: Optional[str] = None
+    role: Optional[str] = None  # admin, analyst, viewer
+    is_active: Optional[bool] = None
+    password: Optional[str] = None  # Si se proporciona, se actualiza
+
+
+class UserListResponse(BaseModel):
+    """Lista de usuarios con paginación."""
+    users: List[UserResponse]
+    total: int
+    page: int
+    per_page: int
+
 
 # =============================================================================
 # FICHAS CLIENTE (Brands)

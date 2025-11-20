@@ -10,7 +10,7 @@ import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -188,6 +188,183 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def read_users_me(current_user: models.User = Depends(get_current_user)):
     """Retorna la información del usuario actualmente logueado."""
     return current_user
+
+
+# =============================================================================
+# USER MANAGEMENT ENDPOINTS (CRUD)
+# =============================================================================
+
+@app.get("/users", response_model=schemas.UserListResponse, tags=["User Management"])
+def list_users(
+    page: int = 1,
+    per_page: int = 50,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Lista todos los usuarios del tenant actual (con paginación).
+    Solo accesible para admin.
+    """
+    if current_user.role not in ["admin"]:
+        raise HTTPException(status_code=403, detail="Only admins can list users")
+    
+    # Calcular offset
+    offset = (page - 1) * per_page
+    
+    # Obtener usuarios del mismo tenant
+    query = db.query(models.User).filter(
+        models.User.tenant_id == current_user.tenant_id
+    )
+    
+    total = query.count()
+    users = query.offset(offset).limit(per_page).all()
+    
+    return {
+        "users": users,
+        "total": total,
+        "page": page,
+        "per_page": per_page
+    }
+
+
+@app.get("/users/{user_id}", response_model=schemas.UserResponse, tags=["User Management"])
+def get_user(
+    user_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Obtiene información de un usuario específico.
+    Solo accesible para admin.
+    """
+    if current_user.role not in ["admin"]:
+        raise HTTPException(status_code=403, detail="Only admins can view user details")
+    
+    user = db.query(models.User).filter(
+        models.User.id == user_id,
+        models.User.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return user
+
+
+@app.post("/users", response_model=schemas.UserResponse, tags=["User Management"])
+def create_user(
+    user_data: schemas.UserCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Crea un nuevo usuario en el tenant actual.
+    Solo accesible para admin.
+    """
+    if current_user.role not in ["admin"]:
+        raise HTTPException(status_code=403, detail="Only admins can create users")
+    
+    # Verificar que el email no exista
+    existing_user = db.query(models.User).filter(models.User.email == user_data.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Crear usuario en el mismo tenant que el admin
+    hashed_password = security.get_password_hash(user_data.password)
+    new_user = models.User(
+        email=user_data.email,
+        hashed_password=hashed_password,
+        full_name=user_data.full_name,
+        tenant_id=current_user.tenant_id,  # Mismo tenant que el admin
+        role="viewer"  # Por defecto viewer, admin puede cambiar después
+    )
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    logger.info(f"Admin {current_user.email} created user {new_user.email}")
+    return new_user
+
+
+@app.patch("/users/{user_id}", response_model=schemas.UserResponse, tags=["User Management"])
+def update_user(
+    user_id: str,
+    user_update: schemas.UserUpdate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Actualiza un usuario existente.
+    Solo accesible para admin.
+    """
+    if current_user.role not in ["admin"]:
+        raise HTTPException(status_code=403, detail="Only admins can update users")
+    
+    # Buscar usuario en el mismo tenant
+    user = db.query(models.User).filter(
+        models.User.id == user_id,
+        models.User.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Actualizar campos proporcionados
+    if user_update.full_name is not None:
+        user.full_name = user_update.full_name
+    
+    if user_update.role is not None:
+        if user_update.role not in ["admin", "analyst", "viewer"]:
+            raise HTTPException(status_code=400, detail="Invalid role")
+        user.role = user_update.role
+    
+    if user_update.is_active is not None:
+        user.is_active = user_update.is_active
+    
+    if user_update.password is not None:
+        user.hashed_password = security.get_password_hash(user_update.password)
+    
+    db.commit()
+    db.refresh(user)
+    
+    logger.info(f"Admin {current_user.email} updated user {user.email}")
+    return user
+
+
+@app.delete("/users/{user_id}", tags=["User Management"])
+def delete_user(
+    user_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Elimina un usuario.
+    Solo accesible para admin.
+    No se puede eliminar a sí mismo.
+    """
+    if current_user.role not in ["admin"]:
+        raise HTTPException(status_code=403, detail="Only admins can delete users")
+    
+    # No permitir auto-eliminación
+    if str(current_user.id) == user_id:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    # Buscar usuario en el mismo tenant
+    user = db.query(models.User).filter(
+        models.User.id == user_id,
+        models.User.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    logger.info(f"Admin {current_user.email} deleted user {user.email}")
+    
+    db.delete(user)
+    db.commit()
+    
+    return {"message": f"User {user.email} deleted successfully"}
 
 
 # =============================================================================
