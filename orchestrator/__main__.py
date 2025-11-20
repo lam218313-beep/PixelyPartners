@@ -21,12 +21,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def authenticate_orchestrator(api_base_url: str) -> str:
+async def authenticate_orchestrator(api_base_url: str, max_retries: int = 5) -> str:
     """
     Authenticate orchestrator with API and get JWT token.
+    Includes retry logic for API availability.
     
     Args:
         api_base_url: Base URL of the API (e.g., http://api:8000)
+        max_retries: Maximum number of retry attempts
     
     Returns:
         JWT access token
@@ -34,22 +36,34 @@ async def authenticate_orchestrator(api_base_url: str) -> str:
     orchestrator_user = os.environ.get("ORCHESTRATOR_USER", "admin")
     orchestrator_password = os.environ.get("ORCHESTRATOR_PASSWORD", "secure_password")
     
-    async with httpx.AsyncClient() as client:
+    for attempt in range(1, max_retries + 1):
         try:
-            response = await client.post(
-                f"{api_base_url}/token",
-                data={
-                    "username": orchestrator_user,
-                    "password": orchestrator_password
-                },
-                timeout=30.0
-            )
-            response.raise_for_status()
-            token_data = response.json()
-            logger.info("✅ Orchestrator authenticated successfully")
-            return token_data["access_token"]
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{api_base_url}/token",
+                    data={
+                        "username": orchestrator_user,
+                        "password": orchestrator_password
+                    },
+                    timeout=30.0
+                )
+                response.raise_for_status()
+                token_data = response.json()
+                logger.info("✅ Orchestrator authenticated successfully")
+                return token_data["access_token"]
+        except (httpx.ConnectError, httpx.TimeoutException) as e:
+            if attempt < max_retries:
+                wait_time = attempt * 2  # Exponential backoff: 2s, 4s, 6s, 8s, 10s
+                logger.warning(f"⏳ API not ready (attempt {attempt}/{max_retries}). Retrying in {wait_time}s...")
+                await asyncio.sleep(wait_time)
+            else:
+                logger.error(f"❌ Failed to connect to API after {max_retries} attempts")
+                raise
+        except httpx.HTTPStatusError as e:
+            logger.error(f"❌ Authentication failed: {e.response.status_code} - {e.response.text}")
+            raise
         except Exception as e:
-            logger.error(f"❌ Failed to authenticate orchestrator: {e}")
+            logger.error(f"❌ Unexpected error during authentication: {e}")
             raise
 
 
