@@ -1,0 +1,8 @@
+{
+  "client_id": "REPLACE_WITH_CLIENT_UUID",
+  "client_name": "Cliente Ejemplo 02",
+  "google_sheets_url": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit",
+  "google_sheets_spreadsheet_id": "YOUR_SPREADSHEET_ID",
+  "credentials_path": "/app/credentials.json",
+  "enabled": false
+}

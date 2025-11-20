@@ -15,11 +15,9 @@ services:
       - ORCHESTRATOR_USER=${ORCHESTRATOR_USER}
       - ORCHESTRATOR_PASSWORD=${ORCHESTRATOR_PASSWORD}
       - PIXELY_OUTPUTS_DIR=/app/orchestrator/outputs
-      # NEW: Variables for incremental analysis and Google Sheets
+      # Multi-Client Configuration
       - API_BASE_URL=http://api:8000
-      - FICHA_CLIENTE_ID=${FICHA_CLIENTE_ID}
-      - GOOGLE_SHEETS_SPREADSHEET_ID=${GOOGLE_SHEETS_SPREADSHEET_ID}
-      - GOOGLE_CREDENTIALS_PATH=/app/credentials.json
+      - ORCHESTRATOR_INPUTS_DIR=/app/orchestrator/inputs
     volumes:
       - ./orchestrator/outputs:/app/orchestrator/outputs
       - ./orchestrator:/app/orchestrator

@@ -1,18 +1,91 @@
 """
-Pixely Partners - Google Sheets Integration Module
+Pixely Partners - Google Sheets Integration Module (Multi-Client)
 
-This module handles data ingestion from Google Sheets for each client.
+This module handles data ingestion from Google Sheets for multiple clients.
+Each client has their own config.json in orchestrator/inputs/Cliente_XX/
 It detects new posts based on timestamp comparison and returns only incremental data.
 """
 
 import os
+import json
 import logging
+from pathlib import Path
 from typing import List, Dict, Optional
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 logger = logging.getLogger(__name__)
+
+
+class ClientConfig:
+    """Represents configuration for a single client."""
+    
+    def __init__(self, config_path: str):
+        """
+        Load client configuration from config.json
+        
+        Args:
+            config_path: Path to client's config.json file
+        """
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+        
+        self.client_id = config['client_id']
+        self.client_name = config['client_name']
+        self.google_sheets_url = config.get('google_sheets_url', '')
+        self.spreadsheet_id = config['google_sheets_spreadsheet_id']
+        self.credentials_path = config.get('credentials_path', '/app/credentials.json')
+        self.enabled = config.get('enabled', True)
+        self.config_dir = str(Path(config_path).parent)
+    
+    def __repr__(self):
+        return f"ClientConfig(name={self.client_name}, id={self.client_id}, enabled={self.enabled})"
+
+
+def load_all_clients(inputs_dir: str = "/app/orchestrator/inputs") -> List[ClientConfig]:
+    """
+    Load all client configurations from inputs directory.
+    
+    Args:
+        inputs_dir: Path to orchestrator/inputs directory
+    
+    Returns:
+        List of ClientConfig objects for enabled clients
+    """
+    clients = []
+    inputs_path = Path(inputs_dir)
+    
+    if not inputs_path.exists():
+        logger.warning(f"Inputs directory not found: {inputs_dir}")
+        return clients
+    
+    # Iterate over all subdirectories (Cliente_01, Cliente_02, etc.)
+    for client_dir in sorted(inputs_path.iterdir()):
+        if not client_dir.is_dir():
+            continue
+        
+        config_file = client_dir / "config.json"
+        if not config_file.exists():
+            logger.warning(f"config.json not found in {client_dir.name}, skipping")
+            continue
+        
+        try:
+            config = ClientConfig(str(config_file))
+            
+            if not config.enabled:
+                logger.info(f"Client {config.client_name} is disabled, skipping")
+                continue
+            
+            clients.append(config)
+            logger.info(f"Loaded client: {config.client_name} (ID: {config.client_id})")
+        
+        except Exception as e:
+            logger.error(f"Failed to load config from {client_dir.name}: {e}")
+            continue
+    
+    logger.info(f"Loaded {len(clients)} enabled clients")
+    return clients
 
 
 class GoogleSheetsIngestor:
@@ -185,13 +258,90 @@ class GoogleSheetsIngestor:
         raise ValueError(f"Could not parse timestamp: {timestamp_str}")
 
 
+async def fetch_incremental_data_for_client(
+    client_config: ClientConfig,
+    last_analysis_timestamp: Optional[datetime] = None
+) -> Dict[str, any]:
+    """
+    High-level function to fetch incremental data for a specific client.
+    
+    Args:
+        client_config: ClientConfig object with spreadsheet ID and credentials
+        last_analysis_timestamp: Timestamp of last analysis for this client
+    
+    Returns:
+        Dictionary with 'client_id', 'client_name', 'posts', and 'comments' keys
+    """
+    ingestor = GoogleSheetsIngestor(client_config.credentials_path)
+    
+    # Fetch new posts
+    new_posts = ingestor.fetch_new_posts(
+        client_config.spreadsheet_id, 
+        last_analysis_timestamp
+    )
+    
+    # If no new posts, return empty
+    if not new_posts:
+        logger.info(f"No new posts for client {client_config.client_name}")
+        return {
+            "client_id": client_config.client_id,
+            "client_name": client_config.client_name,
+            "posts": [],
+            "comments": []
+        }
+    
+    # Fetch comments for new posts
+    post_urls = [post.get('post_url') for post in new_posts if post.get('post_url')]
+    comments = ingestor.fetch_comments_for_posts(client_config.spreadsheet_id, post_urls)
+    
+    return {
+        "client_id": client_config.client_id,
+        "client_name": client_config.client_name,
+        "posts": new_posts,
+        "comments": comments
+    }
+
+
+async def fetch_incremental_data_all_clients(
+    inputs_dir: str = "/app/orchestrator/inputs"
+) -> List[Dict]:
+    """
+    Fetch incremental data for all enabled clients.
+    
+    Args:
+        inputs_dir: Path to orchestrator/inputs directory
+    
+    Returns:
+        List of dictionaries, one per client with their incremental data
+    """
+    clients = load_all_clients(inputs_dir)
+    
+    if not clients:
+        logger.warning("No enabled clients found")
+        return []
+    
+    results = []
+    for client in clients:
+        try:
+            # Note: last_analysis_timestamp would be fetched from API per client
+            # For now, we'll handle that in __main__.py
+            data = await fetch_incremental_data_for_client(client, last_analysis_timestamp=None)
+            results.append(data)
+        except Exception as e:
+            logger.error(f"Failed to fetch data for client {client.client_name}: {e}")
+            continue
+    
+    return results
+
+
 async def fetch_incremental_data(
     spreadsheet_id: str,
     last_analysis_timestamp: Optional[datetime] = None,
     credentials_path: str = "/app/credentials.json"
 ) -> Dict[str, List[Dict]]:
     """
-    High-level function to fetch incremental data from Google Sheets.
+    Legacy function for backward compatibility.
+    Fetch incremental data from Google Sheets for a single client.
     
     Args:
         spreadsheet_id: Google Sheets spreadsheet ID
@@ -201,6 +351,7 @@ async def fetch_incremental_data(
     Returns:
         Dictionary with 'posts' and 'comments' keys
     """
+    logger.warning("fetch_incremental_data() is deprecated. Use fetch_incremental_data_for_client() instead.")
     ingestor = GoogleSheetsIngestor(credentials_path)
     
     # Fetch new posts
@@ -224,13 +375,20 @@ async def fetch_incremental_data(
 if __name__ == "__main__":
     import asyncio
     
-    async def test():
-        # Example: Fetch data for a client
-        spreadsheet_id = os.environ.get("GOOGLE_SHEETS_CLIENT_1_SPREADSHEET_ID")
-        last_timestamp = datetime(2025, 11, 1)  # Example: November 1, 2025
+    async def test_multi_client():
+        # Test loading all clients
+        clients = load_all_clients("/app/orchestrator/inputs")
+        print(f"Found {len(clients)} enabled clients")
         
-        data = await fetch_incremental_data(spreadsheet_id, last_timestamp)
-        print(f"New posts: {len(data['posts'])}")
-        print(f"New comments: {len(data['comments'])}")
+        for client in clients:
+            print(f"\nClient: {client.client_name}")
+            print(f"  ID: {client.client_id}")
+            print(f"  Spreadsheet: {client.spreadsheet_id}")
+            
+            # Fetch data for this client
+            data = await fetch_incremental_data_for_client(client, last_analysis_timestamp=None)
+            print(f"  New posts: {len(data['posts'])}")
+            print(f"  New comments: {len(data['comments'])}")
     
-    asyncio.run(test())
+    asyncio.run(test_multi_client())
+

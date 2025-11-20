@@ -1,17 +1,38 @@
 # Pixely Partners - Sistema de Análisis de Redes Sociales
 
-Sistema automático de análisis cualitativo para redes sociales con arquitectura multi-tenant, ingesta desde Google Sheets y análisis incremental mediante IA.
+Sistema automático de análisis cualitativo para redes sociales con **arquitectura multi-cliente**, ingesta desde Google Sheets y análisis incremental mediante IA.
 
 ## 🚀 Características Principales
 
-- **Multi-tenant**: Aislamiento completo de datos por cliente
+- **Multi-Cliente**: Procesa múltiples clientes automáticamente desde configuraciones independientes
 - **Análisis Automático**: Ejecución programada cada 24 horas (6:00 AM)
-- **Análisis Incremental**: Solo procesa posts nuevos desde última ejecución
-- **Google Sheets Integration**: Ingesta automática de datos desde spreadsheets del cliente
+- **Análisis Incremental**: Solo procesa posts nuevos desde última ejecución por cliente
+- **Google Sheets Integration**: Ingesta automática desde spreadsheets individuales por cliente
 - **10 Módulos de Análisis**: Q1-Q10 (Emociones, Personalidad, Tópicos, Marcos Narrativos, etc.)
 - **API REST**: FastAPI con autenticación JWT
 - **Frontend**: Dashboard Streamlit para visualización
 - **Base de Datos**: PostgreSQL con migraciones Alembic
+
+## 📁 Arquitectura Multi-Cliente
+
+Cada cliente tiene su propia configuración en `orchestrator/inputs/Cliente_XX/config.json`:
+
+```
+orchestrator/
+├── inputs/
+│   ├── Cliente_01/
+│   │   └── config.json    # Cliente 1: Tech Innovators
+│   ├── Cliente_02/
+│   │   └── config.json    # Cliente 2: Fashion Brand
+│   └── Cliente_XX/
+│       └── config.json    # Cliente N
+```
+
+**Ventajas**:
+- ✅ Agregar clientes sin modificar código
+- ✅ Cada cliente con su Google Sheets independiente
+- ✅ Análisis incremental por cliente
+- ✅ Habilitar/deshabilitar clientes individualmente
 
 ## 📋 Módulos de Análisis (Q1-Q10)
 
@@ -48,12 +69,8 @@ OPENAI_MODEL=gpt-4o-mini
 ORCHESTRATOR_USER=admin
 ORCHESTRATOR_PASSWORD=secure_password
 
-# Client Configuration (obtenido después de crear ficha)
-FICHA_CLIENTE_ID=your-ficha-uuid-here
-
-# Google Sheets Integration
-GOOGLE_SHEETS_SPREADSHEET_ID=your-spreadsheet-id-here
-GOOGLE_CREDENTIALS_PATH=/app/credentials.json
+# Multi-Client Configuration (NO requiere FICHA_CLIENTE_ID individual)
+# Cada cliente se configura en orchestrator/inputs/Cliente_XX/config.json
 
 # Database
 DATABASE_URL=postgresql://pixely_user:secret_password_123@localhost:5432/pixely_db
@@ -67,7 +84,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-### 3. Configurar Google Sheets
+### 3. Configurar Google Sheets (Para Cada Cliente)
 
 #### A. Crear Service Account en Google Cloud
 
@@ -84,47 +101,71 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 2. Buscar "Google Sheets API"
 3. Click "Enable"
 
-#### C. Compartir Spreadsheet
-
-1. Abrir spreadsheet del cliente
-2. Click "Share"
-3. Copiar email del Service Account (de `credentials.json`)
-4. Pegar y dar permisos de "Editor"
-
-#### D. Copiar Credenciales
+#### C. Copiar Credenciales
 
 ```bash
 # Copiar credentials.json a la raíz del proyecto
 cp ~/Downloads/your-credentials.json ./credentials.json
 ```
 
-#### E. Obtener Spreadsheet ID
+**Nota**: Un solo archivo `credentials.json` se comparte entre todos los clientes.
 
-De la URL del spreadsheet:
-```
-https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                       Este es el SPREADSHEET_ID
-```
+### 4. Agregar Clientes
 
-Actualizar en `.env`:
+Para cada cliente, crear una carpeta en `orchestrator/inputs/`:
+
 ```bash
-GOOGLE_SHEETS_SPREADSHEET_ID=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+# Ejemplo: Cliente_01
+mkdir orchestrator/inputs/Cliente_01
 ```
 
-### 4. Estructura del Spreadsheet
+Crear `orchestrator/inputs/Cliente_01/config.json`:
 
-El spreadsheet debe tener dos hojas:
+```json
+{
+  "client_id": "uuid-de-la-ficha-cliente",
+  "client_name": "Tech Innovators",
+  "google_sheets_url": "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit",
+  "google_sheets_spreadsheet_id": "SPREADSHEET_ID",
+  "credentials_path": "/app/credentials.json",
+  "enabled": true
+}
+```
 
-#### Hoja "Posts"
-| post_url | platform | created_at | content | likes | comments_count | shares | views |
-|----------|----------|------------|---------|-------|----------------|--------|-------|
-| https://instagram.com/p/001/ | instagram | 2025-01-15T10:30:00 | Texto... | 150 | 25 | 10 | 5000 |
+#### Obtener `client_id` (UUID de Ficha)
 
-#### Hoja "Comments"
-| post_url | comment_text | ownerUsername | created_at | likes |
-|----------|--------------|---------------|------------|-------|
-| https://instagram.com/p/001/ | Me encanta! | user123 | 2025-01-15T11:00:00 | 5 |
+```bash
+# 1. Login
+curl -X POST http://localhost:8000/token \
+  -d "username=admin@pixelypartners.com&password=pixelyadmin2025"
+
+# 2. Crear ficha cliente
+curl -X POST http://localhost:8000/fichas_cliente \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_name": "Tech Innovators",
+    "primary_business_goal": "Aumentar engagement",
+    "industry": "Tecnología",
+    "target_audience": "Millennials",
+    "preferred_platforms": ["instagram", "tiktok"],
+    "language": "es"
+  }'
+
+# Copiar el "id" (UUID) del response
+```
+
+#### Compartir Spreadsheet con Service Account
+
+1. Abrir spreadsheet del cliente
+2. Click "Share"
+3. Agregar email del Service Account (de `credentials.json`):
+   ```
+   pixely-partners-inputs@massive-tea-473421-n4.iam.gserviceaccount.com
+   ```
+4. Dar permisos de **Editor**
+
+**Ver guía completa**: `docs/multi_cliente_arquitectura.md`
 
 ### 5. Iniciar Sistema
 
@@ -142,24 +183,15 @@ alembic upgrade head
 # Iniciar API
 docker compose up -d api
 
-# Ejecutar script de configuración inicial
+# Ejecutar script de configuración inicial (solo primera vez)
 python setup_initial.py
 ```
 
 El script creará:
 - Tenant "Pixely Partners Agency"
 - Usuario admin: `admin@pixelypartners.com` / `pixelyadmin2025`
-- Ficha de cliente "Tech Innovators"
-- Imprimirá el `FICHA_CLIENTE_ID` a agregar en `.env`
 
-### 6. Actualizar .env con Ficha Cliente ID
-
-```bash
-# Copiar el UUID impreso por setup_initial.py
-FICHA_CLIENTE_ID=eca2c18c-364e-4877-99ef-189b58c1905b
-```
-
-### 7. Rebuild y Lanzar Sistema Completo
+### 6. Rebuild y Lanzar Sistema Completo
 
 ```bash
 # Rebuild orchestrator con nuevas dependencias
@@ -168,8 +200,38 @@ docker compose build orchestrator
 # Lanzar todos los servicios
 docker compose up -d
 
-# Ver logs
+# Ver logs del orchestrator procesando múltiples clientes
 docker logs -f pixely_orchestrator
+```
+
+### 7. Logs Esperados (Multi-Cliente)
+
+```
+🚀 PIXELY PARTNERS - ORCHESTRATOR INICIADO (MULTI-CLIENT)
+🔐 Authenticating with API...
+✅ Orchestrator authenticated successfully
+📂 Loading client configurations from /app/orchestrator/inputs/...
+✅ Loaded client: Tech Innovators (ID: eca2c18c-...)
+✅ Found 1 enabled clients
+
+================================================================================
+📋 Processing Client: Tech Innovators
+   UUID: eca2c18c-364e-4877-99ef-189b58c1905b
+   Spreadsheet ID: 1kGDc9GI1qnnQHk4n2TfbmRhuua-FOno6mTXXO0czmp4
+================================================================================
+📅 Last analysis timestamp: None (first run)
+📊 Fetching data from Google Sheets for Tech Innovators...
+✅ Found 25 new posts and 87 comments
+🔄 Starting analysis modules (Q1-Q10) for Tech Innovators...
+✅ Analysis completed for Tech Innovators
+
+================================================================================
+📊 EXECUTION SUMMARY
+   ✅ Processed: 1 clients
+   ⏸️  Skipped: 0 clients (no new data)
+   ❌ Failed: 0 clients
+================================================================================
+✅ ORCHESTRATOR EXECUTION COMPLETED
 ```
 
 ## 🎯 Verificación de Funcionamiento
@@ -328,6 +390,8 @@ docker exec -it pixely_orchestrator crontab -l
 
 ## 📖 Documentación Adicional
 
+- `docs/multi_cliente_arquitectura.md` - **NUEVO**: Arquitectura multi-cliente completa
+- `orchestrator/inputs/README.md` - Guía para agregar clientes
 - `docs/especificaciones_sistema.md` - Especificaciones completas
 - `docs/configuracion_orchestrator.md` - Guía de configuración detallada
 - `docs/resumen_implementacion.md` - Resumen técnico de implementación
