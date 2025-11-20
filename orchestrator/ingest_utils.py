@@ -166,7 +166,7 @@ class GoogleSheetsIngestor:
                     post_date_str = post.get('created_at') or post.get('post_date') or post.get('timestamp')
                     
                     if not post_date_str:
-                        logger.warning(f"Post {post.get('post_url')} missing timestamp, skipping")
+                        logger.warning(f"Post {post.get('link')} missing timestamp, skipping")
                         continue
                     
                     # Parse timestamp (support multiple formats)
@@ -213,10 +213,10 @@ class GoogleSheetsIngestor:
             # Get all comments
             all_comments = comments_sheet.get_all_records()
             
-            # Filter comments by post_url
+            # Filter comments by link (post URL)
             filtered_comments = [
                 comment for comment in all_comments 
-                if comment.get('post_url') in post_urls
+                if comment.get('link') in post_urls
             ]
             
             logger.info(f"Fetched {len(filtered_comments)} comments for {len(post_urls)} posts")
@@ -291,7 +291,7 @@ async def fetch_incremental_data_for_client(
         }
     
     # Fetch comments for new posts
-    post_urls = [post.get('post_url') for post in new_posts if post.get('post_url')]
+    post_urls = [post.get('link') for post in new_posts if post.get('link')]
     comments = ingestor.fetch_comments_for_posts(client_config.spreadsheet_id, post_urls)
     
     return {
