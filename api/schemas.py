@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Any, Union
 from datetime import datetime
+import uuid
 
 # --- Modelos Base ---
 
@@ -8,6 +9,23 @@ class Metadata(BaseModel):
     module: str
     version: Union[str, int]
     description: Optional[str] = None
+
+# --- Schemas para guardar resultados de análisis ---
+
+class AnalysisResultCreate(BaseModel):
+    """Schema para crear/actualizar resultados de análisis desde orchestrator"""
+    ficha_cliente_id: str = Field(..., description="UUID del cliente")
+    module_name: str = Field(..., description="Nombre del módulo (Q1, Q2, ..., Q10)")
+    results: Dict[str, Any] = Field(..., description="Resultados completos del análisis")
+
+class AnalysisResultResponse(BaseModel):
+    """Schema de respuesta al guardar resultados"""
+    success: bool
+    message: str
+    insight_id: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
 
 # --- Q1: Emociones ---
 class Q1Response(BaseModel):

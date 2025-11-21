@@ -98,7 +98,6 @@ class BaseAnalyzer(ABC):
     async def save_results_to_api(self, module_name: str, results: Dict[str, Any]) -> bool:
         """
         Send analysis results to API for storage in PostgreSQL.
-        TEMPORARILY DISABLED until endpoint is created.
         
         Args:
             module_name: Module identifier (e.g., "Q1", "Q2", etc.)
@@ -107,41 +106,36 @@ class BaseAnalyzer(ABC):
         Returns:
             True if successful, False otherwise
         """
-        # TODO: Create /analysis_results endpoint in API
-        logger.info(f"{module_name}: Results saved (API endpoint pending implementation)")
-        return True
+        if not self.ficha_cliente_id:
+            logger.error(f"{module_name}: Cannot save results - missing ficha_cliente_id in config")
+            return False
         
-        # COMMENTED OUT until endpoint exists
-        # if not self.ficha_cliente_id:
-        #     logger.error(f"{module_name}: Cannot save results - missing ficha_cliente_id in config")
-        #     return False
-        # 
-        # if not self.api_token:
-        #     logger.error(f"{module_name}: Cannot save results - missing api_token in config")
-        #     return False
-        # 
-        # try:
-        #     endpoint = f"{self.api_base_url}/analysis_results"
-        #     payload = {
-        #         "ficha_cliente_id": self.ficha_cliente_id,
-        #         "module_name": module_name,
-        #         "results": results
-        #     }
-        #     
-        #     async with httpx.AsyncClient() as client:
-        #         response = await client.post(
-        #             endpoint,
-        #             json=payload,
-        #             headers={"Authorization": f"Bearer {self.api_token}"},
-        #             timeout=30.0
-        #         )
-        #         response.raise_for_status()
-        #         logger.info(f"{module_name}: Results saved to API successfully")
-        #         return True
-        #         
-        # except Exception as e:
-        #     logger.error(f"{module_name}: Failed to save results to API: {e}")
-        #     return False
+        if not self.api_token:
+            logger.error(f"{module_name}: Cannot save results - missing api_token in config")
+            return False
+        
+        try:
+            endpoint = f"{self.api_base_url}/analysis_results"
+            payload = {
+                "ficha_cliente_id": self.ficha_cliente_id,
+                "module_name": module_name,
+                "results": results
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    endpoint,
+                    json=payload,
+                    headers={"Authorization": f"Bearer {self.api_token}"},
+                    timeout=30.0
+                )
+                response.raise_for_status()
+                logger.info(f"{module_name}: Results saved to API successfully")
+                return True
+                
+        except Exception as e:
+            logger.error(f"{module_name}: Failed to save results to API: {e}")
+            return False
 
     @abstractmethod
     async def analyze(self) -> Dict[str, Any]:

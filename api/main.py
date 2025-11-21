@@ -569,6 +569,114 @@ def get_insights(
 
 
 # =============================================================================
+# ORCHESTRATOR ANALYSIS RESULTS ENDPOINT
+# =============================================================================
+
+@app.post("/analysis_results", response_model=schemas.AnalysisResultResponse, tags=["Orchestrator"])
+async def save_analysis_results(
+    data: schemas.AnalysisResultCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint para que el orchestrator guarde resultados de análisis.
+    
+    Este endpoint recibe los resultados de Q1-Q10 desde el orchestrator
+    y los almacena en la tabla social_media_insights.
+    
+    Args:
+        data: AnalysisResultCreate con ficha_cliente_id, module_name y results
+        db: Database session
+    
+    Returns:
+        AnalysisResultResponse con success, message e insight_id
+    """
+    try:
+        logger.info(f"📥 Receiving analysis results for {data.module_name} - Client: {data.ficha_cliente_id}")
+        
+        # Validar que el cliente existe
+        ficha = db.query(models.FichaCliente).filter(
+            models.FichaCliente.id == data.ficha_cliente_id
+        ).first()
+        
+        if not ficha:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"FichaCliente {data.ficha_cliente_id} not found"
+            )
+        
+        # Mapeo de módulos a columnas de la tabla
+        module_column_map = {
+            "Q1": "q1_emociones",
+            "Q2": "q2_personalidad",
+            "Q3": "q3_topicos",
+            "Q4": "q4_marcos_narrativos",
+            "Q5": "q5_influenciadores",
+            "Q6": "q6_oportunidades",
+            "Q7": "q7_sentimiento",
+            "Q8": "q8_temporal",
+            "Q9": "q9_recomendaciones",
+            "Q10": "q10_resumen"
+        }
+        
+        column_name = module_column_map.get(data.module_name)
+        if not column_name:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid module_name: {data.module_name}. Must be Q1-Q10"
+            )
+        
+        # Buscar insight existente para este cliente (último análisis)
+        insight = db.query(models.SocialMediaInsight).filter(
+            models.SocialMediaInsight.cliente_id == data.ficha_cliente_id
+        ).order_by(
+            models.SocialMediaInsight.analysis_date.desc()
+        ).first()
+        
+        # Si no existe o es antiguo (más de 1 día), crear nuevo
+        if not insight or (datetime.utcnow() - insight.analysis_date).days >= 1:
+            insight = models.SocialMediaInsight(
+                cliente_id=data.ficha_cliente_id,
+                analysis_date=datetime.utcnow(),
+                total_posts_analyzed=0,
+                total_comments_analyzed=0,
+                analysis_status="in_progress"
+            )
+            db.add(insight)
+            db.flush()  # Para obtener el ID
+            logger.info(f"✨ Created new insight record: {insight.id}")
+        
+        # Actualizar la columna correspondiente al módulo
+        setattr(insight, column_name, data.results)
+        logger.info(f"✅ Updated {column_name} in insight {insight.id}")
+        
+        # Actualizar metadata si disponible
+        if "metadata" in data.results:
+            results_data = data.results.get("results", {})
+            if "analisis_por_publicacion" in results_data:
+                insight.total_posts_analyzed = len(results_data["analisis_por_publicacion"])
+        
+        # Commit
+        db.commit()
+        db.refresh(insight)
+        
+        return schemas.AnalysisResultResponse(
+            success=True,
+            message=f"{data.module_name} results saved successfully",
+            insight_id=str(insight.id)
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"❌ Error saving {data.module_name} results: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error saving analysis results: {str(e)}"
+        )
+
+
+# =============================================================================
 # INDIVIDUAL MODULE ENDPOINTS (Q1-Q10)
 # =============================================================================
 
