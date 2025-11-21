@@ -89,6 +89,7 @@ class FichaCliente(Base):
     tenant = relationship("Tenant", back_populates="clients")
     posts = relationship("SocialMediaPost", back_populates="cliente", cascade="all, delete-orphan")
     insights = relationship("SocialMediaInsight", back_populates="cliente", cascade="all, delete-orphan")
+    tasks = relationship("Task", back_populates="ficha", cascade="all, delete-orphan")
 
 class SocialMediaPost(Base):
     """

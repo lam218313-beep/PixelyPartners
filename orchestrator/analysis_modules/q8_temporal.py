@@ -254,7 +254,8 @@ Return ONLY valid JSON:
             post_timestamps = {}
             for post in posts:
                 link = post.get("link")
-                timestamp = post.get("timestamp")
+                # Try multiple timestamp field names
+                timestamp = post.get("timestamp") or post.get("created_at") or post.get("post_date")
                 if link and timestamp:
                     try:
                         post_timestamps[link] = pd.to_datetime(timestamp)

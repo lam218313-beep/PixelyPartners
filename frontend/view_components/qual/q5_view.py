@@ -4,7 +4,12 @@ import pandas as pd
 import json
 import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q5_data as api_load_q5
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q5_data():
+    """Load Q5 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q5, "q5_influenciadores.json", "Q5")
 
 def display_q5_influenciadores():
     st.title("🌟 Q5: Análisis de Influenciadores Clave")

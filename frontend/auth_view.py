@@ -3,22 +3,30 @@ Authentication view for Pixely Partners Frontend
 """
 
 import streamlit as st
+from pathlib import Path
 from api_client import APIClient, init_session_state, logout
 from cookie_manager import CookieManager
 
 
 def display_login():
     """Display login form."""
-    st.title("🔐 Pixely Partners - Login")
     
-    st.markdown("""
-    ### Bienvenido al Dashboard de Análisis
-    
-    Ingresa tus credenciales para acceder a los insights de tu marca.
-    """)
+    # Logo before form
+    logo_path = Path(__file__).parent / "assets" / "Logo Rosa SVG_Mesa de trabajo 1-01-01.png"
+    if logo_path.exists():
+        with open(logo_path, "rb") as f:
+            import base64
+            logo_data = base64.b64encode(f.read()).decode()
+        st.markdown(
+            f"""<div class="login-logo">
+                <img src="data:image/png;base64,{logo_data}" alt="Pixely Partners">
+            </div>""",
+            unsafe_allow_html=True
+        )
     
     with st.form("login_form"):
-        username = st.text_input("Usuario", placeholder="tu@email.com")
+        st.markdown("### Login")
+        username = st.text_input("Usuario")
         password = st.text_input("Contraseña", type="password")
         remember_me = st.checkbox("Recordarme (mantener sesión por 7 días)", value=True)
         submit = st.form_submit_button("Iniciar Sesión")
@@ -68,6 +76,14 @@ def display_login():
                 st.error(str(e))
             except Exception as e:
                 st.error(f"Error inesperado: {e}")
+    
+    # Footer debajo del formulario
+    st.markdown(
+        """<div class="login-footer">
+            Hecho para <span class="dikimro">DIKIMRO</span> ♥
+        </div>""",
+        unsafe_allow_html=True
+    )
 
 
 def display_logout_button():
@@ -84,13 +100,18 @@ def display_logout_button():
 
 def display_user_info():
     """Display user info in sidebar."""
+    
+    # Logo in sidebar
+    logo_path = Path(__file__).parent / "assets" / "Logo Rosa SVG_Mesa de trabajo 1-01-01.png"
+    if logo_path.exists():
+        with open(logo_path, "rb") as f:
+            import base64
+            logo_data = base64.b64encode(f.read()).decode()
+        st.sidebar.markdown(
+            f"""<div class="sidebar-logo">
+                <img src="data:image/png;base64,{logo_data}" alt="Pixely Partners">
+            </div>""",
+            unsafe_allow_html=True
+        )
+    
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 👤 Usuario")
-    
-    user_email = st.session_state.get("user_email", "N/A")
-    st.sidebar.text(f"Email: {user_email}")
-    
-    ficha_name = st.session_state.get("ficha_cliente_name", "N/A")
-    st.sidebar.text(f"Cliente: {ficha_name}")
-    
-    display_logout_button()

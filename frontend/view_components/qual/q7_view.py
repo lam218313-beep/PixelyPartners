@@ -4,7 +4,12 @@ import pandas as pd
 import json
 import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q7_data as api_load_q7
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q7_data():
+    """Load Q7 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q7, "q7_sentimiento_detallado.json", "Q7")
 
 def get_sentiment_color(sentiment_type):
     """Map sentiment type to color"""
@@ -144,7 +149,7 @@ def display_q7_sentimiento():
         
         # Get top 5 by mixto
         df_pubs = pd.DataFrame(analisis_por_pub)
-        df_pubs['post_corto'] = df_pubs['post_url'].str.extract(r'/p/([^/]+)')[0].fillna(df_pubs['post_url'])
+        df_pubs['post_corto'] = df_pubs['link'].str.extract(r'/p/([^/]+)')[0].fillna(df_pubs['link'])
         df_top_mixto = df_pubs.nlargest(5, 'porcentaje_mixto')
         
         fig_bars = go.Figure([go.Bar(
@@ -203,7 +208,7 @@ def display_q7_sentimiento():
         selected_pub = df_pubs[df_pubs['post_corto'] == selected_post_corto].iloc[0]
         
         # Display sentiment distribution for this post
-        st.markdown(f"**Publicación:** `{selected_pub['post_url']}`")
+        st.markdown(f"**Publicación:** `{selected_pub['link']}`")
         
         # Show distribution as bars
         sentimientos_post = selected_pub['distribucion_sentimiento']

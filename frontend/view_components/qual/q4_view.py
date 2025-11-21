@@ -166,12 +166,12 @@ def display_q4_marcos_narrativos():
             df_posts['marco_concentration'] = df_posts.apply(get_marco_value, axis=1)
             
             # Get top 5
-            top_5_posts = df_posts.nlargest(5, 'marco_concentration')[['post_url', 'marco_concentration']]
+            top_5_posts = df_posts.nlargest(5, 'marco_concentration')[['link', 'marco_concentration']]
             
             # Create horizontal bar chart with marco color
             marco_color = get_marco_color(selected_marco)
             fig = go.Figure([go.Bar(
-                y=top_5_posts['post_url'].str[:50],
+                y=top_5_posts['link'].str[:50],
                 x=top_5_posts['marco_concentration'],
                 orientation='h',
                 marker_color=marco_color
@@ -188,9 +188,9 @@ def display_q4_marcos_narrativos():
             # Show detailed table
             st.write("**Detalle de Top 5:**")
             display_df = top_5_posts.copy()
-            display_df['post_url'] = display_df['post_url'].str[:60] + "..."
+            display_df['link'] = display_df['link'].str[:60] + "..."
             display_df = display_df.rename(columns={
-                'post_url': 'URL',
+                'link': 'URL',
                 'marco_concentration': f'{selected_marco} (%)'
             })
             st.dataframe(display_df, use_container_width=True)
@@ -226,10 +226,10 @@ def display_q4_marcos_narrativos():
         df_posts = pd.DataFrame(per_post)
         selected_url = st.selectbox(
             "Selecciona una publicación para ver su perfil narrativo y ejemplos:",
-            df_posts["post_url"].tolist(),
+            df_posts["link"].tolist(),
             key="post_marco_selector"
         )
-        selected_post = df_posts[df_posts["post_url"] == selected_url].iloc[0]
+        selected_post = df_posts[df_posts["link"] == selected_url].iloc[0]
         
         # Extract marcos distribution - try both column names
         marcos_dist = selected_post.get("marcos_narrativos", {})

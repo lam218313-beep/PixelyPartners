@@ -210,8 +210,10 @@ class SocialMediaPostResponse(BaseModel):
 class InsightResponse(BaseModel):
     """Respuesta con resultados de análisis guardados."""
     id: Any
-    ficha_cliente_id: Any
-    analysis_type: str  # "Q1", "Q2", etc.
+    cliente_id: Any
+    created_at: datetime
+    total_posts_analyzed: int = 0
+    total_comments_analyzed: int = 0
     q1_emociones: Optional[Dict[str, Any]] = None
     q2_personalidad: Optional[Dict[str, Any]] = None
     q3_topicos: Optional[Dict[str, Any]] = None
@@ -222,7 +224,6 @@ class InsightResponse(BaseModel):
     q8_temporal: Optional[Dict[str, Any]] = None
     q9_recomendaciones: Optional[Dict[str, Any]] = None
     q10_resumen: Optional[Dict[str, Any]] = None
-    analyzed_at: datetime
     
     class Config:
         from_attributes = True

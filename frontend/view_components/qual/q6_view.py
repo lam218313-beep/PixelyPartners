@@ -4,7 +4,12 @@ import pandas as pd
 import json
 import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q6_data as api_load_q6
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q6_data():
+    """Load Q6 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q6, "q6_oportunidades.json", "Q6")
 
 def get_priority_color(gap_score, actividad_competitiva):
     """

@@ -6,7 +6,12 @@ import os
 from datetime import datetime
 import plotly.graph_objects as go  # type: ignore
 from plotly.subplots import make_subplots  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q8_data as api_load_q8
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q8_data():
+    """Load Q8 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q8, "q8_temporal.json", "Q8")
 
 def get_sentiment_color(sentiment_type):
     """Map sentiment type to color"""

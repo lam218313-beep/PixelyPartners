@@ -9,12 +9,24 @@ import json
 from datetime import datetime, timedelta
 
 
+# Global singleton instance
+_cookie_manager_instance = None
+
+
+def get_cookie_manager():
+    """Get or create the singleton CookieManager instance."""
+    global _cookie_manager_instance
+    if _cookie_manager_instance is None:
+        _cookie_manager_instance = stx.CookieManager()
+    return _cookie_manager_instance
+
+
 class CookieManager:
     """Manage authentication cookies for persistent login."""
     
     def __init__(self, cookie_name: str = "pixely_auth"):
         self.cookie_name = cookie_name
-        self.cookie_manager = stx.CookieManager()
+        self.cookie_manager = get_cookie_manager()
     
     def save_auth_cookie(
         self,
@@ -23,7 +35,7 @@ class CookieManager:
         tenant_id: str,
         ficha_cliente_id: Optional[str] = None,
         ficha_cliente_name: Optional[str] = None,
-        days: int = 7
+        days: int = 1  # Changed from 7 to 1 day - tokens expire in 30min anyway
     ):
         """
         Save authentication data to cookie.
@@ -73,8 +85,8 @@ class CookieManager:
             saved_at = datetime.fromisoformat(auth_data.get("saved_at"))
             token_age = datetime.now() - saved_at
             
-            # If saved more than 7 days ago, consider expired
-            if token_age.days > 7:
+            # JWT tokens expire in 30 minutes - force re-login if older
+            if token_age.total_seconds() > 1800:  # 30 minutes in seconds
                 self.clear_auth_cookie()
                 return None
             

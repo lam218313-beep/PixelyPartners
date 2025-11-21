@@ -22,6 +22,9 @@ from .dependencies import get_openai_client, get_config, get_current_user, get_p
 from . import schemas, models, security
 from .database import get_db
 
+# Import task routes
+from . import routes_tasks
+
 # --- IMPORTAR TUS MÓDULOS REALES ---
 from orchestrator.analysis_modules.q1_emociones import Q1Emociones
 from orchestrator.analysis_modules.q2_personalidad import Q2Personalidad
@@ -88,6 +91,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include task management router
+app.include_router(routes_tasks.router)
 
 
 # =============================================================================

@@ -27,18 +27,11 @@ def display_q3_topicos():
     ### El dato de fondo
     Este análisis usa Topic Modeling (LDA/BERTopic) para identificar clusters de palabras que frecuentemente aparecen juntas. No es buscar keywords, sino descubrir TEMAS emergentes que tu equipo podría no haber anticipado.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q3_temas.json")
     
-    # Try alternative filenames
-    if not os.path.exists(json_path):
-        json_path = os.path.join(outputs_dir, "q3_topicos.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q3 file not found")
+    data = load_q3_data()
+    if data is None:
         return
     
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
     results = data.get("results", {})
     
     # ============================================================================
@@ -175,14 +168,14 @@ def display_q3_topicos():
             )
             
             # Get top 5
-            cols_to_select = ['post_url', 'topic_concentration']
+            cols_to_select = ['link', 'topic_concentration']
             if 'sentimiento' in df_posts.columns:
                 cols_to_select.append('sentimiento')
             top_5_posts = df_posts.nlargest(5, 'topic_concentration')[cols_to_select]
             
             # Create horizontal bar chart
             fig = go.Figure([go.Bar(
-                y=top_5_posts['post_url'].str[:50],
+                y=top_5_posts['link'].str[:50],
                 x=top_5_posts['topic_concentration'],
                 orientation='h',
                 marker_color='mediumpurple'
@@ -199,9 +192,9 @@ def display_q3_topicos():
             # Show detailed table
             st.write("**Detalle de Top 5:**")
             display_df = top_5_posts.copy()
-            display_df['post_url'] = display_df['post_url'].str[:60] + "..."
+            display_df['link'] = display_df['link'].str[:60] + "..."
             rename_dict = {
-                'post_url': 'URL',
+                'link': 'URL',
                 'topic_concentration': f'{selected_topic} (%)'
             }
             if 'sentimiento' in display_df.columns:
@@ -244,10 +237,10 @@ def display_q3_topicos():
         df_posts = pd.DataFrame(per_post)
         selected_url = st.selectbox(
             "Selecciona una publicación para ver su distribución de tópicos:",
-            df_posts["post_url"].tolist(),
+            df_posts["link"].tolist(),
             key="post_topic_selector"
         )
-        selected_post = df_posts[df_posts["post_url"] == selected_url].iloc[0]
+        selected_post = df_posts[df_posts["link"] == selected_url].iloc[0]
         
         # Extract topics for this post
         topics_dict = selected_post.get("topicos", {})

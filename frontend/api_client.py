@@ -98,6 +98,126 @@ class APIClient:
         except Exception as e:
             st.error(f"Error al ejecutar análisis: {e}")
             return False
+    
+    # ========================================================================
+    # TASK MANAGEMENT METHODS
+    # ========================================================================
+    
+    def get_tasks(self, ficha_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get all tasks for a client, grouped by week.
+        
+        Returns:
+            Dict with week_1, week_2, week_3, week_4, total_tasks, completed_tasks
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.get(
+                    f"/api/v1/fichas/{ficha_id}/tasks",
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                return None
+            st.error(f"Error al obtener tareas: {e}")
+            return None
+        except Exception as e:
+            st.error(f"Error de conexión: {e}")
+            return None
+    
+    def update_task_status(self, task_id: str, new_status: str) -> Optional[Dict[str, Any]]:
+        """
+        Update task status.
+        
+        Args:
+            task_id: Task ID
+            new_status: New status (PENDIENTE, EN_CURSO, HECHO, REVISADO)
+        
+        Returns:
+            Updated task data
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.patch(
+                    f"/api/v1/tasks/{task_id}",
+                    json={"status": new_status},
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            st.error(f"Error al actualizar tarea: {e}")
+            return None
+    
+    def add_task_note(self, task_id: str, content: str) -> Optional[Dict[str, Any]]:
+        """
+        Add a note/comment to a task.
+        
+        Args:
+            task_id: Task ID
+            content: Note content
+        
+        Returns:
+            Created note data
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.post(
+                    f"/api/v1/tasks/{task_id}/notes",
+                    json={"content": content},
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            st.error(f"Error al agregar nota: {e}")
+            return None
+    
+    def get_task_notes(self, task_id: str) -> Optional[list]:
+        """
+        Get all notes for a task.
+        
+        Args:
+            task_id: Task ID
+        
+        Returns:
+            List of notes
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.get(
+                    f"/api/v1/tasks/{task_id}/notes",
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            st.error(f"Error al obtener notas: {e}")
+            return None
+    
+    def generate_tasks_from_q9(self, ficha_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Generate tasks from Q9 recommendations.
+        
+        Args:
+            ficha_id: Client ID
+        
+        Returns:
+            Dict with generation results
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.post(
+                    f"/api/v1/fichas/{ficha_id}/tasks/generate-from-q9",
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            st.error(f"Error al generar tareas: {e}")
+            return None
 
 
 def init_session_state():

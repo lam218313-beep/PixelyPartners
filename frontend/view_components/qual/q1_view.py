@@ -86,8 +86,8 @@ def display_q1_emotions():
 
     df = pd.DataFrame(per_posts)
     st.header("Análisis por Publicación")
-    post = st.selectbox("Selecciona publicación", df["post_url"].tolist())
-    selected = df[df["post_url"] == post].iloc[0]
+    post = st.selectbox("Selecciona publicación", df["post_link"].tolist())
+    selected = df[df["post_link"] == post].iloc[0]
 
     st.write(f"**Resumen:** {selected.get('resumen_emocional', 'N/A')}")
     emociones = selected.get("emociones", {})
@@ -125,8 +125,8 @@ def display_q1_emotions():
     available = list(per_posts[0].get("emociones", {}).keys())
     emotion = st.selectbox("Elige emoción", available)
     df[emotion] = df["emociones"].apply(lambda d: d.get(emotion, 0))
-    top5 = df.nlargest(5, emotion)[["post_url", emotion, "resumen_emocional"]]
-    st.dataframe(top5.rename(columns={emotion: f"Puntuación ({emotion})", "post_url": "URL"}))
+    top5 = df.nlargest(5, emotion)[["post_link", emotion, "resumen_emocional"]]
+    st.dataframe(top5.rename(columns={emotion: f"Puntuación ({emotion})", "post_link": "URL"}))
     
     # Descripción del ranking
     st.markdown("""

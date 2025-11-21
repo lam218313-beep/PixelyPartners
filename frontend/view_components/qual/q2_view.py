@@ -31,8 +31,7 @@ def display_q2_personalidad():
     data = load_q2_data()
     if data is None:
         return
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    
     results = data.get("results", {})
     
     # ============================================================================
@@ -104,11 +103,11 @@ def display_q2_personalidad():
             )
             
             # Get top 5
-            top_5 = df_posts.nlargest(5, 'trait_score')[['post_url', 'trait_score']]
+            top_5 = df_posts.nlargest(5, 'trait_score')[['link', 'trait_score']]
             
             # Create horizontal bar chart
             fig = go.Figure([go.Bar(
-                y=top_5['post_url'].str[:50],
+                y=top_5['link'].str[:50],
                 x=top_5['trait_score'],
                 orientation='h',
                 marker_color='coral'
@@ -125,9 +124,9 @@ def display_q2_personalidad():
             # Show detailed table
             st.write("**Detalle de Top 5:**")
             display_df = top_5.copy()
-            display_df['post_url'] = display_df['post_url'].str[:60] + "..."
+            display_df['link'] = display_df['link'].str[:60] + "..."
             display_df = display_df.rename(columns={
-                'post_url': 'URL',
+                'link': 'URL',
                 'trait_score': f'{selected_trait} (Intensidad)'
             })
             st.dataframe(display_df, use_container_width=True)
@@ -166,10 +165,10 @@ def display_q2_personalidad():
         df_posts = pd.DataFrame(per_post)
         selected_url = st.selectbox(
             "Selecciona una publicación para ver su perfil de personalidad completo:",
-            df_posts["post_url"].tolist(),
+            df_posts["link"].tolist(),
             key="post_selector"
         )
-        selected_post = df_posts[df_posts["post_url"] == selected_url].iloc[0]
+        selected_post = df_posts[df_posts["link"] == selected_url].iloc[0]
         
         traits = selected_post.get("rasgos_aaker", {})
         if traits and isinstance(traits, dict):

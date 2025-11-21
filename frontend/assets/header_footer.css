@@ -1,0 +1,155 @@
+/* ============================================
+   HEADER STYLES - Dark Theme
+   ============================================ */
+
+/* Hide default Streamlit header */
+header[data-testid="stHeader"] {
+    display: none;
+}
+
+/* Hide Streamlit toolbar and menu */
+[data-testid="stToolbar"],
+#MainMenu {
+    visibility: hidden;
+    display: none;
+}
+
+/* Main app background - Black */
+.stApp {
+    background-color: #000000;
+}
+
+/* Main content background - Black */
+.main {
+    background-color: #000000;
+}
+
+/* Main app header - Black with white text */
+.app-header {
+    background: #000000;
+    padding: 1.25rem 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #333333;
+}
+
+.app-header h1 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* Main content area padding */
+.main .block-container {
+    padding: 2rem 3rem 4rem 3rem;
+    max-width: 1400px;
+    background-color: #000000;
+}
+
+/* Page titles - White */
+.main h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+/* Section titles - White */
+.main h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* All text elements - White */
+.main p,
+.main span,
+.main div,
+.main label {
+    color: #ffffff;
+}
+
+/* Cards and containers - Dark */
+.stAlert,
+[data-testid="stExpander"] {
+    border-radius: 12px;
+    border: 1px solid #333333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    background-color: #1a1a1a;
+}
+
+/* Tabs styling - Dark, sin fondo blanco */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 12px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.stTabs [aria-selected="true"] {
+    background: #333333;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+}
+
+/* Metric containers - Dark */
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"] {
+    color: #ffffff;
+}
+
+
+/* ============================================
+   FOOTER STYLES - Dark Theme
+   ============================================ */
+
+/* Hide default Streamlit footer */
+footer,
+footer::before,
+footer::after,
+footer * {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Custom footer - Black with white text */
+.custom-footer {
+    background: #000000;
+    border-top: 2px solid #333333;
+    padding: 1.25rem 2rem;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.custom-footer p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.custom-footer a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.custom-footer a:hover {
+    color: #cccccc;
+}
