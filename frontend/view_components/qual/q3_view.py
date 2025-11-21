@@ -1,10 +1,13 @@
 """Q3 View: Topic Modeling Display - 3 Gráficos Según Especificación"""
 import streamlit as st # type: ignore
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q3_data as api_load_q3
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q3_data():
+    """Load Q3 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q3, "q3_topicos.json", "Q3")
 
 def display_q3_topicos():
     st.title("💬 Q3: Análisis de Tópicos Principales")

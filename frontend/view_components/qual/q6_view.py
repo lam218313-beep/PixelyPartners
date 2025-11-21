@@ -46,12 +46,11 @@ def display_q6_oportunidades():
     ### El dato de fondo
     Comparamos lo que la audiencia PIDE (menciones, requests, frustrations) vs lo que existe en el mercado (análisis competitivo). El gap = oportunidad. El tamaño del gap × inversión competitiva baja = prioridad.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q6_oportunidades.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q6 file not found"); return
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    
+    data = load_q6_data()
+    if data is None:
+        return
+    
     results = data.get("results", {})
     oportunidades = results.get("lista_oportunidades", [])
     

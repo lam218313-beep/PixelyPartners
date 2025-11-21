@@ -1,10 +1,13 @@
 """Q2 View: Personality Analysis Display - 3 Gráficos Según Especificación Aaker"""
 import streamlit as st # type: ignore
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q2_data as api_load_q2
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q2_data():
+    """Load Q2 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q2, "q2_personalidad.json", "Q2")
 
 def display_q2_personalidad():
     st.title("👤 Q2: Análisis de Personalidad de Marca (Aaker)")
@@ -24,10 +27,9 @@ def display_q2_personalidad():
     ### El dato de fondo
     Las 5 dimensiones de Aaker se basan en investigación exhaustiva con miles de marcas. La mayoría de marcas exitosas tienen una dimensión FUERTE (no tratan de ser todo para todos). Apple = Sofisticación. Nike = Competencia. Esto es lo que verás aquí.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q2_personalidad.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q2 file not found at {json_path}")
+    
+    data = load_q2_data()
+    if data is None:
         return
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)

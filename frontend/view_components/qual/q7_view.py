@@ -34,12 +34,11 @@ def display_q7_sentimiento():
     ### El dato de fondo
     Usamos análisis de oraciones múltiples (no solo agregamos positivo/negativo al comment level) para detectar CONTRADICCIONES dentro de un mismo comentario. También medimos subjetividad (cuánta opinión vs factos). El resultado es un perfil mucho más realista.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q7_sentimiento_detallado.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q7 file not found"); return
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    
+    data = load_q7_data()
+    if data is None:
+        return
+    
     results = data.get("results", {})
     
     analisis_agregado = results.get("analisis_agregado", {})

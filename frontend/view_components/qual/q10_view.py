@@ -1,10 +1,13 @@
-"""Q10 View: Executive Summary with Alert System"""
+"""Q10 View: Executive Summary with Strategic KPIs and Alerts"""
 import streamlit as st # type: ignore
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q10_data as api_load_q10
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q10_data():
+    """Load Q10 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q10, "q10_resumen_ejecutivo.json", "Q10")
 
 def display_q10_resumen_ejecutivo():
     st.title("📊 Q10: Resumen Ejecutivo - Dashboard Estratégico")
@@ -31,13 +34,10 @@ def display_q10_resumen_ejecutivo():
     ### El dato de fondo
     Este es donde ejecutivos NECESITAN estar. No es académico, es ACCIONABLE. Cada punto viene con contexto de dónde vino (Q1? Q6? Q8?) para que si alguien quiere profundizar, sabe dónde buscar.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q10_resumen_ejecutivo.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q10 file not found"); return
     
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = load_q10_data()
+    if data is None:
+        return
     
     results = data.get("results", {})
     

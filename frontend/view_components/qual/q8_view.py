@@ -19,13 +19,10 @@ def get_sentiment_color(sentiment_type):
 
 def display_q8_temporal():
     st.title("📈 Q8: Comportamiento Temporal & Detección de Anomalías")
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q8_temporal.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q8 file not found"); return
     
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = load_q8_data()
+    if data is None:
+        return
     
     results = data.get("results", {})
     serie_temporal = results.get("serie_temporal_semanal", [])

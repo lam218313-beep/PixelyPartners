@@ -1,10 +1,13 @@
 """Q4 View: Narrative Framing Analysis - 4 Gráficos Según Especificación"""
 import streamlit as st # type: ignore
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q4_data as api_load_q4
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q4_data():
+    """Load Q4 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q4, "q4_marcos_narrativos.json", "Q4")
 
 # Mapeo de marcos a colores
 MARCO_COLORS = {
@@ -52,12 +55,11 @@ def display_q4_marcos_narrativos():
     ### El dato de fondo
     Este es el análisis que usa Hollywood para editar películas, que usan políticos para ganar elecciones, y que líderes de marca usan para controlar narrativas. Un marco positivo hace que los clientes CREAN en tu valor; un marco negativo los hace sentir estafados por el mismo producto.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q4_marcos_narrativos.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q4 file not found"); return
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    
+    data = load_q4_data()
+    if data is None:
+        return
+    
     results = data.get("results", {})
     
     # ============================================================================

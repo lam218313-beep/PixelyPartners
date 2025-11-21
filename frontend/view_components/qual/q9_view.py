@@ -1,10 +1,13 @@
 """Q9 View: Recommendations Analysis with Strategic Prioritization"""
 import streamlit as st # type: ignore
 import pandas as pd
-import json
-import os
 import plotly.graph_objects as go  # type: ignore
-from .._outputs import get_outputs_dir
+from view_components.data_loader import load_q9_data as api_load_q9
+from view_components.compat_loader import load_from_api_or_file
+
+def load_q9_data():
+    """Load Q9 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q9, "q9_recomendaciones.json", "Q9")
 
 def get_area_color(area):
     """Map area estratégica to color"""
@@ -53,13 +56,10 @@ def display_q9_recomendaciones():
     ### El dato de fondo
     Las 5-7 recomendaciones principales se rankean por urgencia (CRÍTICA/ALTA/MEDIA/BAJA) y cada una está vinculada a 2-3 frameworks previos que la justifican. Si dices "hacer X", el documento dice "por eso": porque Q6 mostró demanda insatisfecha, Q8 mostró oportunidad, Q5 mostró quién lo quiere más.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q9_recomendaciones.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q9 file not found"); return
     
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = load_q9_data()
+    if data is None:
+        return
     
     results = data.get("results", {})
     recs_list = results.get("lista_recomendaciones", [])

@@ -25,12 +25,11 @@ def display_q5_influenciadores():
     ### El dato de fondo
     Usamos Network Analysis + Sentiment para calcular "centralidad" (cuánta gente está conectada a través de ellos) × "polaridad" (qué tan positivos son). El resultado = poder real, no seguidores vanity.
     """)
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q5_influenciadores.json")
-    if not os.path.exists(json_path):
-        st.error(f"Q5 file not found"); return
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    
+    data = load_q5_data()
+    if data is None:
+        return
+    
     results = data.get("results", {})
     
     # Get data from detallado structure
