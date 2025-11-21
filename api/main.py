@@ -18,7 +18,7 @@ from openai import AsyncOpenAI
 from contextlib import asynccontextmanager
 
 # Importar dependencias y esquemas
-from .dependencies import get_openai_client, get_config, get_current_user
+from .dependencies import get_openai_client, get_config, get_current_user, get_posts_and_comments_from_db
 from . import schemas, models, security
 from .database import get_db
 
@@ -559,25 +559,26 @@ def list_social_media_posts(
 # INSIGHTS ENDPOINTS (Analysis Results)
 # =============================================================================
 
-@app.get("/insights", response_model=List[schemas.InsightResponse], tags=["Insights"])
+@app.get("/insights/{ficha_cliente_id}", response_model=schemas.InsightResponse, tags=["Insights"])
 def get_insights(
-    ficha_cliente_id: Optional[str] = None,
+    ficha_cliente_id: str,
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Obtiene insights/análisis guardados. Opcional: filtrar por ficha_cliente_id."""
-    query = db.query(models.SocialMediaInsight).join(
+    """Obtiene el último insight para un cliente específico."""
+    # Buscar el insight más reciente para este cliente
+    insight = db.query(models.SocialMediaInsight).join(
         models.FichaCliente,
-        models.SocialMediaInsight.ficha_cliente_id == models.FichaCliente.id
+        models.SocialMediaInsight.cliente_id == models.FichaCliente.id
     ).filter(
-        models.FichaCliente.tenant_id == current_user.tenant_id
-    )
+        models.FichaCliente.tenant_id == current_user.tenant_id,
+        models.SocialMediaInsight.cliente_id == ficha_cliente_id
+    ).order_by(models.SocialMediaInsight.created_at.desc()).first()
     
-    if ficha_cliente_id:
-        query = query.filter(models.SocialMediaInsight.ficha_cliente_id == ficha_cliente_id)
+    if not insight:
+        raise HTTPException(status_code=404, detail="No analysis found for this client")
     
-    insights = query.all()
-    return insights
+    return insight
 
 
 # =============================================================================
@@ -740,8 +741,12 @@ async def analyze_q1(
 ):
     """Execute Q1 - Análisis de Emociones y guardar en BD."""
     try:
-        logger.info("Starting Q1 - Emociones analysis")
-        config = get_config()
+        logger.info(f"Starting Q1 - Emociones analysis for client {ficha_cliente_id}")
+        
+        # Load data from database for this specific client
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
+        
         analyzer = Q1Emociones(client, config)
         result = await analyzer.analyze()
         
@@ -767,8 +772,10 @@ async def analyze_q2(
 ):
     """Execute Q2 - Personalidad de Marca (Aaker)."""
     try:
-        logger.info("Starting Q2 - Personalidad analysis")
-        config = get_config()
+        logger.info(f"Starting Q2 - Personalidad analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
+        
         analyzer = Q2Personalidad(client, config)
         result = await analyzer.analyze()
         
@@ -793,8 +800,10 @@ async def analyze_q3(
 ):
     """Execute Q3 - Análisis de Tópicos."""
     try:
-        logger.info("Starting Q3 - Tópicos analysis")
-        config = get_config()
+        logger.info(f"Starting Q3 - Tópicos analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
+        
         analyzer = Q3Topicos(client, config)
         result = await analyzer.analyze()
         
@@ -819,8 +828,9 @@ async def analyze_q4(
 ):
     """Execute Q4 - Análisis de Marcos Narrativos."""
     try:
-        logger.info("Starting Q4 - Marcos Narrativos analysis")
-        config = get_config()
+        logger.info(f"Starting Q4 - Marcos Narrativos analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q4MarcosNarrativos(client, config)
         result = await analyzer.analyze()
         
@@ -845,8 +855,9 @@ async def analyze_q5(
 ):
     """Execute Q5 - Análisis de Influenciadores."""
     try:
-        logger.info("Starting Q5 - Influenciadores analysis")
-        config = get_config()
+        logger.info(f"Starting Q5 - Influenciadores analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q5Influenciadores(client, config)
         result = await analyzer.analyze()
         
@@ -871,8 +882,9 @@ async def analyze_q6(
 ):
     """Execute Q6 - Análisis de Oportunidades."""
     try:
-        logger.info("Starting Q6 - Oportunidades analysis")
-        config = get_config()
+        logger.info(f"Starting Q6 - Oportunidades analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q6Oportunidades(client, config)
         result = await analyzer.analyze()
         
@@ -897,8 +909,9 @@ async def analyze_q7(
 ):
     """Execute Q7 - Análisis de Sentimiento Detallado."""
     try:
-        logger.info("Starting Q7 - Sentimiento Detallado analysis")
-        config = get_config()
+        logger.info(f"Starting Q7 - Sentimiento Detallado analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q7SentimientoDetallado(client, config)
         result = await analyzer.analyze()
         
@@ -923,8 +936,9 @@ async def analyze_q8(
 ):
     """Execute Q8 - Análisis Temporal."""
     try:
-        logger.info("Starting Q8 - Temporal analysis")
-        config = get_config()
+        logger.info(f"Starting Q8 - Temporal analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q8Temporal(client, config)
         result = await analyzer.analyze()
         
@@ -949,8 +963,9 @@ async def analyze_q9(
 ):
     """Execute Q9 - Análisis de Recomendaciones."""
     try:
-        logger.info("Starting Q9 - Recomendaciones analysis")
-        config = get_config()
+        logger.info(f"Starting Q9 - Recomendaciones analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         analyzer = Q9Recomendaciones(client, config)
         result = await analyzer.analyze()
         
@@ -975,8 +990,9 @@ async def analyze_q10(
 ):
     """Execute Q10 - Resumen Ejecutivo."""
     try:
-        logger.info("Starting Q10 - Resumen Ejecutivo analysis")
-        config = get_config()
+        logger.info(f"Starting Q10 - Resumen Ejecutivo analysis for client {ficha_cliente_id}")
+        config = get_posts_and_comments_from_db(ficha_cliente_id, db)
+        logger.info(f"Loaded {len(config['new_posts'])} posts and {len(config['new_comments'])} comments from DB")
         # Q10 no usa cliente OpenAI, pasamos None
         analyzer = Q10ResumenEjecutivo(None, config)
         result = await analyzer.analyze()
@@ -1159,3 +1175,9 @@ if __name__ == "__main__":
         reload=debug,
         log_level="info"
     )
+
+
+
+
+
+
