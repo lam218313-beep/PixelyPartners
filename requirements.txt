@@ -6,6 +6,7 @@ pytest==7.4.3
 pandas==2.1.1
 plotly==5.15.0
 tenacity>=8.2.0
+extra-streamlit-components>=0.1.60  # Cookie management for persistent login
 # --- NUEVO PARA API ---
 fastapi>=0.100.0
 uvicorn>=0.20.0

@@ -9,6 +9,7 @@ import streamlit as st # type: ignore
 import os
 from api_client import APIClient, init_session_state, is_authenticated
 from auth_view import display_login, display_user_info
+from cookie_manager import CookieManager
 from view_components.qual import (
     q1_view, q2_view, q3_view, q4_view, q5_view,
     q6_view, q7_view, q8_view, q9_view, q10_view
@@ -19,10 +20,18 @@ st.set_page_config(layout="wide", page_title="Pixely Partners Dashboard")
 # Initialize session state
 init_session_state()
 
-# Check authentication
+# Try to restore session from cookie if not authenticated
 if not is_authenticated():
-    display_login()
-    st.stop()
+    cookie_mgr = CookieManager()
+    restored = cookie_mgr.restore_session_from_cookie()
+    
+    if not restored:
+        # No valid cookie, show login
+        display_login()
+        st.stop()
+    else:
+        # Session restored from cookie, rerun to show dashboard
+        st.rerun()
 
 # Sidebar navigation
 st.sidebar.title("Pixely Partners")
