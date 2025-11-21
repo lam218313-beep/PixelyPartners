@@ -94,6 +94,9 @@ class Q10Response(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_email: Optional[str] = None
+    tenant_id: Optional[str] = None
+    ficha_cliente_id: Optional[str] = None  # First ficha for this tenant
 
 class TokenData(BaseModel):
     email: Optional[str] = None

@@ -1,25 +1,13 @@
 import streamlit as st  # type: ignore
 import pandas as pd
-import json
-import os
-from view_components._outputs import get_outputs_dir
+from view_components.data_loader import load_q1_data as api_load_q1
+from view_components.compat_loader import load_from_api_or_file
 import plotly.graph_objects as go  # type: ignore
 
 
 def load_q1_data():
-    """Load the Q1 JSON output produced by the orchestrator.
-
-    Returns the parsed JSON dict or None if the file is missing.
-    """
-    outputs_dir = get_outputs_dir()
-    json_path = os.path.join(outputs_dir, "q1_emociones.json")
-
-    if not os.path.exists(json_path):
-        st.error(f"Error: no se encontró el archivo Q1 en {json_path}")
-        return None
-
-    with open(json_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    """Load Q1 data from API or local file (backward compatibility)."""
+    return load_from_api_or_file(api_load_q1, "q1_emociones.json", "Q1")
 
 
 def display_q1_emotions():

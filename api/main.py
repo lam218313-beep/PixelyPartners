@@ -163,7 +163,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     Endpoint de Login (OAuth2 standard).
-    Recibe username (email) y password, devuelve Access Token.
+    Recibe username (email) y password, devuelve Access Token con info de usuario.
     """
     # 1. Buscar usuario
     user = db.query(models.User).filter(models.User.email == form_data.username).first()
@@ -181,7 +181,19 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = security.create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    
+    # 4. Get first ficha_cliente for this tenant (if any)
+    first_ficha = db.query(models.FichaCliente).filter(
+        models.FichaCliente.tenant_id == user.tenant_id
+    ).first()
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_email": user.email,
+        "tenant_id": str(user.tenant_id),
+        "ficha_cliente_id": str(first_ficha.id) if first_ficha else None
+    }
 
 
 @app.get("/users/me", response_model=schemas.UserResponse, tags=["Authentication"])

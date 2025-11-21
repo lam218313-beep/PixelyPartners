@@ -16,8 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project source
 COPY frontend/ /app/frontend
-COPY orchestrator/outputs /app/orchestrator/outputs
-COPY docs/ /app/docs
 
 # Streamlit configuration
 RUN mkdir -p /root/.streamlit

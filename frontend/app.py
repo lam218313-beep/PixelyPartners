@@ -2,13 +2,13 @@
 Pixely Partners - Frontend Dashboard
 
 Streamlit-based dashboard for qualitative analysis (Q1-Q10).
-Displays results from orchestrator analysis modules.
+Displays results from API with JWT authentication.
 """
 
 import streamlit as st # type: ignore
-import json
 import os
-from view_components._outputs import get_outputs_dir
+from api_client import APIClient, init_session_state, is_authenticated
+from auth_view import display_login, display_user_info
 from view_components.qual import (
     q1_view, q2_view, q3_view, q4_view, q5_view,
     q6_view, q7_view, q8_view, q9_view, q10_view
@@ -16,8 +16,19 @@ from view_components.qual import (
 
 st.set_page_config(layout="wide", page_title="Pixely Partners Dashboard")
 
+# Initialize session state
+init_session_state()
+
+# Check authentication
+if not is_authenticated():
+    display_login()
+    st.stop()
+
 # Sidebar navigation
 st.sidebar.title("Pixely Partners")
+
+# Display user info
+display_user_info()
 
 page = st.sidebar.radio(
     "Navegación",
@@ -58,8 +69,8 @@ if page == "Pixely Partners":
     )
 
     # Show outputs directory info
-    outputs_dir = get_outputs_dir()
-    st.info(f"📁 Outputs Directory: `{outputs_dir}`")
+    api_base_url = os.environ.get("API_BASE_URL", "http://api:8000")
+    st.info(f"🔗 API URL: `{api_base_url}`")
 
 elif page == "Wiki":
     st.title("📚 Wiki - Documentación")
@@ -88,47 +99,56 @@ elif page == "Dashboard":
 elif page == "Análisis de Redes":
     st.title("🔍 Análisis de Redes Sociales")
     
-    # Display last update timestamp (if available)
-    try:
-        import requests
-        from datetime import datetime
-        
-        # TODO: Replace with actual ficha_cliente_id from session/auth
-        # For now, this is a placeholder - will be populated after authentication is implemented
-        ficha_cliente_id = os.environ.get("FICHA_CLIENTE_ID", "")
-        api_base_url = os.environ.get("API_BASE_URL", "http://localhost:8000")
-        
-        if ficha_cliente_id:
-            # Get ficha data to check last_analysis_timestamp
-            response = requests.get(
-                f"{api_base_url}/fichas_cliente/{ficha_cliente_id}",
-                timeout=5
-            )
-            
-            if response.status_code == 200:
-                ficha_data = response.json()
-                last_timestamp_str = ficha_data.get("last_analysis_timestamp")
-                
-                if last_timestamp_str:
-                    # Parse and calculate time difference
-                    last_dt = datetime.fromisoformat(last_timestamp_str.replace('Z', '+00:00'))
-                    time_diff = datetime.now(last_dt.tzinfo) - last_dt
-                    hours_ago = int(time_diff.total_seconds() / 3600)
-                    
-                    # Display timestamp with color coding
-                    if hours_ago < 24:
-                        st.success(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
-                    elif hours_ago < 48:
-                        st.info(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
-                    else:
-                        days_ago = int(hours_ago / 24)
-                        st.warning(f"📅 **Última actualización:** hace {days_ago} días ({last_dt.strftime('%Y-%m-%d %H:%M')})")
-                else:
-                    st.warning("⏳ **Esperando primer análisis automático** (se ejecuta cada 24h a las 6:00 AM)")
+    # Get client info and last analysis timestamp
+    client = APIClient()
+    ficha_id = st.session_state.get("ficha_cliente_id")
     
-    except Exception as e:
-        # Silently fail if API is not available (dev mode)
-        st.caption("ℹ️ Modo desarrollo: Leyendo datos locales")
+    if not ficha_id:
+        st.error("❌ No se encontró ID de cliente. Por favor cierra sesión e inicia sesión nuevamente.")
+        st.stop()
+    
+    # Display last update timestamp
+    ficha_data = client.get_ficha_cliente(ficha_id)
+    if ficha_data:
+        last_timestamp_str = ficha_data.get("last_analysis_timestamp")
+        
+        if last_timestamp_str:
+            from datetime import datetime
+            # Parse and calculate time difference
+            try:
+                last_dt = datetime.fromisoformat(last_timestamp_str.replace('Z', '+00:00'))
+                time_diff = datetime.now(last_dt.tzinfo) - last_dt
+                hours_ago = int(time_diff.total_seconds() / 3600)
+                
+                # Display timestamp with color coding
+                if hours_ago < 24:
+                    st.success(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+                elif hours_ago < 48:
+                    st.info(f"📅 **Última actualización:** hace {hours_ago} horas ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+                else:
+                    days_ago = int(hours_ago / 24)
+                    st.warning(f"📅 **Última actualización:** hace {days_ago} días ({last_dt.strftime('%Y-%m-%d %H:%M')})")
+            except Exception as e:
+                st.caption(f"ℹ️ Error al parsear timestamp: {e}")
+        else:
+            st.warning("⏳ **Esperando primer análisis automático** (se ejecuta cada 24h a las 6:00 AM)")
+            
+            # Option to trigger manual analysis
+            if st.button("▶️ Ejecutar Análisis Manual"):
+                with st.spinner("Ejecutando análisis... Esto puede tardar varios minutos."):
+                    if client.trigger_analysis(ficha_id):
+                        st.success("✅ Análisis completado exitosamente")
+                        st.rerun()
+                    else:
+                        st.error("❌ Error al ejecutar análisis")
+    
+    # Store insights in session state for view components
+    insights = client.get_insights(ficha_id)
+    if insights:
+        st.session_state.current_insights = insights
+    else:
+        st.warning("📭 No hay datos de análisis disponibles. El análisis se ejecuta automáticamente cada 24 horas.")
+        st.stop()
     
     # Horizontal tabs for analyses
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
