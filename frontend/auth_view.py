@@ -24,11 +24,13 @@ def display_login():
             unsafe_allow_html=True
         )
     
+    # Body - Login form
+    st.markdown('<div class="login-body">', unsafe_allow_html=True)
     with st.form("login_form"):
         st.markdown("### Login")
-        username = st.text_input("Usuario")
-        password = st.text_input("Contraseña", type="password")
-        remember_me = st.checkbox("Recordarme (mantener sesión por 7 días)", value=True)
+        username = st.text_input("", placeholder="Usuario")
+        password = st.text_input("", type="password", placeholder="Contraseña")
+        remember_me = st.checkbox("Recordarme", value=True)
         submit = st.form_submit_button("Iniciar Sesión")
         
         if submit:
@@ -77,18 +79,20 @@ def display_login():
             except Exception as e:
                 st.error(f"Error inesperado: {e}")
     
-    # Footer debajo del formulario
-    st.markdown(
-        """<div class="login-footer">
-            Hecho para <span class="dikimro">DIKIMRO</span> ♥
-        </div>""",
-        unsafe_allow_html=True
-    )
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown("""
+        <div class="login-footer">
+            Hecho para <span class="dikimro">DIKIMRO</span> ♥<br>
+            <span class="dev-version">Esta es una versión de desarrollo 100% funcional</span>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 def display_logout_button():
     """Display logout button in sidebar."""
-    if st.sidebar.button("🚪 Cerrar Sesión"):
+    if st.sidebar.button("Cerrar Sesión"):
         # Clear cookie
         cookie_mgr = CookieManager()
         cookie_mgr.clear_auth_cookie()

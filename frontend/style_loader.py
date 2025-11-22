@@ -38,8 +38,19 @@ def load_particles_background():
 
 def load_all_styles():
     """Load all custom styles for the application."""
+    st.markdown("""
+    <style>
+    body, .stApp, .main {
+        background: radial-gradient(ellipse at center, #1a0a15 0%, #000000 70%) !important;
+        min-height: 100vh !important;
+        height: 100% !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     load_css_file("header_footer.css")
     load_css_file("sidebar_styles.css")
+    load_css_file("glassmorphism.css")
     load_particles_background()
 
 
@@ -47,11 +58,23 @@ def load_login_styles():
     """Load styles specifically for login page."""
     load_css_file("login_styles.css")
     load_css_file("header_footer.css")
+    load_css_file("glassmorphism.css")
     load_particles_background()
 
 
 def load_dashboard_styles():
     """Load styles specifically for dashboard pages."""
+    st.markdown("""
+    <style>
+    body, .stApp, .main {
+        background: radial-gradient(ellipse at center, #1a0a15 0%, #000000 70%) !important;
+        min-height: 100vh !important;
+        height: 100% !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     load_css_file("sidebar_styles.css")
     load_css_file("header_footer.css")
+    load_css_file("glassmorphism.css")
     load_particles_background()

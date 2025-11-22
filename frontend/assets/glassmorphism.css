@@ -1,0 +1,86 @@
+/* Glassmorphism Effects for Pixely Partners */
+
+/* Main container transparency */
+.stApp {
+    background: transparent !important;
+}
+
+.main .block-container {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px;
+    z-index: 1;
+}
+
+/* Card containers with glass effect */
+div[data-testid="stHorizontalBlock"] > div {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 20, 147, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+/* Expander glass effect */
+.streamlit-expanderHeader {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 20, 147, 0.3);
+}
+
+.streamlit-expanderContent {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+/* Input fields with glass */
+input, textarea, select {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 20, 147, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Buttons with glass effect */
+button {
+    background: rgba(255, 20, 147, 0.3) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 20, 147, 0.5) !important;
+}
+
+button:hover {
+    background: rgba(255, 20, 147, 0.5) !important;
+}
+
+/* Data frames and tables */
+div[data-testid="stDataFrame"] {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+}
+
+/* Metrics with glass */
+div[data-testid="stMetric"] {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 20, 147, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Tab containers */
+div[data-baseweb="tab-panel"] {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+}
+
