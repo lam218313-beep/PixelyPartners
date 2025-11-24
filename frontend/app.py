@@ -20,7 +20,12 @@ from view_components.qual import (
     q6_view, q7_view, q8_view, q9_view, q10_view
 )
 
-st.set_page_config(layout="wide", page_title="Pixely Partners Dashboard", initial_sidebar_state="expanded")
+st.set_page_config(
+    layout="wide", 
+    page_title="Pixely Partners Dashboard", 
+    page_icon="frontend/assets/logo.png",
+    initial_sidebar_state="expanded"
+)
 
 # Initialize session state
 init_session_state()

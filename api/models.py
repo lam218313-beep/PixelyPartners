@@ -207,3 +207,6 @@ class SocialMediaInsight(Base):
     # Q10: Resumen Ejecutivo
     # Schema: Q10Response (metadata, results, errors)
     q10_resumen = Column(JSON, nullable=True)
+
+# Import Task models to establish relationships
+from .models_tasks import Task, TaskNote  # noqa: F401, E402
