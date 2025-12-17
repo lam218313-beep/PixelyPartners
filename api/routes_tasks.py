@@ -237,6 +237,89 @@ def get_task_notes(
     return notes
 
 
+@router.patch("/tasks/{task_id}/notes/{note_id}", response_model=schemas_tasks.TaskNoteResponse)
+def update_task_note(
+    task_id: str,
+    note_id: str,
+    note_update: schemas_tasks.TaskNoteUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Update the content of a note for a task.
+    """
+    # Verify task exists and user has access
+    task = db.query(Task).join(models.FichaCliente).filter(
+        Task.id == task_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tarea no encontrada"
+        )
+    
+    # Get note and verify it belongs to the task
+    note = db.query(TaskNote).filter(
+        TaskNote.id == note_id,
+        TaskNote.task_id == task_id
+    ).first()
+    
+    if not note:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Nota no encontrada"
+        )
+    
+    # Update content
+    note.content = note_update.content
+    db.commit()
+    db.refresh(note)
+    
+    return note
+
+
+@router.delete("/tasks/{task_id}/notes/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task_note(
+    task_id: str,
+    note_id: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Delete a note from a task.
+    """
+    # Verify task exists and user has access
+    task = db.query(Task).join(models.FichaCliente).filter(
+        Task.id == task_id,
+        models.FichaCliente.tenant_id == current_user.tenant_id
+    ).first()
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tarea no encontrada"
+        )
+    
+    # Get note and verify it belongs to the task
+    note = db.query(TaskNote).filter(
+        TaskNote.id == note_id,
+        TaskNote.task_id == task_id
+    ).first()
+    
+    if not note:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Nota no encontrada"
+        )
+    
+    db.delete(note)
+    db.commit()
+    
+    return None
+
+
 # ============================================================================
 # UTILITY: GENERATE TASKS FROM Q9 RECOMMENDATIONS
 # ============================================================================
@@ -248,7 +331,8 @@ def generate_tasks_from_q9(
     current_user: models.User = Depends(get_current_user)
 ):
     """
-    Generate tasks from Q9 recommendations for a ficha.
+    Generate enriched tasks from Q9 recommendations.
+    Enriches each task with evidence from Q1-Q8 for strategic context.
     Distributes recommendations across 4 weeks based on urgency.
     """
     # Verify ficha exists
@@ -263,7 +347,7 @@ def generate_tasks_from_q9(
             detail="Ficha de cliente no encontrada"
         )
     
-    # Get latest insight with Q9 data
+    # Get latest insight with all Q data
     latest_insight = db.query(models.SocialMediaInsight).filter(
         models.SocialMediaInsight.cliente_id == ficha_id,
         models.SocialMediaInsight.q9_recomendaciones.isnot(None)
@@ -274,6 +358,16 @@ def generate_tasks_from_q9(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No hay recomendaciones Q9 disponibles"
         )
+    
+    # Extract all Q data for enrichment
+    q_data = {
+        "q1": latest_insight.q1_emociones.get("results", {}) if latest_insight.q1_emociones else {},
+        "q3": latest_insight.q3_topicos.get("results", {}) if latest_insight.q3_topicos else {},
+        "q4": latest_insight.q4_marcos_narrativos.get("results", {}) if latest_insight.q4_marcos_narrativos else {},
+        "q5": latest_insight.q5_influenciadores.get("results", {}) if latest_insight.q5_influenciadores else {},
+        "q6": latest_insight.q6_oportunidades.get("results", {}) if latest_insight.q6_oportunidades else {},
+        "q8": latest_insight.q8_temporal.get("results", {}) if latest_insight.q8_temporal else {},
+    }
     
     # Extract recommendations
     q9_data = latest_insight.q9_recomendaciones
@@ -288,31 +382,109 @@ def generate_tasks_from_q9(
     # Delete existing tasks for this ficha
     db.query(Task).filter(Task.ficha_cliente_id == ficha_id).delete()
     
-    # Create tasks from recommendations
+    # Helper: Extract evidence summary
+    def build_evidence_summary(q_data):
+        """Build detailed evidence summary from Q1-Q8 with real data"""
+        summary_parts = []
+        
+        # Q1: Emociones - Extract from analisis_por_publicacion
+        if q_data["q1"] and "analisis_por_publicacion" in q_data["q1"]:
+            posts = q_data["q1"]["analisis_por_publicacion"]
+            if posts:
+                # Aggregate emotions across all posts
+                all_emotions = {}
+                for post in posts:
+                    emociones = post.get("emociones", {})
+                    for emo, val in emociones.items():
+                        all_emotions[emo] = all_emotions.get(emo, 0) + val
+                
+                # Get top 3 emotions
+                top_emotions = sorted(all_emotions.items(), key=lambda x: x[1], reverse=True)[:3]
+                if top_emotions:
+                    emo_text = ", ".join([f"{emo.capitalize()}: {val/len(posts):.1%}" for emo, val in top_emotions])
+                    summary_parts.append(f"🎭 **Emociones dominantes:** {emo_text}")
+        
+        # Q3: Tópicos - Extract from analisis_agregado
+        if q_data["q3"] and "analisis_agregado" in q_data["q3"]:
+            topicos_list = q_data["q3"]["analisis_agregado"]
+            if topicos_list and isinstance(topicos_list, list):
+                # Get top 3-5 topics
+                top_topicos = sorted(topicos_list, key=lambda x: x.get("frecuencia_relativa", 0), reverse=True)[:5]
+                top_names = [t.get("topic", "") for t in top_topicos if t.get("topic")]
+                if top_names:
+                    summary_parts.append(f"📊 **Tópicos frecuentes:** {', '.join(top_names)}")
+        
+        # Q6: Oportunidades - Extract specific opportunities
+        if q_data["q6"] and "oportunidades" in q_data["q6"]:
+            oportunidades = q_data["q6"]["oportunidades"]
+            if oportunidades:
+                # Get top 2-3 opportunities by gap_score
+                top_opps = sorted(oportunidades, key=lambda x: x.get("gap_score", 0), reverse=True)[:3]
+                opp_names = [o.get("oportunidad", "") for o in top_opps if o.get("oportunidad")]
+                if opp_names:
+                    summary_parts.append(f"💎 **Oportunidades clave:** {', '.join(opp_names)}")
+        
+        # Q8: Anomalías temporales - Extract from resumen_global
+        if q_data["q8"] and "resumen_global" in q_data["q8"]:
+            resumen = q_data["q8"]["resumen_global"]
+            serie = resumen.get("serie_temporal", [])
+            if serie:
+                # Count weeks with significant changes
+                anomalias = [s for s in serie if abs(s.get("cambio_porcentaje", 0)) > 20]
+                if anomalias:
+                    summary_parts.append(f"⚠️ **Patrones temporales:** {len(anomalias)} semanas con cambios significativos (>20%)")
+        
+        if not summary_parts:
+            return "Datos insuficientes para generar evidencia detallada"
+        
+        return "\n".join(summary_parts)
+    
+    evidence_summary = build_evidence_summary(q_data)
+    
+    # Create enriched tasks from recommendations with 4 per week distribution
     tasks_created = []
-    for rec in recommendations:
-        # Determine week based on urgency
-        urgencia = rec.get("urgencia", "MEDIA")
-        if urgencia == "CRÍTICA":
-            week = 1
-        elif urgencia == "ALTA":
-            week = 1
-        elif urgencia == "MEDIA-ALTA":
-            week = 2
-        elif urgencia == "MEDIA":
-            week = 3
+    
+    # Sort recommendations by priority (impacto/esfuerzo ratio) descending
+    sorted_recs = sorted(
+        recommendations,
+        key=lambda r: r.get("score_impacto", 50) / max(r.get("score_esfuerzo", 1), 1),
+        reverse=True
+    )
+    
+    # Distribute 4 tasks per week
+    for idx, rec in enumerate(sorted_recs):
+        # Calculate week: 4 tasks per week (0-3: week 1, 4-7: week 2, etc.)
+        week = (idx // 4) + 1
+        
+        # Determine urgencia based on priority and week
+        prioridad_score = rec.get("score_impacto", 50) / max(rec.get("score_esfuerzo", 1), 1)
+        if week == 1 and prioridad_score > 2.0:
+            urgencia = "CRÍTICA"
+        elif week == 1 or prioridad_score > 1.5:
+            urgencia = "ALTA"
+        elif week == 2 or prioridad_score > 1.0:
+            urgencia = "MEDIA-ALTA"
+        elif week == 3:
+            urgencia = "MEDIA"
         else:
-            week = 4
+            urgencia = "BAJA"
+        
+        # Build enriched description with evidence
+        base_description = rec.get("descripcion", "Sin descripción detallada disponible.")
+        
+        # Add evidence section
+        enriched_description = f"{base_description}\n\n---\n\n### 📊 Evidencia del Análisis\n\n{evidence_summary}"
         
         new_task = Task(
             id=str(uuid.uuid4()),
             ficha_cliente_id=ficha_id,
             title=rec.get("recomendacion", "Tarea sin título"),
-            area_estrategica=rec.get("area_estrategica"),
+            description=enriched_description,
+            area_estrategica=rec.get("area_estrategica", "Operaciones"),
             urgencia=urgencia,
-            score_impacto=rec.get("score_impacto"),
-            score_esfuerzo=rec.get("score_esfuerzo"),
-            prioridad=int(rec.get("prioridad", 0) * 100),  # Convert to integer
+            score_impacto=rec.get("score_impacto", 50),
+            score_esfuerzo=rec.get("score_esfuerzo", 50),
+            prioridad=int(prioridad_score * 100),
             week=week
         )
         
@@ -322,7 +494,7 @@ def generate_tasks_from_q9(
     db.commit()
     
     return {
-        "message": f"Se crearon {len(tasks_created)} tareas desde las recomendaciones Q9",
+        "message": f"Se crearon {len(tasks_created)} hilos de trabajo enriquecidos desde Q9",
         "tasks_created": len(tasks_created),
         "distribution": {
             "week_1": sum(1 for t in tasks_created if t.week == 1),

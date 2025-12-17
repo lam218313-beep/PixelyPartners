@@ -922,14 +922,33 @@ elif page == "Hilos de Trabajo":
             if notes and len(notes) > 0:
                 with st.expander(f"📝 Ver notas ({len(notes)})"):
                     for note in notes:
-                        created_at = note.get('created_at', '')[:19]  # Truncar timestamp
+                        note_id = note.get('id')
+                        created_at = note.get('created_at', '')[:19]
                         content = note.get('content', '')
-                        st.markdown(f"""
-                            <div class="note-item">
-                                <small style="color: #999;">{created_at}</small><br>
-                                {content}
-                            </div>
-                        """, unsafe_allow_html=True)
+
+                        st.markdown("<div class=\"note-item\">", unsafe_allow_html=True)
+                        st.write(f"📅 {created_at}")
+                        edit_content = st.text_area(
+                            "Editar nota:",
+                            value=content,
+                            key=f"note_edit_content_{note_id}",
+                            label_visibility="collapsed",
+                            height=100
+                        )
+                        cols_note = st.columns([1, 1])
+                        with cols_note[0]:
+                            if st.button("💾 Guardar cambios", key=f"save_edit_note_{note_id}"):
+                                result = client.update_task_note(task_id, note_id, edit_content)
+                                if result:
+                                    st.success("✅ Nota actualizada")
+                                    st.rerun()
+                        with cols_note[1]:
+                            if st.button("🗑️ Eliminar", key=f"delete_note_{note_id}"):
+                                ok = client.delete_task_note(task_id, note_id)
+                                if ok:
+                                    st.success("✅ Nota eliminada")
+                                    st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
             
             st.markdown("</div>", unsafe_allow_html=True)
 

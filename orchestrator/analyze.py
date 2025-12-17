@@ -15,6 +15,7 @@ import asyncio
 import re
 import logging
 from typing import Dict, Any
+import httpx
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
@@ -131,6 +132,34 @@ async def analyze_data(config: Dict[str, Any], module_to_run: str = "all"):
 
                 # Send results to API (database)
                 await analyzer_instance.save_results_to_api(module_name, result)
+
+                # Auto-generate Hilos de Trabajo after Q9 is saved to API
+                if module_name == "Q9":
+                    try:
+                        api_base_url = config.get("api_base_url", os.environ.get("API_BASE_URL", "http://api:8000"))
+                        ficha_id = config.get("ficha_cliente_id")
+                        api_token = config.get("api_token")
+                        if api_base_url and ficha_id and api_token:
+                            logging.info(f"Triggering task generation from Q9 for ficha {ficha_id}...")
+                            async with httpx.AsyncClient() as client:
+                                resp = await client.post(
+                                    f"{api_base_url}/api/v1/fichas/{ficha_id}/tasks/generate-from-q9",
+                                    headers={"Authorization": f"Bearer {api_token}"},
+                                    timeout=60.0,
+                                )
+                                resp.raise_for_status()
+                                data = resp.json()
+                                created = data.get("tasks_created")
+                                dist = data.get("distribution", {})
+                                logging.info(
+                                    f"Hilos de Trabajo generados automáticamente: {created} (Distribución: W1={dist.get('week_1')}, W2={dist.get('week_2')}, W3={dist.get('week_3')}, W4={dist.get('week_4')})"
+                                )
+                                print(f"   🧵 Hilos de Trabajo generados: {created} tareas (4/semana)")
+                        else:
+                            logging.warning("Skipping auto-generation of tasks: missing api_base_url, ficha_cliente_id, or api_token in config")
+                    except Exception as gen_err:
+                        logging.error(f"Failed to auto-generate tasks from Q9: {gen_err}", exc_info=True)
+                        print("   ⚠️ No se pudieron generar los Hilos de Trabajo automáticamente")
 
                 # Extract counts for console output
                 errors = result.get("errors", [])

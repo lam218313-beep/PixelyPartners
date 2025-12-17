@@ -100,7 +100,7 @@ class SocialMediaPost(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     post_url = Column(String, unique=True, index=True, nullable=False)
     content_text = Column(Text)
-    post_date = Column(DateTime)
+    posted_at = Column(DateTime)  # Fecha del post (from Google Sheets: created_at)
     platform = Column(String)  # instagram, tiktok, facebook
     likes = Column(Integer, default=0)
     shares = Column(Integer, default=0)

@@ -196,6 +196,54 @@ class APIClient:
         except Exception as e:
             st.error(f"Error al obtener notas: {e}")
             return None
+
+    def update_task_note(self, task_id: str, note_id: str, content: str) -> Optional[Dict[str, Any]]:
+        """
+        Update a task note's content.
+        
+        Args:
+            task_id: Task ID
+            note_id: Note ID
+            content: New content
+        
+        Returns:
+            Updated note data
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.patch(
+                    f"/api/v1/tasks/{task_id}/notes/{note_id}",
+                    json={"content": content},
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return response.json()
+        except Exception as e:
+            st.error(f"Error al actualizar nota: {e}")
+            return None
+
+    def delete_task_note(self, task_id: str, note_id: str) -> bool:
+        """
+        Delete a task note.
+        
+        Args:
+            task_id: Task ID
+            note_id: Note ID
+        
+        Returns:
+            True if deleted
+        """
+        try:
+            with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+                response = client.delete(
+                    f"/api/v1/tasks/{task_id}/notes/{note_id}",
+                    headers=self._get_headers()
+                )
+                response.raise_for_status()
+                return True
+        except Exception as e:
+            st.error(f"Error al eliminar nota: {e}")
+            return False
     
     def generate_tasks_from_q9(self, ficha_id: str) -> Optional[Dict[str, Any]]:
         """

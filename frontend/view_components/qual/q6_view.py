@@ -3,9 +3,12 @@ import streamlit as st # type: ignore
 import pandas as pd
 import json
 import os
+import logging
 import plotly.graph_objects as go  # type: ignore
 from view_components.data_loader import load_q6_data as api_load_q6
 from view_components.compat_loader import load_from_api_or_file
+
+logger = logging.getLogger(__name__)
 
 def load_q6_data():
     """Load Q6 data from API or local file (backward compatibility)."""
@@ -62,6 +65,17 @@ def display_q6_oportunidades():
     if oportunidades:
         df_opp = pd.DataFrame(oportunidades)
         
+        # Validate required columns
+        required_cols = ['gap_score', 'actividad_competitiva', 'tema']
+        missing = [c for c in required_cols if c not in df_opp.columns]
+        if missing:
+            st.error(f"❌ Columnas faltantes: {missing}")
+            st.stop()
+        
+        # Ensure numeric columns
+        df_opp['gap_score'] = pd.to_numeric(df_opp['gap_score'], errors='coerce')
+        df_opp['competencia_score'] = pd.to_numeric(df_opp['competencia_score'], errors='coerce')
+        
         # ========================================================================
         # GRÁFICO 1: MATRIZ DE PRIORIZACIÓN ESTRATÉGICA (SCATTER PLOT)
         # ========================================================================
@@ -91,48 +105,46 @@ def display_q6_oportunidades():
             lambda row: get_priority_color(row['gap_score'], row['actividad_competitiva']), 
             axis=1
         )
-        df_opp['tamaño'] = 30  # Bubble size
         
-        # Create scatter plot
+        # Create scatter plot - ensure all rows are added
         fig_matriz = go.Figure()
         
+        import numpy as np
+        added_count = 0
         for idx, row in df_opp.iterrows():
-            fig_matriz.add_trace(go.Scatter(
-                x=[row['actividad_numeric']],
-                y=[row['gap_score']],
-                mode='markers',
-                marker=dict(
-                    size=15,
-                    color=row['color'],
-                    line=dict(width=2, color='white')
-                ),
-                text=row['tema'],
-                hovertemplate=(
-                    f"<b>{row['tema']}</b><br>"
-                    f"Gap Score: {row['gap_score']}<br>"
-                    f"Actividad Competitiva: {row['actividad_competitiva']}<br>"
-                    f"<extra></extra>"
-                ),
-                showlegend=False
-            ))
+            try:
+                if pd.isna(row['gap_score']) or pd.isna(row['actividad_numeric']):
+                    continue
+                
+                # Add jitter to x-axis to prevent overlapping when multiple opportunities 
+                # have the same actividad_numeric and gap_score values
+                jitter = np.random.normal(0, 0.08)  # Small random offset
+                x_jittered = row['actividad_numeric'] + jitter
+                    
+                fig_matriz.add_trace(go.Scatter(
+                    x=[x_jittered],
+                    y=[row['gap_score']],
+                    mode='markers',
+                    marker=dict(
+                        size=15,
+                        color=row['color'],
+                        line=dict(width=2, color='white')
+                    ),
+                    text=row['tema'],
+                    hovertemplate=(
+                        f"<b>{row['tema']}</b><br>"
+                        f"Gap Score: {row['gap_score']}<br>"
+                        f"Actividad Competitiva: {row['actividad_competitiva']}<br>"
+                        f"<extra></extra>"
+                    ),
+                    showlegend=False,
+                    name=row['tema']  # Add name for debugging
+                ))
+                added_count += 1
+            except Exception as e:
+                logger.error(f"Error agregando fila {idx}: {e}")
         
-        fig_matriz.update_layout(
-            title="Matriz Estratégica: Urgencia vs Barrera de Entrada",
-            xaxis_title="Barrera de Entrada (Actividad Competitiva)",
-            yaxis_title="Urgencia Estratégica (Gap Score)",
-            xaxis=dict(
-                tickvals=[1, 2, 3],
-                ticktext=['Baja', 'Media', 'Alta'],
-                range=[0.5, 3.5]
-            ),
-            yaxis=dict(range=[0, 100]),
-            height=500,
-            hovermode='closest',
-            plot_bgcolor='rgba(240, 240, 240, 0.5)',
-            paper_bgcolor='white'
-        )
-        
-        # Add quadrant lines and labels
+        # Add layout
         fig_matriz.add_hline(y=80, line_dash="dash", line_color="rgba(0,0,0,0.2)")
         fig_matriz.add_vline(x=2, line_dash="dash", line_color="rgba(0,0,0,0.2)")
         
@@ -177,17 +189,30 @@ def display_q6_oportunidades():
                                 font=dict(size=12, color="red"), showarrow=False)
         
         # Add data points
+        added_count_g2 = 0
         for idx, row in df_opp.iterrows():
-            fig_zonas.add_trace(go.Scatter(
-                x=[row['actividad_numeric']],
-                y=[row['gap_score']],
-                mode='markers+text',
-                marker=dict(size=20, color=row['color'], line=dict(width=2, color='white')),
-                text=row['tema'].split()[0],  # First word for compact label
-                textposition='top center',
-                hovertemplate=f"<b>{row['tema']}</b><br>Gap: {row['gap_score']}<br>Competencia: {row['actividad_competitiva']}<extra></extra>",
-                showlegend=False
-            ))
+            try:
+                if pd.isna(row['gap_score']) or pd.isna(row['actividad_numeric']):
+                    continue
+                
+                # Add jitter to prevent overlapping markers with same coordinates
+                jitter = np.random.normal(0, 0.08)
+                x_jittered = row['actividad_numeric'] + jitter
+                    
+                fig_zonas.add_trace(go.Scatter(
+                    x=[x_jittered],
+                    y=[row['gap_score']],
+                    mode='markers+text',
+                    marker=dict(size=20, color=row['color'], line=dict(width=2, color='white')),
+                    text=row['tema'].split()[0] if len(row['tema']) > 0 else "?",  # First word for compact label
+                    textposition='top center',
+                    hovertemplate=f"<b>{row['tema']}</b><br>Gap: {row['gap_score']}<br>Competencia: {row['actividad_competitiva']}<extra></extra>",
+                    showlegend=False,
+                    name=row['tema']
+                ))
+                added_count_g2 += 1
+            except Exception as e:
+                logger.error(f"Error en Gráfico 2, fila {idx}: {e}")
         
         fig_zonas.update_layout(
             title="Zonas de Acción Estratégica",
@@ -293,7 +318,7 @@ def display_q6_oportunidades():
             st.metric("Máxima Urgencia", f"{opp_max_gap['gap_score']}")
         with col4:
             st.metric("Oportunidades Críticas", resumen.get('oportunidades_criticas', 0))
-        
+    
     else:
         st.info("No opportunities data available")
 

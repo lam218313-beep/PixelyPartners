@@ -270,6 +270,16 @@ def display_q9_recomendaciones():
     st.markdown("**Distribución de Urgencias:**")
     urgencia_dist = resumen.get('urgencia_distribucion', {})
     
+    # If urgencia_distribucion is empty, calculate it from recs_list
+    if not urgencia_dist or all(v == 0 for v in urgencia_dist.values()):
+        urgencia_dist = {
+            'CRÍTICA': len([r for r in recs_list if r.get('urgencia') == 'CRÍTICA']),
+            'ALTA': len([r for r in recs_list if r.get('urgencia') == 'ALTA']),
+            'MEDIA-ALTA': len([r for r in recs_list if r.get('urgencia') == 'MEDIA-ALTA']),
+            'MEDIA': len([r for r in recs_list if r.get('urgencia') == 'MEDIA']),
+            'BAJA': len([r for r in recs_list if r.get('urgencia') == 'BAJA'])
+        }
+    
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:

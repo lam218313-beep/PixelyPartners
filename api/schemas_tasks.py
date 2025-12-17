@@ -27,6 +27,11 @@ class TaskNoteCreate(TaskNoteBase):
     pass
 
 
+class TaskNoteUpdate(TaskNoteBase):
+    """Schema for updating a task note"""
+    pass
+
+
 class TaskNoteResponse(TaskNoteBase):
     """Schema for task note response"""
     id: str

@@ -282,6 +282,12 @@ Return ONLY valid JSON:
             
             logger.info(f"Processing {len(posts)} posts with {len(comments)} comments")
             
+            # Debug: Check if posts have posted_at field
+            for idx, post in enumerate(posts[:2]):
+                post_date = post.get("created_at") or post.get("posted_at") or post.get("post_date") or post.get("fecha") or post.get("timestamp")
+                logger.info(f"Post {idx}: {post.get('link', 'NO_LINK')} - created_at: {post_date}")
+                logger.debug(f"Post {idx} available fields: {list(post.keys())}")
+            
             if not comments:
                 errors.append("No comments found for analysis")
                 return {
@@ -312,7 +318,7 @@ Return ONLY valid JSON:
             # Group posts by date for temporal analysis
             for post in posts:
                 link = post.get("link")
-                post_date = post.get("post_date", post.get("fecha", post.get("timestamp")))
+                post_date = post.get("created_at") or post.get("posted_at") or post.get("post_date") or post.get("fecha") or post.get("timestamp")
                 if link:
                     if post_date:
                         try:

@@ -980,6 +980,16 @@ async def analyze_q9(
             "Q9", "q9_recomendaciones", result["results"]
         )
         
+        # Generar automáticamente hilos de trabajo desde Q9
+        try:
+            from .routes_tasks import generate_tasks_from_q9
+            logger.info("Generando hilos de trabajo desde Q9...")
+            tasks_result = generate_tasks_from_q9(ficha_cliente_id, db, current_user)
+            logger.info(f"✅ {tasks_result['tasks_created']} hilos de trabajo generados")
+        except Exception as task_error:
+            logger.warning(f"No se pudieron generar tareas automáticamente: {task_error}")
+            # No fallar el análisis Q9 si las tareas fallan
+        
         logger.info("✅ Q9 completed successfully")
         return result
     except Exception as e:

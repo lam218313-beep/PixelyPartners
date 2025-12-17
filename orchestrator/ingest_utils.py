@@ -153,6 +153,10 @@ class GoogleSheetsIngestor:
             
             logger.info(f"Fetched {len(all_posts)} total posts from Google Sheets")
             
+            # Debug: Log available columns from first post
+            if all_posts:
+                logger.info(f"Available columns in Posts sheet: {list(all_posts[0].keys())}")
+            
             # If no last timestamp, return all posts
             if last_analysis_timestamp is None:
                 logger.info("No last_analysis_timestamp provided. Returning all posts.")
